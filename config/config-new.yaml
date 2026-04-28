@@ -48,7 +48,7 @@ projects:
     q2tPromptGenerator:
       implementation: Q2TPromptGenerator
   ruim:
-    shacl: ./config/ruim/sparnatural-config.ttl
+    shacl: ./config/ruim/RUIM-SHACL-instances.ttl
     sparqlEndpoint: https://data.sparna.fr/graphdb/repositories/RUIM
     reconcileStrategy: sparql-only
     domains:
