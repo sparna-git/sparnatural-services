@@ -135,7 +135,6 @@ _:d85f7e570c704b5b9b53672428339dae692 dct:format <https://www.iana.org/assignmen
 
 med:SpecialitePharmaceutique a sh:NodeShape, rdfs:Class;
   rdfs:label "Spécialité pharmaceutique"@fr;
-  sh:agentInstruction "Une spécialité pharmaceutique représente un médicament autorisé, indépendamment de son packaging. C’est la classe principale. Elle est identifiée par son code CIS (code identifiant de spécialité). Elle porte des informations descriptives, comme son code ATC ou ses dates de validité. La classification ATC d’une Spécialité est indiquée dans l’attribut classificationATC qui donne une référence à l’entrée actuelle de la classification ATC sur laquelle est classée cette Spécialité -pour filtrer par code ATC (ex. J01DC02), utiliser uniquement cette propriété classificationATC, jamais les propriétés de substance. Chaque spécialité est catégorisée selon sa prescriptibilité en dénomination commune : prescriptible, non-prescriptible et prescriptible avec nom de marque. La voie d’administration de la Spécialité est indiquée via la propriété voie. Une spécialité est liée aux UCD qui dispensent cette spécialité (aPourUniteDeDispensation) et aux présentations qui contiennent cette spécialité (aPourPresentation). DISTINCTION SUBSTANCES : utiliser substanceActive quand l’utilisateur parle explicitement de \"substance active\" ; utiliser fractionTherapeutique quand il parle de \"fraction thérapeutique\" ; utiliser SAouFT (propriété union SA ou FT) uniquement si la requête est ambiguë ou couvre les deux. DISTINCTION PROCÉDURE/ÉVÉNEMENT : la propriété typeProcedureCourante donne le régime de procédure ACTUEL de la spécialité (ex. autorisation d’importation parallèle = TypeProcedure_31) -utiliser cette propriété quand l’utilisateur demande les spécialités \"faisant l’objet de\" ou \"ayant\" un certain type de procédure courante. Ne pas confondre avec les Evenements qui représentent des faits historiques datés. Le titulaire courant de la spécialité est indiqué via titulaireCourant."@fr ;
   rdfs:comment """Une spécialité pharmaceutique est identifiée par son [code CIS](#med:SpecialitePharmaceutique_med:CIS) (code identifiant de spécialité). Elle porte des informations descriptives, comme son code ATC ou ses dates de validité. La classification ATC d’une Spécialité est indiquée dans 3 attributs : 
  - L'attribut [`classificationATC`](#med:SpecialitePharmaceutique_med:classificationATC) donne une référence à l’entrée actuelle de la classification ATC sur laquelle est classée cette Spécialité; 
  - L’attribut [`codeATC`](#med:SpecialitePharmaceutique_med:codeATC) donne le code de l’entrée ATC actuelle; c’est un complément à la référence à l’entrée de la classification ATC, permettant de voir le code, qui est porteur d’informations; 
@@ -174,7 +173,6 @@ _:d85f7e570c704b5b9b53672428339dae695 rdf:first owl:equivalentClass;
 
 med:Presentation a sh:NodeShape, rdfs:Class;
   rdfs:label "Présentation"@fr;
-  sh:agentInstruction "Représente une spécialité pharmaceutique dans un certain packaging. Une présentation est identifiée par son code CIP13. Elle est liée à la spécialité présentée et à l’UCD contenue dans la présentation. Conceptuellement, la présentation “hérite” de toutes les caractéristiques de la spécialité dispensée (substances, type de conditionnement, forme manufacturée). Le nombre d'UCD (comme le nombre de comprimés dans la boite), le conditionnement et les éventuels dispositifs d'administration sont indiqués sur la Présentation. Les dates de commercialisation doivent être récupérées sur les Evenements de type \"début de commercilisation\" ou \"arrêt de commercialisation\" liés à la présentation."@fr ;
   rdfs:comment """Une présentation est identifiée par son code [CIP13](#med:Presentation_med:CIP13). Elle est [liée à la spécialité](#med:Presentation_med:presente) présentée et à l’UCD [contenue dans la présentation](#med:Presentation_med:contientUniteDeDispensation). Conceptuellement, la présentation “[hérite](#med:Presentation_rdfs:subClassOf)” de toutes les caractéristiques de la spécialité dispensée (substances, type de conditionnement, forme manufacturée). La présentation peut être [prescriptible](#med:Presentation_med:prescriptibleComme) dans une ou plusieurs définitions de prescriptions en dénomination commune, si la spécialité dispensée est prescriptible en DC. 
 
 Une présentation porte également l’[historique](#med:Presentation_med:libelle) de tous ses noms. 
@@ -202,7 +200,6 @@ _:d85f7e570c704b5b9b53672428339dae698 rdf:first owl:equivalentClass;
 
 med:UniteCommuneDeDispensation a sh:NodeShape, rdfs:Class;
   rdfs:label "Unité commune de dispensation"@fr;
-  sh:agentInstruction "Représente un comprimé, un flacon, une ampoule, etc. Une Unité Commune de dispensation est identifiée par son code UCD13. Elle est liée d’une part à sa spécialité pharmaceutique (une et une seule) et d’autre part aux présentations dans lesquelles elle se retrouve (une UCD peut se retrouver dans plusieurs présentations)."@fr ;
   rdfs:comment "Une Unité Commune de dispensation est identifiée par son code [UCD13](#med:UniteCommuneDeDispensation_med:codeUCD13). Elle est liée d’une part [à sa spécialité pharmaceutique](#med:UniteCommuneDeDispensation_med:uniteDeDispensationDe) (une et une seule) et d’autre part [aux présentations](#med:UniteCommuneDeDispensation_med:presenteDans) dans lesquelles elle se retrouve (une UCD peut se retrouver dans plusieurs présentations). L’UCD porte l’[historique](#med:UniteCommuneDeDispensation_med:libelle) de tous ses noms."@fr;
   foaf:depiction <images/ucd.png>, med:Diagramme_SpecialitesPresentationsUCD;
   sh:closed "true"^^xsd:boolean;
@@ -223,7 +220,6 @@ _:d85f7e570c704b5b9b53672428339dae701 rdf:first owl:equivalentClass;
 
 med:GroupeGenerique a sh:NodeShape, rdfs:Class;
   rdfs:label "Groupe générique"@fr;
-  sh:agentInstruction "Un groupe regroupant des spécialités équivalentes. Les groupes génériques regroupent les spécialités par des liens de différentes natures. Chaque groupe générique indique en général une spécialité de référence (mais pas toujours, certains groupes n’ont aucune spécialité de référence), et donne les spécialités génériques équivalentes et les autres spécialités substituables."@fr ;
   rdfs:comment "Les groupes génériques regroupent les spécialités par des liens de différentes natures. Chaque groupe générique indique en général une [spécialité de référence](#med:GroupeGenerique_med:specialiteDeReference) (mais pas toujours, certains groupes n’ont aucune spécialité de référence), et donne les spécialités génériques [équivalentes](#med:GroupeGenerique_med:specialiteGenerique) et les autres spécialités [substituables](#med:GroupeGenerique_med:specialiteSubstituable)."@fr;
   foaf:depiction <images/groupes_generiques.png>;
   sh:closed "true"^^xsd:boolean;
@@ -385,7 +381,6 @@ _:d85f7e570c704b5b9b53672428339dae722 rdf:first owl:equivalentClass;
 
 med:Organisation a sh:NodeShape, rdfs:Class;
   rdfs:label "Organisation"@fr;
-  sh:agentInstruction "Un laboratoire pharmaceutique titulaire d'une autorisation de spécialité."@fr ;
   rdfs:comment "Une organisation, typiquement un laboratoire pharmaceutique."@fr;
   sh:closed "true"^^xsd:boolean;
   sh:ignoredProperties _:d85f7e570c704b5b9b53672428339dae723;
@@ -405,7 +400,6 @@ _:d85f7e570c704b5b9b53672428339dae725 rdf:first owl:equivalentClass;
 
 med:Substance a sh:NodeShape, rdfs:Class;
   rdfs:label "Substance"@fr;
-  sh:agentInstruction "Une substance dans un médicament, soit une substance de base, soit un sel ou un acide, etc. Les substances sont identifiées par un identifiant interne. Elles peuvent être associées à un code SMS quand un équivalent existe. Au moins un libellé en français est donné à la substance, avec potentiellement plusieurs synonymes."@fr ;
   rdfs:comment "Les substances sont identifiées par un [identifiant interne ANSM](#med:Substance_dct:identifier). Elles peuvent être associées à un [code SMS](#med:Substance_med:codeSMS) quand un équivalent existe. Au moins un [libellé](#med:Substance_rdfs:label) en français est donné à la substance, avec potentiellement plusieurs [synonymes](#med:Substance_skos:altLabel:)."@fr;
   foaf:depiction med:Diagramme_SpecialitesPresentationsUCD;
   sh:closed "true"^^xsd:boolean;
@@ -726,7 +720,6 @@ _:d85f7e570c704b5b9b53672428339dae773 rdf:first owl:equivalentClass;
 
 med:Evenement a sh:NodeShape, rdfs:Class;
   rdfs:label "Evènement"@fr;
-  sh:agentInstruction "Un événement qui concerne soit des Spécialités soit des Présentations. Les événéments qui concernent les Spécialités sont de type Autorisation, Changements de procédure, Suspension, etc. Les événements qui concernent les Présentations sont de type Début de commercialisation ou Arrêt de commercialisation."@fr ;
   rdfs:comment "Un événement réglementaire [concerne](#med:Evenement_med:concerne) une [Spécialité](#med:Specialite) ou une [Présentation](#med:Presentation) et est caractérisé par son [type d'événement](#med:Evenement_med:typeEvenement) et sa [date d'effet](#med:Evenement_med:dateEffet)."@fr;
   sh:ignoredProperties _:d85f7e570c704b5b9b53672428339dae774;
   sh:nodeKind sh:IRI;
@@ -784,7 +777,6 @@ _:d85f7e570c704b5b9b53672428339dae782 rdf:first owl:equivalentClass;
 
 med:TypeProcedure a sh:NodeShape, rdfs:Class;
   rdfs:label "Type de procédure"@fr;
-  sh:agentInstruction "Le type d'une procédure d'autorisation de Spécialité, comme \"Procédure nationale\", \"Procédure de reconnaissance mutuelle\", \"Procédure décentralisée\", \"Autorisation d'importation parallèle\", etc."@fr ;
   rdfs:comment "Liste de toutes les catégories de procédures que peut décrire le référentiel du médicament sur les spécialités pharmaceutiques. Cette liste est utilisée pour code le [type de procédure courante](#med:SpecialitePharmaceutique_med:typeProcedureCourante) d'une spécialité."@fr;
   sh:closed "true"^^xsd:boolean;
   sh:ignoredProperties _:d85f7e570c704b5b9b53672428339dae783;
@@ -804,7 +796,6 @@ _:d85f7e570c704b5b9b53672428339dae785 rdf:first owl:equivalentClass;
 
 med:StatutSpecialite a sh:NodeShape, rdfs:Class;
   rdfs:label "Statut de Spécialité"@fr;
-  sh:agentInstruction "Le statut d'une Spécialité, qui peut être \"Actif\", \"Archivé\", \"Archivé administratif\", \"Retiré\" ou \"Suspension\""@fr ;
   rdfs:comment "Le statut est l'état de l'autorisation de la spécialité pharmaceutique : actif, archivé, suspendu, retiré... Cette liste est utilisée pour coder le [statut courant d'une spécialité](#med:SpecialitePharmaceutique_med:statutCourant)."@fr;
   sh:closed "true"^^xsd:boolean;
   sh:ignoredProperties _:d85f7e570c704b5b9b53672428339dae786;
@@ -824,7 +815,6 @@ _:d85f7e570c704b5b9b53672428339dae788 rdf:first owl:equivalentClass;
 
 med:TypeEvenement a sh:NodeShape, rdfs:Class;
   rdfs:label "Type d'évènement"@fr;
-  sh:agentInstruction "Le type d'un événement, Autorisation, Changements de procédure, Suspension, etc."@fr ;
   rdfs:comment "Liste de toutes les catégories d'[événements](#med:Evenement) que peut décrire le référentiel du médicament, aussi bien sur les spécialités que sur les présentations."@fr;
   sh:closed "true"^^xsd:boolean;
   sh:ignoredProperties _:d85f7e570c704b5b9b53672428339dae789;

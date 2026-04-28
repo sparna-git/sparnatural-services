@@ -3,7 +3,11 @@ import { ConfigProvider } from "../../config/ConfigProvider";
 import { AppConfig } from "../../config/AppConfig";
 
 import { getSHACLConfig, loadShaclTtl } from "../../config/SCHACL";
-import { extractNodeShapes, type NodeShapeInfo } from "./shaclParser";
+import {
+  extractNodeShapes,
+  extractPrefixesFromTtl,
+  type NodeShapeInfo,
+} from "./shaclParser";
 import type {
   ReconcileInput,
   ReconcileOutput,
@@ -31,7 +35,7 @@ export interface ProjectConfigAdapter {
   getShaclNodeShapes(
     projectId: string,
     lang?: string,
-  ): Promise<{ shapes: NodeShapeInfo[]; prefixes?: [string, string][] }>;
+  ): Promise<{ shapes: NodeShapeInfo[]; prefixes: [string, string][] }>;
   reconcileEntities(
     projectId: string,
     queries: ReconcileInput,
@@ -115,14 +119,13 @@ export class ConfigBackedProjectConfigAdapter implements ProjectConfigAdapter {
   async getShaclNodeShapes(
     projectId: string,
     lang = "fr",
-  ): Promise<{ shapes: NodeShapeInfo[]; prefixes?: [string, string][] }> {
-    // ensure project exists
+  ): Promise<{ shapes: NodeShapeInfo[]; prefixes: [string, string][] }> {
     await this.getProjectConfig(projectId);
-    const { model } = await getSHACLConfig(projectId);
     const { ttl } = loadShaclTtl(projectId);
-    // const prefixes = extractPrefixesFromTtl(ttl);
-    const shapes = extractNodeShapes(model, lang);
-    return { shapes };
+    const { model } = await getSHACLConfig(projectId);
+    const prefixes = extractPrefixesFromTtl(ttl);
+    const shapes = extractNodeShapes(model, lang, prefixes);
+    return { shapes, prefixes };
   }
 
   // Reconcile entity labels to IRIs using the project's configured reconcile service.

@@ -3,7 +3,6 @@ log:
 projects:
   dbpedia-en:
     shacl: ./config/dbpedia-en/config.ttl
-    shaclmcp: ./config/dbpedia-en/config.ttl
     sparqlEndpoint: https://dbpedia.org/sparql
     reconcileStrategy: sparql-only
     domains:
@@ -27,7 +26,6 @@ projects:
       implementation: Q2TPromptGenerator
   demo-ep:
     shacl: ./config/demo-ep/config-1.ttl ./config/demo-ep/config-2.ttl
-    shaclmcp: ./config/demo-ep/config-1.ttl ./config/demo-ep/config-2.ttl
     sparqlEndpoint: http://graphdb.sparna.fr/repositories/endorse2025
     reconcileStrategy: sparql-only
     domains:
@@ -51,7 +49,6 @@ projects:
       implementation: Q2TPromptGenerator
   ruim:
     shacl: ./config/ruim/sparnatural-config.ttl
-    shaclmcp: ./config/ruim/RUIM-SHACL-instances.ttl
     sparqlEndpoint: https://data.sparna.fr/graphdb/repositories/RUIM
     reconcileStrategy: sparql-only
     domains:
@@ -75,7 +72,6 @@ projects:
       implementation: Q2TPromptGenerator
   isidore:
     shacl: ./config/isidore/isidore-shapes.ttl
-    shaclmcp: ./config/isidore/isidore-shapes.ttl
     sparqlEndpoint: https://isidore-ref.huma-num.fr/sparql
     reconcileStrategy: isidore-api
     domains:

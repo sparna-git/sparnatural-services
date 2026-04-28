@@ -5,20 +5,9 @@
     {
       "type": "term",
       "subType": "variable",
-      "value": "Presentation_1"
-    },
-    {
-      "type": "term",
-      "subType": "variable",
-      "value": "Substance_4"
-    },
-    {
-      "type": "term",
-      "subType": "variable",
-      "value": "TypeProcedure_6"
+      "value": "Presentation"
     }
   ],
-  "distinct": true,
   "solutionModifiers": {},
   "where": {
     "type": "pattern",
@@ -26,7 +15,7 @@
     "subject": {
       "type": "term",
       "subType": "variable",
-      "value": "Presentation_1",
+      "value": "Presentation",
       "rdfType": "https://sparna-git.github.io/referentiel-medicaments/configs/sparnatural-config.ttl#Presentation"
     },
     "predicateObjectPairs": [
@@ -45,7 +34,6 @@
             "value": "SpecialitePharmaceutique",
             "rdfType": "https://sparna-git.github.io/referentiel-medicaments/configs/sparnatural-config.ttl#SpecialitePharmaceutique"
           },
-          "filters": [],
           "predicateObjectPairs": [
             {
               "type": "predicateObjectPair",
@@ -59,15 +47,14 @@
                 "variable": {
                   "type": "term",
                   "subType": "variable",
-                  "value": "Substance_4",
+                  "value": "Substance",
                   "rdfType": "https://sparna-git.github.io/referentiel-medicaments/configs/sparnatural-config.ttl#Substance"
                 },
-                "filters": [],
                 "values": [
                   {
                     "type": "term",
                     "subType": "namedNode",
-                    "value": "http://data.esante.gouv.fr/ansm/medicament/Substance_73242",
+                    "value": "https://services.sparnatural.eu/api/v1/URI_NOT_FOUND",
                     "label": "ézétimibe"
                   }
                 ]
@@ -85,15 +72,14 @@
                 "variable": {
                   "type": "term",
                   "subType": "variable",
-                  "value": "TypeProcedure_6",
+                  "value": "TypeProcedure",
                   "rdfType": "https://sparna-git.github.io/referentiel-medicaments/configs/sparnatural-config.ttl#TypeProcedure"
                 },
-                "filters": [],
                 "values": [
                   {
                     "type": "term",
                     "subType": "namedNode",
-                    "value": "http://data.esante.gouv.fr/ansm/medicament/TypeProcedure_31",
+                    "value": "https://services.sparnatural.eu/api/v1/URI_NOT_FOUND",
                     "label": "Autorisation d'importation parallèle d’une spécialité pharmaceutique en vue de la mise sur le marché en France (300)"
                   }
                 ]
@@ -101,7 +87,59 @@
             }
           ]
         }
+      },
+      {
+        "type": "predicateObjectPair",
+        "predicate": {
+          "type": "term",
+          "subType": "namedNode",
+          "value": "https://sparna-git.github.io/referentiel-medicaments/configs/sparnatural-config.ttl#Presentation_concernePar"
+        },
+        "object": {
+          "type": "objectCriteria",
+          "variable": {
+            "type": "term",
+            "subType": "variable",
+            "value": "Evenement",
+            "rdfType": "https://sparna-git.github.io/referentiel-medicaments/configs/sparnatural-config.ttl#Evenement"
+          },
+          "predicateObjectPairs": [
+            {
+              "type": "predicateObjectPair",
+              "predicate": {
+                "type": "term",
+                "subType": "namedNode",
+                "value": "https://sparna-git.github.io/referentiel-medicaments/configs/sparnatural-config.ttl#Evenement_typeEvenement"
+              },
+              "object": {
+                "type": "objectCriteria",
+                "variable": {
+                  "type": "term",
+                  "subType": "variable",
+                  "value": "TypeEvenement",
+                  "rdfType": "https://sparna-git.github.io/referentiel-medicaments/configs/sparnatural-config.ttl#TypeEvenement"
+                },
+                "values": [
+                  {
+                    "type": "term",
+                    "subType": "namedNode",
+                    "value": "https://services.sparnatural.eu/api/v1/URI_NOT_FOUND",
+                    "label": "Début de commercialisation"
+                  }
+                ]
+              }
+            }
+          ]
+        }
       }
+    ]
+  },
+  "metadata": {
+    "reasoning": [
+      "L'utilisateur demande des présentations → sujet racine : Presentation (Cat.A) car Presentation est l'entité à lister.",
+      "Contrainte substance active 'ézétimibe' → propriété SpecialitePharmaceutique_substanceActive avec values (URI_NOT_FOUND).",
+      "Contrainte type de procédure 'Autorisation d'importation parallèle' → propriété SpecialitePharmaceutique_typeProcedureCourante avec values (URI_NOT_FOUND).",
+      "Contrainte commercialisées à ce jour → propriété Presentation_concernePar avec type d'événement 'Début de commercialisation' (URI_NOT_FOUND)."
     ]
   }
 }

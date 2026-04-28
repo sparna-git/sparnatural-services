@@ -41,7 +41,7 @@ shape:Presentation a sh:NodeShape;
 Une présentation porte également l’[historique](#med:Presentation_med:libelle) de tous ses noms. 
 
 La [forme manufacturée](#med:Presentation_med:formeManufacturee) ainsi que les [voies d’administration possibles](#med:Presentation_med:voie) sont indiquées sur les présentations. La forme peut être plus spécifique que la forme indiquée au niveau de la spécialité, par exemple _\"solution\"_ sur la spécialité, et _\"solution en ampoule\"_ ou _\"solution en flacon\"_ sur des présentations."""@fr;
-  sh:agentInstruction "Représente une spécialité pharmaceutique dans un certain packaging. Une présentation est identifiée par son code CIP13. Elle est liée à la spécialité présentée et à l’UCD contenue dans la présentation. Conceptuellement, la présentation \"hérite\" de toutes les caractéristiques de la spécialité dispensée (substances, type de conditionnement, forme manufacturée). Le nombre d’UCD (comme le nombre de comprimés dans la boite), le conditionnement et les éventuels dispositifs d’administration sont indiqués sur la Présentation. NAVIGATION DATES : n'ajouter un filtre événement QUE si l'utilisateur demande une date précise (ex: \"depuis le [date]\", \"commercialisée après [date]\"). Si l'utilisateur dit juste \"commercialisées\" sans date explicite, ne PAS naviguer vers les événements. Pour une date, naviguer via Presentation_concernePar -> Evenement -> Evenement_typeEvenement (valeur \"début de commercialisation\" ou \"arrêt de commercialisation\") + Evenement_dateEffet. NAVIGATION VOIE : il n'existe PAS de propriété voie directe sur Presentation. Pour filtrer une Présentation par voie d’administration, naviguer obligatoirement via Presentation_presente -> SpecialitePharmaceutique -> SpecialitePharmaceutique_voie."@fr;
+  sh:agentInstruction "Représente une spécialité pharmaceutique dans un certain packaging. Une présentation est identifiée par son code CIP13. Elle est liée à la spécialité présentée et à l’UCD contenue dans la présentation. Conceptuellement, la présentation \\\"hérite\\\" de toutes les caractéristiques de la spécialité dispensée (substances, type de conditionnement, forme manufacturée). Le nombre d’UCD (comme le nombre de comprimés dans la boite), le conditionnement et les éventuels dispositifs d’administration sont indiqués sur la Présentation. Les dates de commercialisation doivent être récupérées sur les Evenements de type \\\"début de commercialisation\\\" ou \\\"arrêt de commercialisation\\\" liés à la présentation. NAVIGATION VOIE : il n'existe PAS de propriété voie directe sur Presentation. Pour filtrer une Présentation par voie d’administration, naviguer obligatoirement via Presentation_presente -> SpecialitePharmaceutique -> SpecialitePharmaceutique_voie."@fr;
   sh:order 13;
   volipi:iconName "fa-thin fa-box";
   sh:property shape:Presentation_label, shape:Presentation_altLabel, shape:Presentation_CIP13,
@@ -80,7 +80,7 @@ Une spécialité porte également l’[historique de tous ses noms](#med:Special
 Le [titulaire courant de la spécialité](#med:SpecialitePharmaceutique_med:titulaireCourant) est indiqué. Ce titulaire peut évoluer dans le temps, mais seul le titulaire courant est indiqué. 
 
 D’autres caractéristiques de la spécialité liées à son AMM et à son statut courant sont décrites dans la partie “[Autorisations](#med:Autorisation)”. Se reporter également à la section sur les dosages pour la description qualitative et quantitative de la spécialité."""@fr;
-  sh:agentInstruction "Une spécialité pharmaceutique représente un médicament autorisé, indépendamment de son packaging. C'est la classe principale. Elle est identifiée par son code CIS (code identifiant de spécialité). Elle porte des informations descriptives, comme son code ATC ou ses dates de validité. La classification ATC d’une Spécialité est indiquée dans l'attribut `classificationATC` qui donne une référence à l’entrée actuelle de la classification ATC sur laquelle est classée cette Spécialité. Chaque spécialité est catégorisée selon sa prescriptibilité en dénomination commune : prescriptible, non-prescriptible et prescriptible avec nom de marque. Le cas échéant la cause de l’exception à la prescription en DC est indiquée. La forme manufacturée de la Spécialité est indiquée. Cette forme peut être plus générique que la forme indiquée au niveau de chaque présentation de la spécialité, par exemple \"solution\" sur la spécialité, et \"solution en ampoule\" ou \"solution en flacon\" sur des présentations. A de rares exceptions, une seule forme manufacturée est indiquée. La voie d’administration de la Spécialité est également indiquée. Une spécialité est liée aux UCD qui dispensent cette spécialité et aux présentations qui contiennent cette spécialité. Elle se décompose également en Eléments contenus dans la spécialité (par exemple une poudre et un solvant). Le titulaire courant de la spécialité est indiqué. Ce titulaire peut évoluer dans le temps, mais seul le titulaire courant est indiqué. D’autres caractéristiques de la spécialité liées à son AMM et à son statut courant sont décrites dans la partie \"Autorisations\"."@fr;
+  sh:agentInstruction "Une spécialité pharmaceutique représente un médicament autorisé, indépendamment de son packaging. C'est la classe principale. Elle est identifiée par son code CIS (code identifiant de spécialité). Elle porte des informations descriptives, comme son code ATC ou ses dates de validité. La classification ATC d’une Spécialité est indiquée dans l'attribut `classificationATC` qui donne une référence à l’entrée actuelle de la classification ATC sur laquelle est classée cette Spécialité. Chaque spécialité est catégorisée selon sa prescriptibilité en dénomination commune : prescriptible, non-prescriptible et prescriptible avec nom de marque. Le cas échéant la cause de l’exception à la prescription en DC est indiquée. La forme manufacturée de la Spécialité est indiquée. Cette forme peut être plus générique que la forme indiquée au niveau de chaque présentation de la spécialité, par exemple \\\"solution\\\" sur la spécialité, et \\\"solution en ampoule\\\" ou \\\"solution en flacon\\\" sur des présentations. A de rares exceptions, une seule forme manufacturée est indiquée. La voie d’administration de la Spécialité est également indiquée. Une spécialité est liée aux UCD qui dispensent cette spécialité et aux présentations qui contiennent cette spécialité. Elle se décompose également en Eléments contenus dans la spécialité (par exemple une poudre et un solvant). Le titulaire courant de la spécialité est indiqué. Ce titulaire peut évoluer dans le temps, mais seul le titulaire courant est indiqué. D’autres caractéristiques de la spécialité liées à son AMM et à son statut courant sont décrites dans la partie “Autorisations”."@fr;
   sh:order 11;
   volipi:iconName "fa-thin fa-mortar-pestle";
   sh:property shape:SpecialitePharmaceutique_label, shape:SpecialitePharmaceutique_CIS,
@@ -127,7 +127,7 @@ shape:Substance a sh:NodeShape;
   sh:nodeKind sh:IRI;
   rdfs:label "Substance"@fr;
   rdfs:comment "Les substances sont identifiées par un [identifiant interne ANSM](#med:Substance_dct:identifier). Elles peuvent être associées à un [code SMS](#med:Substance_med:codeSMS) quand un équivalent existe. Au moins un [libellé](#med:Substance_rdfs:label) en français est donné à la substance, avec potentiellement plusieurs [synonymes](#med:Substance_skos:altLabel:)."@fr;
-  sh:agentInstruction "Une substance dans un médicament, soit une substance de base, soit un sel ou un acide, etc. Les substances sont identifiées par un identifiant interne. Elles peuvent être associées à un code SMS quand un équivalent existe. Au moins un libellé en français est donné à la substance, avec potentiellement plusieurs synonymes."@fr;
+  sh:agentInstruction "Une substance dans un médicament, soit une substance de base, soit un sel ou un acide, etc. Les substances sont identifiées par un identifiant interne. Elles peuvent être associées à un code SMS quand un équivalent existe. Au moins un libellé en français est donné à la substance, avec potentiellement plusieurs synonymes. NAVIGATION NOM SPÉCIALITÉ : pour filtrer les substances d'une spécialité par le nom de la spécialité (ex: \"HUMEX RHUME\"), NE PAS utiliser values sur Substance_estSubstanceActiveDans. Naviguer via predicateObjectPairs vers SpecialitePharmaceutique, puis ajouter un predicateObjectPair vers SpecialitePharmaceutique_label (Cat.B, filter:search) avec un searchFilter sur le nom cherché."@fr;
   sh:order 14;
   volipi:iconName "fa-thin fa-atom";
   sh:property shape:Substance_notation, shape:Substance_codeSMS, shape:Substance_label,
@@ -436,7 +436,7 @@ shape:SpecialitePharmaceutique_dateFin sh:path med:dateFin;
   sh:node shape:Date;
   dash:searchWidget config-core:TimeProperty-Date .
 
-shape:SpecialitePharmaceutique_classificationATC sh:path _:75572b1bf5a84ce4a8b20179021f2eb23039;
+shape:SpecialitePharmaceutique_classificationATC sh:path _:75572b1bf5a84ce4a8b20179021f2eb24548;
   sh:name "est classée sous"@fr;
   sh:description "Référence à un élément de la classification ATC de cette spécialité. Cet attribut n'est pas historisé et contient la dernière valeur en date du code ATC. Les évolutions de l’ATC elle-même sont historisées dans le référentiel ATC. Pour certaines spécialités archivées, il est possible que la référence à l'ATC ne soit pas présente dans le cas où ce code aurait disparu avant l'ATC 2022. Après 2022 l'ATC est cumulative et mêmes les codes dépréciés restent présents."@fr;
   sh:nodeKind sh:IRI;
@@ -445,13 +445,13 @@ shape:SpecialitePharmaceutique_classificationATC sh:path _:75572b1bf5a84ce4a8b20
   <datasources:treeRootsDatasource> shape:tree_atc_root;
   <datasources:treeChildrenDatasource> shape:tree_atc_child .
 
-_:75572b1bf5a84ce4a8b20179021f2eb23039 rdf:first med:classificationATC;
-  rdf:rest _:75572b1bf5a84ce4a8b20179021f2eb23040 .
+_:75572b1bf5a84ce4a8b20179021f2eb24548 rdf:first med:classificationATC;
+  rdf:rest _:75572b1bf5a84ce4a8b20179021f2eb24549 .
 
-_:75572b1bf5a84ce4a8b20179021f2eb23040 rdf:first _:75572b1bf5a84ce4a8b20179021f2eb23041;
+_:75572b1bf5a84ce4a8b20179021f2eb24549 rdf:first _:75572b1bf5a84ce4a8b20179021f2eb24550;
   rdf:rest rdf:nil .
 
-_:75572b1bf5a84ce4a8b20179021f2eb23041 sh:zeroOrMorePath rdfs:subClassOf .
+_:75572b1bf5a84ce4a8b20179021f2eb24550 sh:zeroOrMorePath rdfs:subClassOf .
 
 shape:SpecialitePharmaceutique_classificationATCdirect sh:path med:classificationATC;
   sh:name "est classée sous (direct)"@fr;
@@ -502,7 +502,7 @@ shape:SpecialitePharmaceutique_justificationPrescriptibiliteEnDC sh:path med:jus
   dash:searchWidget config-core:ListProperty;
   <datasources:datasource> shape:list_rdfslabel_alpha_with_count .
 
-shape:SpecialitePharmaceutique_SAouFT sh:path _:75572b1bf5a84ce4a8b20179021f2eb23042;
+shape:SpecialitePharmaceutique_SAouFT sh:path _:75572b1bf5a84ce4a8b20179021f2eb24551;
   sh:name "contient (SA ou FT)"@fr;
   sh:description "Contient en susbtance active ou en fraction thérapeutique"@fr;
   sh:nodeKind sh:IRI;
@@ -510,12 +510,12 @@ shape:SpecialitePharmaceutique_SAouFT sh:path _:75572b1bf5a84ce4a8b20179021f2eb2
   dash:searchWidget config-core:AutocompleteProperty;
   <datasources:datasource> shape:search_rdfslabel_contains .
 
-_:75572b1bf5a84ce4a8b20179021f2eb23042 sh:alternativePath _:75572b1bf5a84ce4a8b20179021f2eb23043 .
+_:75572b1bf5a84ce4a8b20179021f2eb24551 sh:alternativePath _:75572b1bf5a84ce4a8b20179021f2eb24552 .
 
-_:75572b1bf5a84ce4a8b20179021f2eb23043 rdf:first med:substanceActive;
-  rdf:rest _:75572b1bf5a84ce4a8b20179021f2eb23044 .
+_:75572b1bf5a84ce4a8b20179021f2eb24552 rdf:first med:substanceActive;
+  rdf:rest _:75572b1bf5a84ce4a8b20179021f2eb24553 .
 
-_:75572b1bf5a84ce4a8b20179021f2eb23044 rdf:first med:fractionTherapeutique;
+_:75572b1bf5a84ce4a8b20179021f2eb24553 rdf:first med:fractionTherapeutique;
   rdf:rest rdf:nil .
 
 shape:SpecialitePharmaceutique_substanceActive sh:path med:substanceActive;
@@ -591,21 +591,21 @@ shape:SpecialitePharmaceutique_voie sh:path med:voie;
 
 shape:Evenement_concerne sh:path med:concerne;
   sh:name "concerne"@fr;
-  sh:description "Référence à la Spécialité ou à la Présentation concernée par cet évènement. Utiliser values directement sur l'entité cible (SpecialitePharmaceutique ou Presentation), sans naviguer vers ses sous-propriétés comme le label."@fr;
+  sh:description "Référence à la Spécialité ou à la Présentation concernée par cet évènement"@fr;
   sh:nodeKind sh:IRI;
-  sh:or _:75572b1bf5a84ce4a8b20179021f2eb23047;
+  sh:or _:75572b1bf5a84ce4a8b20179021f2eb24556;
   dash:searchWidget config-core:AutocompleteProperty;
   <datasources:datasource> shape:search_rdfslabel_contains .
 
-_:75572b1bf5a84ce4a8b20179021f2eb23045 sh:class med:SpecialitePharmaceutique .
+_:75572b1bf5a84ce4a8b20179021f2eb24554 sh:class med:SpecialitePharmaceutique .
 
-_:75572b1bf5a84ce4a8b20179021f2eb23046 sh:class med:Presentation .
+_:75572b1bf5a84ce4a8b20179021f2eb24555 sh:class med:Presentation .
 
-_:75572b1bf5a84ce4a8b20179021f2eb23047 a rdf:List;
-  rdf:first _:75572b1bf5a84ce4a8b20179021f2eb23045;
-  rdf:rest _:75572b1bf5a84ce4a8b20179021f2eb23048 .
+_:75572b1bf5a84ce4a8b20179021f2eb24556 a rdf:List;
+  rdf:first _:75572b1bf5a84ce4a8b20179021f2eb24554;
+  rdf:rest _:75572b1bf5a84ce4a8b20179021f2eb24557 .
 
-_:75572b1bf5a84ce4a8b20179021f2eb23048 rdf:first _:75572b1bf5a84ce4a8b20179021f2eb23046;
+_:75572b1bf5a84ce4a8b20179021f2eb24557 rdf:first _:75572b1bf5a84ce4a8b20179021f2eb24555;
   rdf:rest rdf:nil .
 
 shape:Evenement_typeEvenement sh:path med:typeEvenement;
@@ -676,7 +676,7 @@ shape:Substance_estFractionTherapeutiqueDans sh:path med:estFractionTherapeutiqu
 
 shape:Substance_estSubstanceActiveDans sh:path med:estSubstanceActiveDans;
   sh:name "substance active dans"@fr;
-  sh:description "Référence à une spécialité dans laquelle cette substance est une substance active. Propriété inverse de \"substanceActive\" pour les spécialités. Pour filtrer par nom de spécialité (ex: \"HUMEX RHUME\"), naviguer vers SpecialitePharmaceutique_label avec un searchFilter."@fr;
+  sh:description "Référence à une spécialité dans laquelle cette substance est une substance active. Propriété inverse de \"substanceActive\" pour les spécialités."@fr;
   sh:nodeKind sh:IRI;
   sh:class med:SpecialitePharmaceutique .
 
