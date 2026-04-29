@@ -15,8 +15,8 @@ export interface ProjectConfig {
         implementation: "SparqlReconcileServiceV13";
       } & SparqlReconcileServiceV13Config)
     | ({
-        implementation: "LuceneReconcileService";
-      } & LuceneReconcileServiceConfig)
+        implementation: "LuceneGraphDBReconcileService";
+      } & LuceneGraphDBReconcileServiceConfig)
     | { implementation: "DummyReconcileService" };
 
   text2query?:
@@ -50,7 +50,7 @@ export interface SparqlReconcileServiceV13Config {
   cacheSize?: number;
   maxResults?: number;
 }
-export interface LuceneReconcileServiceConfig {
+export interface LuceneGraphDBReconcileServiceConfig {
   cacheSize?: number;
   maxResults?: number;
   /* Nom de l'instance du connecteur Lucene dans GraphDB  */

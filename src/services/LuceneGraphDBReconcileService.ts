@@ -7,7 +7,7 @@ import {
   ManifestType,
 } from "./ReconcileServiceIfc";
 import { inject, injectable } from "tsyringe";
-import { LuceneReconcileServiceConfig } from "../config/ProjectConfig";
+import { LuceneGraphDBReconcileServiceConfig } from "../config/ProjectConfig";
 import {
   collectUnresolvedLabels,
   buildLabelToUriMap,
@@ -30,8 +30,8 @@ type SearchResult = { uri: string; label: string };
  *
  * Le label réel du graphe ("intraveineuse (2225)") est retourné, pas juste le terme de recherche.
  */
-@injectable({ token: "LuceneReconcileService" })
-export class LuceneReconcileService implements ReconcileServiceIfc {
+@injectable({ token: "LuceneGraphDBReconcileService" })
+export class LuceneGraphDBReconcileService implements ReconcileServiceIfc {
   public static DEFAULT_MAX_RESULTS = 10;
   public static DEFAULT_CACHE_SIZE = 1000;
   public static DEFAULT_INDEX_NAME = "MedicamentIndexThird";
@@ -49,22 +49,22 @@ export class LuceneReconcileService implements ReconcileServiceIfc {
     @inject("project.id") projectId?: string,
     @inject("project.sparqlEndpoint") sparqlEndpoint?: string,
     @inject("reconciliation.config")
-    reconciliationConfig?: LuceneReconcileServiceConfig,
+    reconciliationConfig?: LuceneGraphDBReconcileServiceConfig,
   ) {
     this.projectId = projectId || "";
     this.sparqlEndpoint = sparqlEndpoint || "";
     this.maxResults =
       reconciliationConfig?.maxResults ||
-      LuceneReconcileService.DEFAULT_MAX_RESULTS;
+      LuceneGraphDBReconcileService.DEFAULT_MAX_RESULTS;
     this.cacheSize =
       reconciliationConfig?.cacheSize ||
-      LuceneReconcileService.DEFAULT_CACHE_SIZE;
+      LuceneGraphDBReconcileService.DEFAULT_CACHE_SIZE;
     this.luceneIndexName =
       reconciliationConfig?.luceneIndexName ||
-      LuceneReconcileService.DEFAULT_INDEX_NAME;
+      LuceneGraphDBReconcileService.DEFAULT_INDEX_NAME;
     this.similarityThreshold =
       reconciliationConfig?.similarityThreshold ||
-      LuceneReconcileService.DEFAULT_SIMILARITY_THRESHOLD;
+      LuceneGraphDBReconcileService.DEFAULT_SIMILARITY_THRESHOLD;
   }
 
   // ─── Manifest ───────────────────────────────────────────────
@@ -160,7 +160,7 @@ export class LuceneReconcileService implements ReconcileServiceIfc {
       Object.values(labelsToResolve).map((l) => l.query),
     );
 
-    const queries = LuceneReconcileService.parseQueries(labelsToResolve);
+    const queries = LuceneGraphDBReconcileService.parseQueries(labelsToResolve);
     const uriRes = await this.reconcileQueries(queries, false);
     const labelToUri = buildLabelToUriMap(labelsToResolve, uriRes);
     injectResolvedUris(parsedQuery, labelToUri);
