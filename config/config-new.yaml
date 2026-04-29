@@ -48,7 +48,7 @@ projects:
     q2tPromptGenerator:
       implementation: Q2TPromptGenerator
   ruim:
-    shacl: ./config/ruim/RUIM-SHACL-instances.ttl
+    shacl: ./config/ruim/sparnatural-config.ttl
     sparqlEndpoint: https://data.sparna.fr/graphdb/repositories/RUIM
     reconcileStrategy: sparql-only
     domains:
@@ -82,3 +82,15 @@ projects:
       implementation: SparqlReconcileService
       cacheSize: 500
       maxResults: 4
+  ruim-mcp:
+    shacl: ./config/ruim/RUIM-SHACL-instances.ttl
+    sparqlEndpoint: https://data.sparna.fr/graphdb/repositories/RUIM
+    reconcileStrategy: sparql-only
+    domains:
+      - sparna-git.github.io
+    cache:
+      urilookup: ./cache/ruim/urilookup_cache.json
+    reconciliation:
+      implementation: SparqlReconcileServiceV13
+      cacheSize: 1000
+      maxResults: 2
