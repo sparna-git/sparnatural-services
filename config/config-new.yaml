@@ -94,3 +94,8 @@ projects:
       implementation: SparqlReconcileServiceV13
       cacheSize: 1000
       maxResults: 2
+    t2qPromptGenerator:
+      implementation: T2QPromptGenerator
+      additionalInstructions: ./config/ruim/additionalInstructions.txt
+    q2tPromptGenerator:
+      implementation: Q2TPromptGenerator
