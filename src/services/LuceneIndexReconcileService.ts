@@ -34,7 +34,7 @@ type SearchResult = { uri: string; label: string };
 export class LuceneReconcileService implements ReconcileServiceIfc {
   public static DEFAULT_MAX_RESULTS = 10;
   public static DEFAULT_CACHE_SIZE = 1000;
-  public static DEFAULT_INDEX_NAME = "MedicamentIndex";
+  public static DEFAULT_INDEX_NAME = "MedicamentIndexThird";
   public static DEFAULT_SIMILARITY_THRESHOLD = 0.9;
 
   private memoryCache: Record<string, CacheEntry> = {};
@@ -188,6 +188,7 @@ export class LuceneReconcileService implements ReconcileServiceIfc {
     configTypeUri?: string,
   ): Promise<SearchResult[]> {
     const escapedName = name.replace(/"/g, '\\"');
+    const escapedRegex = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
     let sparql: string;
 
@@ -208,10 +209,8 @@ export class LuceneReconcileService implements ReconcileServiceIfc {
                 ?luceneResult ?p ?entity .
                 ?entity a <${configTypeUri}> .
             }
-            OPTIONAL {
-                ?entity rdfs:label ?lbl .
-                FILTER(LANG(?lbl) = "fr" || LANG(?lbl) = "")
-            }
+            ?entity rdfs:label ?lbl .
+            FILTER(LANG(?lbl) = "fr" || LANG(?lbl) = "")
         }
         GROUP BY ?entity
         LIMIT ${this.maxResults}
@@ -244,10 +243,9 @@ export class LuceneReconcileService implements ReconcileServiceIfc {
             ?search a inst:${this.luceneIndexName} .
             ?search :query "${escapedName}" .
             ?search :entities ?entity .
-            OPTIONAL {
-                ?entity rdfs:label ?lbl .
-                FILTER(LANG(?lbl) = "fr" || LANG(?lbl) = "")
-            }
+            ?entity rdfs:label ?lbl .
+            FILTER(LANG(?lbl) = "fr" || LANG(?lbl) = "")
+            FILTER(REGEX(STR(?lbl), "${escapedRegex}", "i"))
         }
         GROUP BY ?entity
         LIMIT ${this.maxResults}
