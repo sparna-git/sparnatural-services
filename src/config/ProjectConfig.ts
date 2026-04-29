@@ -14,6 +14,9 @@ export interface ProjectConfig {
     | ({
         implementation: "SparqlReconcileServiceV13";
       } & SparqlReconcileServiceV13Config)
+    | ({
+        implementation: "LuceneReconcileService";
+      } & LuceneReconcileServiceConfig)
     | { implementation: "DummyReconcileService" };
 
   text2query?:
@@ -46,6 +49,14 @@ export interface SparqlReconcileServiceConfig {
 export interface SparqlReconcileServiceV13Config {
   cacheSize?: number;
   maxResults?: number;
+}
+export interface LuceneReconcileServiceConfig {
+  cacheSize?: number;
+  maxResults?: number;
+  /* Nom de l'instance du connecteur Lucene dans GraphDB  */
+  luceneIndexName?: string;
+  /* Seuil de similarité (0-1) pour le rerankement par distance d'édition. Désactivé si absent. */
+  similarityThreshold?: number;
 }
 
 export interface MistralText2QueryServiceConfig {

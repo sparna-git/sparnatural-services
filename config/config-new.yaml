@@ -56,9 +56,9 @@ projects:
     cache:
       urilookup: ./cache/ruim/urilookup_cache.json
     reconciliation:
-      implementation: SparqlReconcileServiceV13
+      implementation: LuceneReconcileService
       cacheSize: 1000
-      maxResults: 2
+      maxResults: 10
     text2query:
       implementation: MistralText2QueryService
       agentId: ag_019dbabf106875a7a0a8904017d7e93f
