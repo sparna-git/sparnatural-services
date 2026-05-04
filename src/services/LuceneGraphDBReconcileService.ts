@@ -179,7 +179,6 @@ export class LuceneGraphDBReconcileService implements ReconcileServiceIfc {
     configTypeUri?: string,
   ): Promise<SearchResult[]> {
     const escapedName = name.replace(/"/g, '\\"');
-    const escapedRegex = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
     let sparql: string;
 
@@ -188,22 +187,48 @@ export class LuceneGraphDBReconcileService implements ReconcileServiceIfc {
         PREFIX : <http://www.ontotext.com/connectors/lucene#>
         PREFIX inst: <http://www.ontotext.com/connectors/lucene/instance#>
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        PREFIX med: <http://data.esante.gouv.fr/ansm/medicament/>
 
         SELECT ?entity (SAMPLE(?lbl) AS ?label) WHERE {
-            ?search a inst:${this.luceneIndexName} .
-            ?search :query "${escapedName}" .
-            ?search :entities ?luceneResult .
             {
-                ?luceneResult a <${configTypeUri}> .
-                BIND(?luceneResult AS ?entity)
-            } UNION {
-                ?luceneResult ?p ?entity .
-                ?entity a <${configTypeUri}> .
+                SELECT ?entity (MIN(STRLEN(?l)) AS ?minLen) WHERE {
+                    ?search a inst:${this.luceneIndexName} .
+                    ?search :query "${escapedName}" .
+                    ?search :entities ?luceneResult .
+                    {
+                        {
+                            ?luceneResult a <${configTypeUri}> .
+                            BIND(?luceneResult AS ?entity)
+                        } UNION {
+                            ?luceneResult ?p ?entity .
+                            ?entity a <${configTypeUri}> .
+                        }
+                        ?entity rdfs:label ?l .
+                        FILTER(LANG(?l) = "fr" || LANG(?l) = "")
+                    } UNION {
+                        ?luceneResult med:classificationATC ?entity .
+                        ?entity a <${configTypeUri}> .
+                        ?luceneResult med:codeATC ?code .
+                        ?luceneResult med:libelleATC ?libelleAtc .
+                        BIND(CONCAT(STR(?code), " - ", STR(?libelleAtc)) AS ?l)
+                    }
+                }
+                GROUP BY ?entity
             }
-            ?entity rdfs:label ?lbl .
-            FILTER(LANG(?lbl) = "fr" || LANG(?lbl) = "")
+            {
+                ?entity rdfs:label ?lbl .
+                FILTER(LANG(?lbl) = "fr" || LANG(?lbl) = "")
+                FILTER(STRLEN(?lbl) = ?minLen)
+            } UNION {
+                ?spec med:classificationATC ?entity .
+                ?spec med:codeATC ?code .
+                ?spec med:libelleATC ?libelleAtc .
+                BIND(CONCAT(STR(?code), " - ", STR(?libelleAtc)) AS ?lbl)
+                FILTER(STRLEN(?lbl) = ?minLen)
+            }
         }
-        GROUP BY ?entity
+        GROUP BY ?entity ?minLen
+        ORDER BY ?minLen
         LIMIT ${this.maxResults}
       `;
 
@@ -227,16 +252,41 @@ export class LuceneGraphDBReconcileService implements ReconcileServiceIfc {
         PREFIX : <http://www.ontotext.com/connectors/lucene#>
         PREFIX inst: <http://www.ontotext.com/connectors/lucene/instance#>
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        PREFIX med: <http://data.esante.gouv.fr/ansm/medicament/>
 
         SELECT ?entity (SAMPLE(?lbl) AS ?label) WHERE {
-            ?search a inst:${this.luceneIndexName} .
-            ?search :query "${escapedName}" .
-            ?search :entities ?entity .
-            ?entity rdfs:label ?lbl .
-            FILTER(LANG(?lbl) = "fr" || LANG(?lbl) = "")
-            FILTER(REGEX(STR(?lbl), "${escapedRegex}", "i"))
+            {
+                SELECT ?entity (MIN(STRLEN(?l)) AS ?minLen) WHERE {
+                    ?search a inst:${this.luceneIndexName} .
+                    ?search :query "${escapedName}" .
+                    ?search :entities ?luceneResult .
+                    {
+                        BIND(?luceneResult AS ?entity)
+                        ?entity rdfs:label ?l .
+                        FILTER(LANG(?l) = "fr" || LANG(?l) = "")
+                    } UNION {
+                        ?luceneResult med:classificationATC ?entity .
+                        ?luceneResult med:codeATC ?code .
+                        ?luceneResult med:libelleATC ?libelleAtc .
+                        BIND(CONCAT(STR(?code), " - ", STR(?libelleAtc)) AS ?l)
+                    }
+                }
+                GROUP BY ?entity
+            }
+            {
+                ?entity rdfs:label ?lbl .
+                FILTER(LANG(?lbl) = "fr" || LANG(?lbl) = "")
+                FILTER(STRLEN(?lbl) = ?minLen)
+            } UNION {
+                ?spec med:classificationATC ?entity .
+                ?spec med:codeATC ?code .
+                ?spec med:libelleATC ?libelleAtc .
+                BIND(CONCAT(STR(?code), " - ", STR(?libelleAtc)) AS ?lbl)
+                FILTER(STRLEN(?lbl) = ?minLen)
+            }
         }
-        GROUP BY ?entity
+        GROUP BY ?entity ?minLen
+        ORDER BY ?minLen
         LIMIT ${this.maxResults}
       `;
       console.log(`[lucene-recon] Lucene SPARQL (sans type):\n${sparql}`);

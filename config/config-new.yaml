@@ -118,7 +118,7 @@ projects:
     cache:
       urilookup: ./cache/ruim/urilookup_cache.json
     reconciliation:
-      implementation: LuceneGraphDBReconcileService
+      implementation: LunrReconcileService
       cacheSize: 1000
       maxResults: 10
       indexCachePath: ./cache/ruim/lunr-index.json

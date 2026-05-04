@@ -112,10 +112,10 @@ export function registerTools(
 
   // The following tools require sparnatural_discover_nodeshapes to be called first to inspect the schema and identify relevant NodeShapes, classes, and properties. This is necessary to use them correctly and avoid imprecise results or errors.
   server.registerTool(
-    "sparnatural_discover_nodeshapes",
+    `${projectId}_discover_nodeshapes`,
     {
-      title: "Discover NodeShapes",
-      description: `MANDATORY first step of the query workflow for project '${projectId}'. You MUST call this before sparnatural_reconcile_entities and sparnatural_execute_sparql. Returns the SHACL NodeShapes, their targets, and their declared properties.`,
+      title: `Discover graph structure of project ${projectId} in SHACL`,
+      description: `MANDATORY first step of the query workflow for project '${projectId}'. You MUST call this before ${projectId}_reconcile_entities and ${projectId}_query_sparql. Returns the SHACL node shapes, their targets, and available properties. This will provide you with the classes and property identifiers to write correct SPARQL queries.`,
       inputSchema: {
         lang: z
           .string()
@@ -241,7 +241,11 @@ export function registerTools(
           content: [
             {
               type: "text",
-              text: JSON.stringify({ prefixes: prefixesRecord, shapes }, null, 2),
+              text: JSON.stringify(
+                { prefixes: prefixesRecord, shapes },
+                null,
+                2,
+              ),
             },
           ],
           structuredContent: {
@@ -272,15 +276,15 @@ export function registerTools(
 
   // sparnatural_reconcile_entities tool used to resolve user-provided labels to IRIs from the knowledge graph.
   server.registerTool(
-    "sparnatural_reconcile_entities",
+    `${projectId}_reconcile_entities`,
     {
-      title: "Reconcile Entity Labels to IRIs",
-      description: `Step 2 of the query workflow for project '${projectId}'. REQUIRES sparnatural_discover_nodeshapes first — without it, the 'type' parameter cannot be set correctly and results will be imprecise or wrong. Reconciles user-provided entity labels to candidate IRIs from the project knowledge graph. The resolved IRI must then be injected directly into the SPARQL query produced in step 3 — do not match on rdfs:label once an entity has been reconciled.
+      title: `Reconcile entity labels to IRIs in project ${projectId}`,
+      description: `Step 2 of the query workflow for project '${projectId}'. REQUIRES ${projectId}_discover_graph_structure first — without it, the 'type' parameter cannot be set correctly and results will be imprecise or wrong. Reconciles user-provided entity labels to candidate IRIs from the project knowledge graph. The resolved IRI must then be injected directly into the SPARQL query produced in step 3 — do not match on rdfs:label once an entity has been reconciled.
 
-      How to call it correctly:
-        - For EACH entity label the user mentioned, add one entry to 'queries' with BOTH 'query' (the label) AND 'type' (the class IRI of the entity, taken from the targetClass of the matching NodeShape discovered in step 1). Passing 'type' improves precision and is expected whenever a class is known from the schema.
-        - The 'type' value MUST be a class IRI that exists in the SHACL schema returned by sparnatural_discover_nodeshapes (i.e. one of the targetClasses of a NodeShape). NEVER use a class IRI that was not returned by sparnatural_discover_nodeshapes — guessed or external class IRIs will produce wrong or empty results.
-        - When all returned candidates have match: false, present the full list to the user (name + id) and ask them to choose. Only proceed to the SPARQL query once the user has confirmed their choice.`,
+  How to call it correctly:
+    - For EACH entity label the user mentioned, add one entry to 'queries' with BOTH 'query' (the label) AND 'type' (the class IRI of the entity, taken from the targetClass of the matching node shape discovered in step 1). Passing 'type' improves precision and is expected whenever a class is known from the schema.
+    - The 'type' value MUST be a class IRI that exists in the SHACL schema returned by ${projectId}_discover_graph_structure (i.e. one of the targetClasses of a node shape). NEVER use a class IRI that was not returned by ${projectId}_discover_graph_structure — guessed or external class IRIs will produce wrong or empty results.
+    - When all returned candidates have match: false, present the full list to the user (name + id) and ask them to choose. Only proceed to the SPARQL query once the user has confirmed their choice.`,
       inputSchema: {
         queries: z
           .record(
@@ -349,12 +353,12 @@ export function registerTools(
     },
   );
 
-  // sparnatural_execute_sparql tool used to execute the finalized SPARQL query after schema inspection and entity reconciliation.
+  // ${projectId}_query_sparql tool used to execute the finalized SPARQL query after schema inspection and entity reconciliation.
   server.registerTool(
-    "sparnatural_execute_sparql",
+    `${projectId}_query_sparql`,
     {
-      title: "Execute Final SPARQL",
-      description: `Step 3 of the query workflow for project '${projectId}'. REQUIRES sparnatural_discover_nodeshapes first — queries built without inspecting the schema will fail or return incorrect results because class URIs, predicates, and graph paths are not guessable. Executes a finalized SPARQL query against the configured endpoint. The query must be schema-aware and grounded in the SHACL structure: prefer explicit rdf:type constraints when they are known from the schema, use DISTINCT when needed to avoid duplicate rows or overcounting, and prefer grouping by resources rather than labels alone when labels may be ambiguous. If an entity has already been reconciled to a specific IRI, use that IRI directly and do not add redundant label-based regex or text filters for the same entity. Do not use this tool for schema exploration, property guessing, or trial-and-error query construction. Do not add FILTER(lang(...)) constraints unless the user explicitly requests a specific language. Always include a LIMIT clause in the query. Start with LIMIT 20 and present the results to the user. If the user wants more, increase progressively (e.g. 100, 500).`,
+      title: `Execute Final SPARQL for project ${projectId}`,
+      description: `Step 3 of the query workflow for project '${projectId}'. REQUIRES ${projectId}_discover_graph_structure first — queries built without inspecting the schema will fail or return incorrect results because class URIs, predicates, and graph paths are not guessable. Executes a finalized SPARQL query against the configured endpoint. The query must be grounded in the SHACL structure: prefer explicit rdf:type constraints when they are known from the schema, use OPTIONAL and GROUP_CONCAT as appropriate depending on property cardinalities, use DISTINCT when needed to avoid duplicate rows or overcounting, and prefer grouping by resources rather than labels alone when labels may be ambiguous. If an entity has already been reconciled to a specific IRI, use that IRI directly and do not add redundant label-based regex or text filters for the same entity. Do not use this tool for schema exploration, property guessing, or trial-and-error query construction. Do not add FILTER(lang(...)) constraints unless the user explicitly requests a specific language. Always include a LIMIT clause in the query. Start with LIMIT 20 and present the results to the user. If the user wants more, increase progressively (e.g. 100, 500).`,
       inputSchema: {
         query: z
           .string()

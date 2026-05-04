@@ -26,7 +26,6 @@ type IndexDoc = { id: string; label: string };
 export class LunrReconcileService implements ReconcileServiceIfc {
   public static DEFAULT_MAX_RESULTS = 10;
   public static DEFAULT_CACHE_SIZE = 1000;
-  public static DEFAULT_SIMILARITY_THRESHOLD = 0.9;
 
   private memoryCache: Record<string, CacheEntry> = {};
   private projectId: string;
@@ -57,9 +56,6 @@ export class LunrReconcileService implements ReconcileServiceIfc {
     this.cacheSize =
       reconciliationConfig?.cacheSize ??
       LunrReconcileService.DEFAULT_CACHE_SIZE;
-    this.similarityThreshold =
-      reconciliationConfig?.similarityThreshold ??
-      LunrReconcileService.DEFAULT_SIMILARITY_THRESHOLD;
     this.sparqlQuery =
       reconciliationConfig?.sparqlQuery ?? this.defaultSparqlQuery();
     this.indexCachePath = reconciliationConfig?.indexCachePath;
@@ -149,6 +145,14 @@ export class LunrReconcileService implements ReconcileServiceIfc {
   }
 
   // ─── Index construction ─────────────────────────────────────
+
+  /**
+   * Triggers index construction at server startup so the first reconciliation
+   * request is served immediately from an already-warm index.
+   */
+  warmUp(): Promise<void> {
+    return this.ensureIndex();
+  }
 
   /**
    * Ensures the lunr index is built exactly once, even under concurrent requests.
