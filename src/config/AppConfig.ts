@@ -13,6 +13,7 @@ import { T2QPromptGenerator } from "../services/T2QPromptGeneratorService";
 import { SparqlReconcileService } from "../services/SparqlReconcileService";
 import { SparqlReconcileServiceV13 } from "../services/SparqlReconcileServiceV13";
 import { LuceneGraphDBReconcileService } from "../services/LuceneGraphDBReconcileService";
+import { LunrReconcileService } from "../services/LunrReconcileService";
 /*
 const DEFAULT_RECONCILIATION_CONFIG: SparqlReconcileServiceConfig = {
   cacheSize: SparqlReconcileService.DEFAULT_CACHE_SIZE,
@@ -171,6 +172,10 @@ export class AppConfig {
 
     container.register("LuceneGraphDBReconcileService", {
       useClass: LuceneGraphDBReconcileService,
+    });
+
+    container.register("LunrReconcileService", {
+      useClass: LunrReconcileService,
     });
 
     container.register<string>("log.directory", {

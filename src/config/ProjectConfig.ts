@@ -17,6 +17,9 @@ export interface ProjectConfig {
     | ({
         implementation: "LuceneGraphDBReconcileService";
       } & LuceneGraphDBReconcileServiceConfig)
+    | ({
+        implementation: "LunrReconcileService";
+      } & LunrReconcileServiceConfig)
     | { implementation: "DummyReconcileService" };
 
   text2query?:
@@ -57,6 +60,14 @@ export interface LuceneGraphDBReconcileServiceConfig {
   luceneIndexName?: string;
   /* Seuil de similarité (0-1) pour le rerankement par distance d'édition. Désactivé si absent. */
   similarityThreshold?: number;
+}
+
+export interface LunrReconcileServiceConfig {
+  cacheSize?: number;
+  maxResults?: number;
+  similarityThreshold?: number;
+  sparqlQuery?: string;
+  indexCachePath?: string;
 }
 
 export interface MistralText2QueryServiceConfig {

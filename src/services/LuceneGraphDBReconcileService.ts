@@ -20,15 +20,6 @@ type SearchResult = { uri: string; label: string };
 
 /**
  * Service de réconciliation basé sur le connecteur Lucene de GraphDB.
- *
- * Stratégie :
- * 1. Recherche Lucene dans l'index configuré (types indexés : SpecialitePharmaceutique,
- *    Substance, Presentation, UCD, Evenement, GroupeGenerique).
- * 2. Si aucun résultat Lucene (ex. Voie non indexé), fallback SPARQL par rdfs:label CONTAINS
- *    avec le rdfType Sparnatural dans "?uri a <configTypeUri>" + expandSparql (comme SparqlReconcileServiceV13).
- * 3. Si SHACL indisponible ou toujours rien, recherche SPARQL sans filtre de type.
- *
- * Le label réel du graphe ("intraveineuse (2225)") est retourné, pas juste le terme de recherche.
  */
 @injectable({ token: "LuceneGraphDBReconcileService" })
 export class LuceneGraphDBReconcileService implements ReconcileServiceIfc {
@@ -122,7 +113,7 @@ export class LuceneGraphDBReconcileService implements ReconcileServiceIfc {
         `\n[lucene-recon] ═══ Réconciliation : "${name}" | type: ${configTypeUri ?? "aucun"} ═══`,
       );
       console.log(
-        `[lucene-recon] 🔍 Recherche Lucene (index: ${this.luceneIndexName})`,
+        `[lucene-recon] Recherche Lucene (index: ${this.luceneIndexName})`,
       );
 
       const searchResults: SearchResult[] = await this.searchLucene(
@@ -151,12 +142,12 @@ export class LuceneGraphDBReconcileService implements ReconcileServiceIfc {
     const labelsToResolve = collectUnresolvedLabels(parsedQuery);
 
     if (Object.keys(labelsToResolve).length === 0) {
-      console.log("[lucene-recon] ✅ No URI_NOT_FOUND to resolve.");
+      console.log("[lucene-recon] No URI_NOT_FOUND to resolve.");
       return parsedQuery;
     }
 
     console.log(
-      `[lucene-recon] 🔎 Resolving ${Object.keys(labelsToResolve).length} label(s):`,
+      `[lucene-recon] Resolving ${Object.keys(labelsToResolve).length} label(s):`,
       Object.values(labelsToResolve).map((l) => l.query),
     );
 
@@ -220,19 +211,17 @@ export class LuceneGraphDBReconcileService implements ReconcileServiceIfc {
       try {
         const { postProcessor } = await getSHACLConfig(this.projectId);
         sparql = postProcessor.expandSparql(sparql, {});
-        console.log(`[lucene-recon] 📐 Lucene SPARQL après expand:\n${sparql}`);
+        console.log(`[lucene-recon] Lucene SPARQL après expand:\n${sparql}`);
       } catch (_err) {
         console.log(
-          `[lucene-recon] ℹ️  SHACL non configuré → requête Lucene avec configTypeUri tel quel`,
+          `[lucene-recon] SHACL non configuré → requête Lucene avec configTypeUri tel quel`,
         );
-        console.log(
-          `[lucene-recon] 📄 Lucene SPARQL (sans expand):\n${sparql}`,
-        );
+        console.log(`[lucene-recon] Lucene SPARQL (sans expand):\n${sparql}`);
       }
     } else {
       // Sans type : requête Lucene simple
       console.log(
-        `[lucene-recon] ℹ️  Aucun type fourni → requête Lucene sans filtre de type`,
+        `[lucene-recon] Aucun type fourni → requête Lucene sans filtre de type`,
       );
       sparql = `
         PREFIX : <http://www.ontotext.com/connectors/lucene#>
@@ -250,7 +239,7 @@ export class LuceneGraphDBReconcileService implements ReconcileServiceIfc {
         GROUP BY ?entity
         LIMIT ${this.maxResults}
       `;
-      console.log(`[lucene-recon] 📄 Lucene SPARQL (sans type):\n${sparql}`);
+      console.log(`[lucene-recon] Lucene SPARQL (sans type):\n${sparql}`);
     }
 
     try {
@@ -263,7 +252,7 @@ export class LuceneGraphDBReconcileService implements ReconcileServiceIfc {
         label: b.label?.value || name,
       }));
     } catch (err) {
-      console.error(`[lucene-recon] ❌ Lucene error for "${name}":`, err);
+      console.error(`[lucene-recon] Lucene error for "${name}":`, err);
       return [];
     }
   }
@@ -295,7 +284,7 @@ export class LuceneGraphDBReconcileService implements ReconcileServiceIfc {
           (a, b) => b.similarity - a.similarity,
         );
         console.log(
-          `[lucene-recon] 🎯 Similarity rerank (threshold: ${threshold}) — best: "${best.label}" ${(best.similarity * 100).toFixed(1)}%`,
+          `[lucene-recon] Similarity rerank (threshold: ${threshold}) — best: "${best.label}" ${(best.similarity * 100).toFixed(1)}%`,
         );
         return reranked.map((r, index) => ({
           id: r.uri,
@@ -306,7 +295,7 @@ export class LuceneGraphDBReconcileService implements ReconcileServiceIfc {
       }
 
       console.log(
-        `[lucene-recon] ℹ️  No result above similarity threshold (${threshold}) — keeping Lucene order`,
+        `[lucene-recon] No result above similarity threshold (${threshold}) — keeping Lucene order`,
       );
     }
 
@@ -375,7 +364,7 @@ export class LuceneGraphDBReconcileService implements ReconcileServiceIfc {
           : b,
       );
       delete this.memoryCache[oldestKey];
-      console.log(`[cache] 🧹 LRU: suppression "${oldestKey}"`);
+      console.log(`[cache] LRU: suppression "${oldestKey}"`);
     }
   }
 
@@ -388,8 +377,8 @@ export class LuceneGraphDBReconcileService implements ReconcileServiceIfc {
   ): void {
     console.log(
       results.length > 0
-        ? `[lucene-recon] 🔎 "${name}" → "${results[0].id}" label:"${results[0].name}" (${source})`
-        : `[lucene-recon] 🔎 "${name}" → aucun résultat (${source})`,
+        ? `[lucene-recon] "${name}" → "${results[0].id}" label:"${results[0].name}" (${source})`
+        : `[lucene-recon] "${name}" → aucun résultat (${source})`,
     );
   }
 

@@ -59,6 +59,33 @@ projects:
       implementation: LuceneGraphDBReconcileService
       cacheSize: 1000
       maxResults: 10
+      indexCachePath: ./cache/ruim/lunr-index.json
+      sparqlQuery: |
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+        PREFIX med: <http://data.esante.gouv.fr/ansm/medicament/>
+
+        SELECT ?entity ?label WHERE {
+          {
+            # Labels principaux — toutes les entités avec rdfs:label (hors espace ATC)
+            ?entity rdfs:label ?label .
+            FILTER(LANG(?label) = "fr" || LANG(?label) = "")
+            FILTER(!STRSTARTS(STR(?entity), "http://data.esante.gouv.fr/whocc/atc/"))
+          }
+          UNION
+          {
+            # Synonymes — skos:altLabel sur Substances et Présentations
+            ?entity skos:altLabel ?label .
+            FILTER(LANG(?label) = "fr" || LANG(?label) = "")
+          }
+          UNION
+          {
+            ?spec med:classificationATC ?entity .
+            ?spec med:codeATC ?code .
+            ?spec med:libelleATC ?libelleAtc .
+            BIND(CONCAT(STR(?code), " - ", STR(?libelleAtc)) AS ?label)
+          }
+        }
     text2query:
       implementation: MistralText2QueryService
       agentId: ag_019dbabf106875a7a0a8904017d7e93f
@@ -91,9 +118,38 @@ projects:
     cache:
       urilookup: ./cache/ruim/urilookup_cache.json
     reconciliation:
-      implementation: SparqlReconcileServiceV13
+      implementation: LuceneGraphDBReconcileService
       cacheSize: 1000
-      maxResults: 2
+      maxResults: 10
+      indexCachePath: ./cache/ruim/lunr-index.json
+      sparqlQuery: |
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+        PREFIX med: <http://data.esante.gouv.fr/ansm/medicament/>
+
+        SELECT ?entity ?label WHERE {
+          {
+            # Labels principaux — toutes les entités avec rdfs:label (hors espace ATC)
+            ?entity rdfs:label ?label .
+            FILTER(LANG(?label) = "fr" || LANG(?label) = "")
+            FILTER(!STRSTARTS(STR(?entity), "http://data.esante.gouv.fr/whocc/atc/"))
+          }
+          UNION
+          {
+            # Synonymes — skos:altLabel sur Substances et Présentations
+            ?entity skos:altLabel ?label .
+            FILTER(LANG(?label) = "fr" || LANG(?label) = "")
+          }
+          UNION
+          {
+            # Entités ATC : URIs sans triplets propres, labels dénormalisés sur les Spécialités.
+            # Format Sparnatural : "CODE - libellé"
+            ?spec med:classificationATC ?entity .
+            ?spec med:codeATC ?code .
+            ?spec med:libelleATC ?libelleAtc .
+            BIND(CONCAT(STR(?code), " - ", STR(?libelleAtc)) AS ?label)
+          }
+        }
     t2qPromptGenerator:
       implementation: T2QPromptGenerator
       additionalInstructions: ./config/ruim/additionalInstructions.txt
