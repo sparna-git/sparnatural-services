@@ -170,7 +170,7 @@ export class SparqlReconcileService implements ReconcileServiceIfc {
       `[reconciliation] 🔎 Resolving ${
         Object.keys(labelsToResolve).length
       } label(s):`,
-      Object.values(labelsToResolve).map((l) => l.query),
+      Object.values(labelsToResolve).map((l: any) => l.query),
     );
 
     const queries = SparqlReconcileService.parseQueries(labelsToResolve);

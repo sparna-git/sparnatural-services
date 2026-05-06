@@ -5,22 +5,26 @@ export interface AppConfig {
   projects: Record<string, ProjectConfig>;
 }
 
+export type ReconciliationServiceConfig =
+  | ({
+      implementation: "SparqlReconcileService";
+    } & SparqlReconcileServiceConfig)
+  | ({
+      implementation: "SparqlReconcileServiceV13";
+    } & SparqlReconcileServiceV13Config)
+  | ({
+      implementation: "LuceneGraphDBReconcileService";
+    } & LuceneGraphDBReconcileServiceConfig)
+  | ({ implementation: "LunrReconcileService" } & LunrReconcileServiceConfig)
+  | ({
+      implementation: "IsidoreApiReconcileService";
+    } & IsidoreApiReconcileServiceConfig)
+  | { implementation: "DummyReconcileService" };
+
 export interface ProjectConfig {
   sparqlEndpoint: string;
-  reconciliation?:
-    | ({
-        implementation: "SparqlReconcileService";
-      } & SparqlReconcileServiceConfig)
-    | ({
-        implementation: "SparqlReconcileServiceV13";
-      } & SparqlReconcileServiceV13Config)
-    | ({
-        implementation: "LuceneGraphDBReconcileService";
-      } & LuceneGraphDBReconcileServiceConfig)
-    | ({
-        implementation: "LunrReconcileService";
-      } & LunrReconcileServiceConfig)
-    | { implementation: "DummyReconcileService" };
+  shaclTypes?: string[];
+  reconciliation?: ReconciliationServiceConfig | ReconciliationServiceConfig[];
 
   text2query?:
     | ({
@@ -69,6 +73,8 @@ export interface LunrReconcileServiceConfig {
   sparqlQuery?: string;
   indexCachePath?: string;
 }
+
+export interface IsidoreApiReconcileServiceConfig {}
 
 export interface MistralText2QueryServiceConfig {
   agentId: string;

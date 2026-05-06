@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import { container, DependencyContainer } from "tsyringe";
 import { Project } from "./Project";
-import { ProjectConfig, SparqlReconcileServiceConfig } from "./ProjectConfig";
+import { ProjectConfig, ReconciliationServiceConfig, SparqlReconcileServiceConfig } from "./ProjectConfig";
 import { ConfigProvider } from "./ConfigProvider";
 import { AppLogger } from "../utils/AppLogger";
 import { MistralText2QueryService } from "../services/impl/MistralText2QueryService";
@@ -14,6 +14,9 @@ import { SparqlReconcileService } from "../services/SparqlReconcileService";
 import { SparqlReconcileServiceV13 } from "../services/SparqlReconcileServiceV13";
 import { LuceneGraphDBReconcileService } from "../services/LuceneGraphDBReconcileService";
 import { LunrReconcileService } from "../services/LunrReconcileService";
+import { IsidoreApiReconcileService } from "../services/IsidoreApiReconcileService";
+import { ChainedReconcileService } from "../services/ChainedReconcileService";
+import { ReconcileServiceIfc } from "../services/ReconcileServiceIfc";
 /*
 const DEFAULT_RECONCILIATION_CONFIG: SparqlReconcileServiceConfig = {
   cacheSize: SparqlReconcileService.DEFAULT_CACHE_SIZE,
@@ -87,16 +90,45 @@ export class AppConfig {
     projectContainer.register<string>("project.sparqlEndpoint", {
       useValue: projectConfig.sparqlEndpoint,
     });
-    // 3. register the token "reconciliation" to be the name of the implementation in the config, or the default implementation
-    projectContainer.register("reconciliation", {
-      useToken:
-        projectConfig.reconciliation?.implementation ??
-        "default:reconciliation",
-    });
-    // 4. register the reconciliation config to whatever is in the reconciliation section, or the default values
-    projectContainer.register("reconciliation.config", {
-      useValue: projectConfig.reconciliation ?? DEFAULT_RECONCILIATION_CONFIG,
-    });
+    // 3. Build and register the reconciliation service (single or chained)
+    const reconciliationRaw = projectConfig.reconciliation;
+    const reconciliationList: ReconciliationServiceConfig[] = !reconciliationRaw
+      ? []
+      : Array.isArray(reconciliationRaw)
+        ? reconciliationRaw
+        : [reconciliationRaw];
+
+    if (reconciliationList.length === 0) {
+      projectContainer.register("reconciliation", {
+        useToken: "default:reconciliation",
+      });
+      projectContainer.register("reconciliation.config", {
+        useValue: DEFAULT_RECONCILIATION_CONFIG,
+      });
+    } else if (reconciliationList.length === 1) {
+      projectContainer.register("reconciliation", {
+        useToken: reconciliationList[0].implementation,
+      });
+      projectContainer.register("reconciliation.config", {
+        useValue: reconciliationList[0],
+      });
+    } else {
+      // Build each service in its own child container so each gets its own config,
+      // then wrap them all in a ChainedReconcileService.
+      projectContainer.register("reconciliation", {
+        useFactory: (c) => {
+          const services: ReconcileServiceIfc[] = reconciliationList.map((cfg) => {
+            const child = c.createChildContainer();
+            child.register("reconciliation.config", { useValue: cfg });
+            return child.resolve<ReconcileServiceIfc>(cfg.implementation as any);
+          });
+          return new ChainedReconcileService(services);
+        },
+      });
+      projectContainer.register("reconciliation.config", {
+        useValue: reconciliationList[0],
+      });
+    }
 
     // 5. Same thing to register text2query service
     projectContainer.register("text2query", {
@@ -176,6 +208,10 @@ export class AppConfig {
 
     container.register("LunrReconcileService", {
       useClass: LunrReconcileService,
+    });
+
+    container.register("IsidoreApiReconcileService", {
+      useClass: IsidoreApiReconcileService,
     });
 
     container.register<string>("log.directory", {

@@ -1,4 +1,11 @@
 import axios from "axios";
+import { injectable } from "tsyringe";
+import {
+  ReconcileInput,
+  ReconcileOutput,
+  ReconcileServiceIfc,
+  ManifestType,
+} from "./ReconcileServiceIfc";
 
 const ISIDORE_RESOURCE_SUGGEST_URL =
   "https://api.isidore.science/resource/suggest";
@@ -15,15 +22,19 @@ export interface IsidoreCandidate {
 }
 
 /**
+ * Maps a class IRI (from SHACL NodeShape targetClass) to an IsidoreEntityType.
+ * Falls back to "subject" when unknown.
+ */
+export function classIriToIsidoreType(classIri?: string): IsidoreEntityType {
+  if (!classIri) return "subject";
+  if (classIri === "http://xmlns.com/foaf/0.1/Agent") return "agent";
+  if (classIri === "http://isidore.science/class/Source") return "source";
+  return "subject";
+}
+
+/**
  * Calls the right ISIDORE suggest endpoint based on the entity type and
  * returns resolved candidates (full URI + label).
- *
- * - agent   -> resource/suggest, picks <replies name="creators">,
- *             prefixes raw key with ISIDORE_AGENT_PREFIX
- * - subject -> resource/suggest, picks <replies name="subjects">,
- *             URI is already a full http:// value — used as-is
- * - source  -> source/suggest, single list,
- *             prefixes raw key with ISIDORE_SOURCE_PREFIX
  */
 export async function getIsidoreSuggestCandidates(
   query: string,
@@ -58,11 +69,9 @@ export async function getIsidoreSuggestCandidates(
 
 function parseXml(xml: string, entityType: string): IsidoreCandidate[] {
   if (entityType === "source") {
-    // source/suggest has a flat list, no section filtering needed
     return extractReplies(xml, ISIDORE_SOURCE_PREFIX);
   }
 
-  // resource/suggest → pick the matching <replies name="creators|subjects"> section
   const targetSection = entityType === "agent" ? "creators" : "subjects";
   const repliesRegex =
     /<replies\b[^>]*\bname="([^"]*)"[^>]*>([\s\S]*?)<\/replies>/g;
@@ -77,11 +86,6 @@ function parseXml(xml: string, entityType: string): IsidoreCandidate[] {
   return [];
 }
 
-/**
- * Extracts <reply label="..."> entries from a block of XML.
- * When prefix is provided, it is prepended to raw URI values that don't
- * already start with "http". Otherwise the raw value is used as-is.
- */
 function extractReplies(xml: string, prefix?: string): IsidoreCandidate[] {
   const candidates: IsidoreCandidate[] = [];
   const replyRegex = /<reply\b[^>]*\blabel="([^"]*)"[^>]*>([\s\S]*?)<\/reply>/g;
@@ -97,7 +101,6 @@ function extractReplies(xml: string, prefix?: string): IsidoreCandidate[] {
     if (!rawUri || !label) continue;
 
     const uri = prefix && !rawUri.startsWith("http") ? prefix + rawUri : rawUri;
-
     candidates.push({ uri, label });
   }
 
@@ -105,12 +108,46 @@ function extractReplies(xml: string, prefix?: string): IsidoreCandidate[] {
 }
 
 /**
- * Maps a class IRI (from SHACL NodeShape targetClass) to an IsidoreEntityType.
- * Falls back to "subject" when unknown.
+ * Reconciliation service that queries the ISIDORE API.
+ * Returns empty results when no type is provided (letting a chained fallback service handle it)
+ * or when the API returns nothing.
  */
-export function classIriToIsidoreType(classIri?: string): IsidoreEntityType {
-  if (!classIri) return "subject";
-  if (classIri === "http://xmlns.com/foaf/0.1/Agent") return "agent";
-  if (classIri === "http://isidore.science/class/Source") return "source";
-  return "subject";
+@injectable({ token: "IsidoreApiReconcileService" })
+export class IsidoreApiReconcileService implements ReconcileServiceIfc {
+  async reconcileQueries(
+    queries: ReconcileInput,
+    _includeTypes: boolean,
+  ): Promise<ReconcileOutput> {
+    const output: ReconcileOutput = {};
+
+    for (const [key, qobj] of Object.entries(queries)) {
+      if (!qobj.type) {
+        // No type → cannot determine ISIDORE category, return empty to let chain fall through
+        output[key] = { result: [] };
+        continue;
+      }
+
+      const entityType = classIriToIsidoreType(qobj.type);
+      const candidates = await getIsidoreSuggestCandidates(qobj.query, entityType);
+
+      output[key] = {
+        result: candidates.map((c, i) => ({
+          id: c.uri,
+          name: c.label,
+          score: 90 - i,
+          match: candidates.length === 1,
+        })),
+      };
+    }
+
+    return output;
+  }
+
+  async resolveQueryUris(parsedQuery: any): Promise<any> {
+    return parsedQuery;
+  }
+
+  async buildManifest(): Promise<ManifestType> {
+    throw new Error("IsidoreApiReconcileService does not support manifest");
+  }
 }

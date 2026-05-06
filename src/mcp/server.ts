@@ -16,17 +16,17 @@ import {
 } from "./utils/projectConfigAdapter";
 
 // Factory to create a new McpServer instance with all prompts/tools/resources registered for a given project. In HTTP mode, a new server will be created for each session.
-function buildServer(
+async function buildServer(
   projectId: string,
   projectConfigAdapter: ProjectConfigAdapter,
-): McpServer {
+): Promise<McpServer> {
   // create a new MCP server instance for this session (HTTP) or the whole process (stdio)
   const server = new McpServer({
     name: `sparnatural-mcp-${projectId}`,
     version: "0.1.0",
   });
 
-  registerTools(server, { projectConfigAdapter, projectId });
+  await registerTools(server, { projectConfigAdapter, projectId });
   //registerResources(server, { projectConfigAdapter, projectId });
   registerPrompts(server, { projectConfigAdapter, projectId });
 
@@ -74,7 +74,7 @@ export function createMcpRouter(
         }
 
         // build a new server instance for this session
-        const sessionServer = buildServer(projectId, projectConfigAdapter);
+        const sessionServer = await buildServer(projectId, projectConfigAdapter);
         const transport = new StreamableHTTPServerTransport({
           sessionIdGenerator: () => randomUUID(),
           enableJsonResponse: true,
@@ -149,7 +149,7 @@ export async function startMcpStdio(
   // Redirect console.log to stderr — stdout is the MCP wire protocol in stdio mode
   console.log = console.error;
 
-  const server = buildServer(projectId, projectConfigAdapter);
+  const server = await buildServer(projectId, projectConfigAdapter);
   const transport = new StdioServerTransport();
   await server.connect(transport);
   console.error(`MCP stdio server started for project '${projectId}'`);

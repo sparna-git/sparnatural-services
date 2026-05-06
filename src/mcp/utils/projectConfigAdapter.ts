@@ -3,6 +3,7 @@ import { ConfigProvider } from "../../config/ConfigProvider";
 import { AppConfig } from "../../config/AppConfig";
 
 import { getSHACLConfig, loadShaclTtl } from "../../config/SCHACL";
+import { ShapesGraph } from "rdf-shacl-commons";
 import {
   extractNodeShapes,
   extractPrefixesFromTtl,
@@ -12,18 +13,11 @@ import type {
   ReconcileInput,
   ReconcileOutput,
 } from "../../services/ReconcileServiceIfc";
-import {
-  getIsidoreSuggestCandidates,
-  classIriToIsidoreType,
-} from "../../services/IsidoreApiReconcileService";
-
-export type ReconcileStrategy = "isidore-api" | "sparql-only";
-
 export interface ProjectConfig {
   projectId: string;
   sparqlEndpoint: string;
   shaclPath?: string;
-  reconcileStrategy: ReconcileStrategy;
+  shaclTypes?: string[];
 }
 
 /**
@@ -36,6 +30,15 @@ export interface ProjectConfigAdapter {
     projectId: string,
     lang?: string,
   ): Promise<{ shapes: NodeShapeInfo[]; prefixes: [string, string][] }>;
+  getShapesGraphMeta(
+    projectId: string,
+    lang?: string,
+  ): Promise<{
+    title?: string;
+    description?: string;
+    agentInstruction?: string;
+  }>;
+
   reconcileEntities(
     projectId: string,
     queries: ReconcileInput,
@@ -69,9 +72,7 @@ export class ConfigBackedProjectConfigAdapter implements ProjectConfigAdapter {
       projectId,
       sparqlEndpoint: projectConfig.sparqlEndpoint,
       shaclPath: projectConfig.shacl,
-      // Default to "sparql-only" when not specified for backward compatibility.
-      reconcileStrategy:
-        (projectConfig.reconcileStrategy as ReconcileStrategy) ?? "sparql-only",
+      shaclTypes: projectConfig.shaclTypes,
     };
   }
 
@@ -128,97 +129,29 @@ export class ConfigBackedProjectConfigAdapter implements ProjectConfigAdapter {
     return { shapes, prefixes };
   }
 
-  // Reconcile entity labels to IRIs using the project's configured reconcile service.
-  // a voir avec thomas
+  async getShapesGraphMeta(
+    projectId: string,
+    lang = "fr",
+  ): Promise<{
+    title?: string;
+    description?: string;
+    agentInstruction?: string;
+  }> {
+    const { model } = await getSHACLConfig(projectId);
+    const sg = new ShapesGraph(model);
+    return {
+      title: sg.getTitle(lang),
+      //description: sg.getDescription(lang),
+      agentInstruction: sg.getAgentInstruction(lang),
+    };
+  }
+
   async reconcileEntities(
     projectId: string,
     queries: ReconcileInput,
     includeTypes = false,
   ): Promise<ReconcileOutput> {
-    const config = await this.getProjectConfig(projectId);
-
-    switch (config.reconcileStrategy) {
-      case "isidore-api":
-        return this._reconcileViaIsidoreApi(projectId, queries, includeTypes);
-      case "sparql-only": {
-        const project = AppConfig.getInstance().getProject(projectId);
-        return project.reconcileService.reconcileQueries(queries, includeTypes);
-      }
-      default: {
-        // Exhaustiveness check: TS will error here if a new strategy is added
-        // to the union type but not handled above.
-        const _exhaustive: never = config.reconcileStrategy;
-        throw new Error(
-          `Unknown reconcileStrategy: ${_exhaustive}. ` +
-            `Check the reconcileStrategy field in your project config.`,
-        );
-      }
-    }
-  }
-
-  private async _reconcileViaIsidoreApi(
-    projectId: string,
-    queries: ReconcileInput,
-    includeTypes: boolean,
-  ): Promise<ReconcileOutput> {
-    const responsePayload: ReconcileOutput = {};
     const project = AppConfig.getInstance().getProject(projectId);
-
-    for (const [key, qobj] of Object.entries(queries)) {
-      // Without a type IRI we can't determine the right ISIDORE section → skip to SPARQL
-      if (!qobj.type) {
-        const fallback = await project.reconcileService.reconcileQueries(
-          { [key]: qobj },
-          includeTypes,
-        );
-        responsePayload[key] = fallback[key] ?? { result: [] };
-        continue;
-      }
-
-      const entityType = classIriToIsidoreType(qobj.type);
-      const candidates = await getIsidoreSuggestCandidates(
-        qobj.query,
-        entityType,
-      );
-
-      if (candidates.length === 0) {
-        // ISIDORE returned nothing -> fall back to the SPARQL reconcile service
-        console.log(
-          `[isidore-api] No candidates for "${qobj.query}", falling back to SPARQL.`,
-        );
-        const fallback = await project.reconcileService.reconcileQueries(
-          { [key]: qobj },
-          includeTypes,
-        );
-        responsePayload[key] = fallback[key] ?? { result: [] };
-        continue;
-      }
-
-      if (candidates.length === 1) {
-        // Unambiguous: single URI resolved directly from ISIDORE
-        responsePayload[key] = {
-          result: [
-            {
-              id: candidates[0].uri,
-              name: candidates[0].label,
-              score: 100,
-              match: true,
-            },
-          ],
-        };
-      } else {
-        // Ambiguous: return all with match:false so the agent presents them to the user
-        responsePayload[key] = {
-          result: candidates.map((c, i) => ({
-            id: c.uri,
-            name: c.label,
-            score: 90 - i,
-            match: false,
-          })),
-        };
-      }
-    }
-
-    return responsePayload;
+    return project.reconcileService.reconcileQueries(queries, includeTypes);
   }
 }

@@ -4,7 +4,6 @@ projects:
   dbpedia-en:
     shacl: ./config/dbpedia-en/config.ttl
     sparqlEndpoint: https://dbpedia.org/sparql
-    reconcileStrategy: sparql-only
     domains:
       - sparna-git.github.io
     cache:
@@ -27,7 +26,6 @@ projects:
   demo-ep:
     shacl: ./config/demo-ep/config-1.ttl ./config/demo-ep/config-2.ttl
     sparqlEndpoint: http://graphdb.sparna.fr/repositories/endorse2025
-    reconcileStrategy: sparql-only
     domains:
       - sparna-git.github.io
     cache:
@@ -50,42 +48,26 @@ projects:
   ruim:
     shacl: ./config/ruim/sparnatural-config.ttl
     sparqlEndpoint: https://data.sparna.fr/graphdb/repositories/RUIM
-    reconcileStrategy: sparql-only
+    shaclTypes:
+      - http://data.esante.gouv.fr/ansm/medicament/Presentation
+      - http://data.esante.gouv.fr/ansm/medicament/UniteCommuneDeDispensation
+      - http://data.esante.gouv.fr/ansm/medicament/SpecialitePharmaceutique
+      - http://data.esante.gouv.fr/ansm/medicament/Evenement
+      - http://data.esante.gouv.fr/ansm/medicament/Substance
+      - http://data.esante.gouv.fr/ansm/medicament/GroupeGenerique
+      - http://data.esante.gouv.fr/ansm/medicament/Organisation
+      - http://data.esante.gouv.fr/ansm/medicament/ElementPresentation
+      - http://data.esante.gouv.fr/ansm/medicament/TypeEvenement
+      - http://data.esante.gouv.fr/ansm/medicament/TypeProcedure
+      - http://data.esante.gouv.fr/ansm/medicament/StatutSpecialite
+      - http://data.esante.gouv.fr/ansm/medicament/NiveauPrescriptibilite
+      - http://data.esante.gouv.fr/ansm/medicament/JustificationNiveauPrescriptibilite
+      - http://data.esante.gouv.fr/ansm/medicament/Voie
+      - http://data.esante.gouv.fr/ema/sms
     domains:
       - sparna-git.github.io
     cache:
       urilookup: ./cache/ruim/urilookup_cache.json
-    reconciliation:
-      implementation: LuceneGraphDBReconcileService
-      cacheSize: 1000
-      maxResults: 10
-      indexCachePath: ./cache/ruim/lunr-index.json
-      sparqlQuery: |
-        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-        PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-        PREFIX med: <http://data.esante.gouv.fr/ansm/medicament/>
-
-        SELECT ?entity ?label WHERE {
-          {
-            # Labels principaux — toutes les entités avec rdfs:label (hors espace ATC)
-            ?entity rdfs:label ?label .
-            FILTER(LANG(?label) = "fr" || LANG(?label) = "")
-            FILTER(!STRSTARTS(STR(?entity), "http://data.esante.gouv.fr/whocc/atc/"))
-          }
-          UNION
-          {
-            # Synonymes — skos:altLabel sur Substances et Présentations
-            ?entity skos:altLabel ?label .
-            FILTER(LANG(?label) = "fr" || LANG(?label) = "")
-          }
-          UNION
-          {
-            ?spec med:classificationATC ?entity .
-            ?spec med:codeATC ?code .
-            ?spec med:libelleATC ?libelleAtc .
-            BIND(CONCAT(STR(?code), " - ", STR(?libelleAtc)) AS ?label)
-          }
-        }
     text2query:
       implementation: MistralText2QueryService
       agentId: ag_019dbabf106875a7a0a8904017d7e93f
@@ -97,22 +79,77 @@ projects:
       additionalInstructions: ./config/ruim/additionalInstructions.txt
     q2tPromptGenerator:
       implementation: Q2TPromptGenerator
+    reconciliation:
+      - implementation: LuceneGraphDBReconcileService
+      - implementation: LunrReconcileService
+        cacheSize: 1000
+        maxResults: 10
+        indexCachePath: ./cache/ruim/lunr-index.json
+        sparqlQuery: |
+          PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+          PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+          PREFIX med: <http://data.esante.gouv.fr/ansm/medicament/>
+
+          SELECT ?entity ?label WHERE {
+            {
+              # Labels principaux — toutes les entités avec rdfs:label (hors espace ATC)
+              ?entity rdfs:label ?label .
+              FILTER(LANG(?label) = "fr" || LANG(?label) = "")
+              FILTER(!STRSTARTS(STR(?entity), "http://data.esante.gouv.fr/whocc/atc/"))
+            }
+            UNION
+            {
+              # Synonymes — skos:altLabel sur Substances et Présentations
+              ?entity skos:altLabel ?label .
+              FILTER(LANG(?label) = "fr" || LANG(?label) = "")
+            }
+            UNION
+            {
+              ?spec med:classificationATC ?entity .
+              ?spec med:codeATC ?code .
+              ?spec med:libelleATC ?libelleAtc .
+              BIND(CONCAT(STR(?code), " - ", STR(?libelleAtc)) AS ?label)
+            }
+          }
   isidore:
     shacl: ./config/isidore/isidore-shapes.ttl
     sparqlEndpoint: https://isidore-ref.huma-num.fr/sparql
-    reconcileStrategy: isidore-api
+    shaclTypes:
+      - http://isidore.science/class/Source
+      - http://www.w3.org/2004/02/skos/core#Concept
+      - http://isidore.science/class/Organization
+      - http://isidore.science/class/Document
+      - http://data.bnf.fr/ontology/bnf-onto/ExpositionVirtuelle
+      - http://xmlns.com/foaf/0.1/Agent
+      - http://isidore.science/class/Collection
     domains:
       - sparna-git.github.io
     cache:
       urilookup: ./cache/isidore/urilookup_cache.json
     reconciliation:
-      implementation: SparqlReconcileService
-      cacheSize: 500
-      maxResults: 4
+      - implementation: IsidoreApiReconcileService
+      - implementation: SparqlReconcileService
+        cacheSize: 500
+        maxResults: 4
   ruim-mcp:
     shacl: ./config/ruim/RUIM-SHACL-instances.ttl
     sparqlEndpoint: https://data.sparna.fr/graphdb/repositories/RUIM
-    reconcileStrategy: sparql-only
+    shaclTypes:
+      - http://data.esante.gouv.fr/ansm/medicament/Presentation
+      - http://data.esante.gouv.fr/ansm/medicament/UniteCommuneDeDispensation
+      - http://data.esante.gouv.fr/ansm/medicament/SpecialitePharmaceutique
+      - http://data.esante.gouv.fr/ansm/medicament/Evenement
+      - http://data.esante.gouv.fr/ansm/medicament/Substance
+      - http://data.esante.gouv.fr/ansm/medicament/GroupeGenerique
+      - http://data.esante.gouv.fr/ansm/medicament/Organisation
+      - http://data.esante.gouv.fr/ansm/medicament/ElementPresentation
+      - http://data.esante.gouv.fr/ansm/medicament/TypeEvenement
+      - http://data.esante.gouv.fr/ansm/medicament/TypeProcedure
+      - http://data.esante.gouv.fr/ansm/medicament/StatutSpecialite
+      - http://data.esante.gouv.fr/ansm/medicament/NiveauPrescriptibilite
+      - http://data.esante.gouv.fr/ansm/medicament/JustificationNiveauPrescriptibilite
+      - http://data.esante.gouv.fr/ansm/medicament/Voie
+      - http://data.esante.gouv.fr/ema/sms
     domains:
       - sparna-git.github.io
     cache:
