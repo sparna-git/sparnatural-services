@@ -26,7 +26,6 @@ export class LuceneGraphDBReconcileService implements ReconcileServiceIfc {
   public static DEFAULT_MAX_RESULTS = 10;
   public static DEFAULT_CACHE_SIZE = 1000;
   public static DEFAULT_INDEX_NAME = "MedicamentIndexThird";
-  public static DEFAULT_SIMILARITY_THRESHOLD = 0.9;
 
   private memoryCache: Record<string, CacheEntry> = {};
   private projectId: string;
@@ -34,7 +33,6 @@ export class LuceneGraphDBReconcileService implements ReconcileServiceIfc {
   private maxResults: number;
   private cacheSize: number;
   private luceneIndexName: string;
-  private similarityThreshold: number | undefined;
 
   constructor(
     @inject("project.id") projectId?: string,
@@ -53,9 +51,6 @@ export class LuceneGraphDBReconcileService implements ReconcileServiceIfc {
     this.luceneIndexName =
       reconciliationConfig?.luceneIndexName ||
       LuceneGraphDBReconcileService.DEFAULT_INDEX_NAME;
-    this.similarityThreshold =
-      reconciliationConfig?.similarityThreshold ||
-      LuceneGraphDBReconcileService.DEFAULT_SIMILARITY_THRESHOLD;
   }
 
   // ─── Manifest ───────────────────────────────────────────────
@@ -315,72 +310,12 @@ export class LuceneGraphDBReconcileService implements ReconcileServiceIfc {
   ): ReconcileResult[] {
     if (searchResults.length === 0) return [];
 
-    if (this.similarityThreshold !== undefined) {
-      const threshold = this.similarityThreshold;
-      const withSim = searchResults.map((r) => ({
-        ...r,
-        similarity: this.stringSimilarity(
-          fallbackName,
-          r.label || fallbackName,
-        ),
-      }));
-
-      const best = withSim.reduce((a, b) =>
-        b.similarity > a.similarity ? b : a,
-      );
-
-      if (best.similarity >= threshold) {
-        const reranked = [...withSim].sort(
-          (a, b) => b.similarity - a.similarity,
-        );
-        console.log(
-          `[lucene-recon] Similarity rerank (threshold: ${threshold}) — best: "${best.label}" ${(best.similarity * 100).toFixed(1)}%`,
-        );
-        return reranked.map((r, index) => ({
-          id: r.uri,
-          name: r.label || fallbackName,
-          score: index === 0 ? 100 : Math.max(100 - index, 1),
-          match: index === 0,
-        }));
-      }
-
-      console.log(
-        `[lucene-recon] No result above similarity threshold (${threshold}) — keeping Lucene order`,
-      );
-    }
-
     return searchResults.map((r, index) => ({
       id: r.uri,
       name: r.label || fallbackName,
       score: index === 0 ? 100 : Math.max(100 - index, 1),
       match: index === 0,
     }));
-  }
-
-  private stringSimilarity(a: string, b: string): number {
-    const s1 = a.toLowerCase().trim();
-    const s2 = b.toLowerCase().trim();
-    if (s1 === s2) return 1;
-    const maxLen = Math.max(s1.length, s2.length);
-    if (maxLen === 0) return 1;
-    return 1 - this.levenshtein(s1, s2) / maxLen;
-  }
-
-  private levenshtein(a: string, b: string): number {
-    const m = a.length;
-    const n = b.length;
-    const dp: number[] = Array.from({ length: n + 1 }, (_, i) => i);
-    for (let i = 1; i <= m; i++) {
-      let prev = dp[0];
-      dp[0] = i;
-      for (let j = 1; j <= n; j++) {
-        const temp = dp[j];
-        dp[j] =
-          a[i - 1] === b[j - 1] ? prev : 1 + Math.min(prev, dp[j], dp[j - 1]);
-        prev = temp;
-      }
-    }
-    return dp[n];
   }
 
   // ─── Cache ──────────────────────────────────────────────────

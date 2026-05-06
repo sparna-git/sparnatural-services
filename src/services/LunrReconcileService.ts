@@ -32,7 +32,6 @@ export class LunrReconcileService implements ReconcileServiceIfc {
   private sparqlEndpoint: string;
   private maxResults: number;
   private cacheSize: number;
-  private similarityThreshold: number | undefined;
   private sparqlQuery: string;
   private indexCachePath: string | undefined;
 
@@ -314,42 +313,6 @@ export class LunrReconcileService implements ReconcileServiceIfc {
 
     const topN = lunrResults.slice(0, this.maxResults);
 
-    if (this.similarityThreshold !== undefined) {
-      const threshold = this.similarityThreshold;
-      const withSim = topN.map((r) => ({
-        uri: r.ref,
-        label: this.uriToLabel.get(r.ref) ?? r.ref,
-        similarity: this.stringSimilarity(
-          name,
-          this.uriToLabel.get(r.ref) ?? "",
-        ),
-      }));
-
-      const best =
-        withSim.length > 0
-          ? withSim.reduce((a, b) => (b.similarity > a.similarity ? b : a))
-          : null;
-
-      if (best && best.similarity >= threshold) {
-        const reranked = [...withSim].sort(
-          (a, b) => b.similarity - a.similarity,
-        );
-        console.log(
-          `[lunr-recon] Similarity rerank (threshold: ${threshold}) — best: "${best.label}" ${(best.similarity * 100).toFixed(1)}%`,
-        );
-        return reranked.map((r, i) => ({
-          id: r.uri,
-          name: r.label,
-          score: i === 0 ? 100 : Math.max(100 - i, 1),
-          match: i === 0,
-        }));
-      }
-
-      console.log(
-        `[lunr-recon] No result above similarity threshold (${threshold})`,
-      );
-    }
-
     return topN.map((r, i) => ({
       id: r.ref,
       name: this.uriToLabel.get(r.ref) ?? r.ref,
@@ -368,34 +331,6 @@ export class LunrReconcileService implements ReconcileServiceIfc {
         FILTER(LANG(?label) = "fr" || LANG(?label) = "")
       }
     `;
-  }
-
-  // ─── Similarity ──────────────────────────────────────────────
-
-  private stringSimilarity(a: string, b: string): number {
-    const s1 = a.toLowerCase().trim();
-    const s2 = b.toLowerCase().trim();
-    if (s1 === s2) return 1;
-    const maxLen = Math.max(s1.length, s2.length);
-    if (maxLen === 0) return 1;
-    return 1 - this.levenshtein(s1, s2) / maxLen;
-  }
-
-  private levenshtein(a: string, b: string): number {
-    const m = a.length;
-    const n = b.length;
-    const dp: number[] = Array.from({ length: n + 1 }, (_, i) => i);
-    for (let i = 1; i <= m; i++) {
-      let prev = dp[0];
-      dp[0] = i;
-      for (let j = 1; j <= n; j++) {
-        const temp = dp[j];
-        dp[j] =
-          a[i - 1] === b[j - 1] ? prev : 1 + Math.min(prev, dp[j], dp[j - 1]);
-        prev = temp;
-      }
-    }
-    return dp[n];
   }
 
   // ─── Cache ───────────────────────────────────────────────────

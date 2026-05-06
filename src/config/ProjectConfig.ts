@@ -60,16 +60,12 @@ export interface SparqlReconcileServiceV13Config {
 export interface LuceneGraphDBReconcileServiceConfig {
   cacheSize?: number;
   maxResults?: number;
-  /* Nom de l'instance du connecteur Lucene dans GraphDB  */
   luceneIndexName?: string;
-  /* Seuil de similarité (0-1) pour le rerankement par distance d'édition. Désactivé si absent. */
-  similarityThreshold?: number;
 }
 
 export interface LunrReconcileServiceConfig {
   cacheSize?: number;
   maxResults?: number;
-  similarityThreshold?: number;
   sparqlQuery?: string;
   indexCachePath?: string;
 }
