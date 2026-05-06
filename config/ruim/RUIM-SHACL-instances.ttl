@@ -1409,7 +1409,8 @@ Pour certaines spécialités archivées, il est possible que la référence à l
 
 med:P84 sh:path med:codeATC;
   sh:name "code ATC";
-  sh:description "Code ATC sous forme littérale (par exemple “G04CA01”). Le code est explicitement répété en plus de la référence à l'URI principalement pour des questions d'affichage car le simple libellé de la catégorie est ambigü.";
+  sh:description "Code ATC sous forme littérale (par exemple 'G04CA01'). Le code est explicitement répété en plus de la référence à l'URI principalement pour des questions d'affichage car le simple libellé de la catégorie est ambigü.";
+  sh:agentInstruction "Pour filtrer une spécialité par classification ATC, utiliser la réconciliation avec le type <http://data.esante.gouv.fr/ema/sms> pour trouver l'entité ATC. Les entités ATC sont indexées sous la forme 'CODE - libellé' (ex: 'G04CA01 - Antagonistes des récepteurs alpha-adrénergiques'). Injecter ensuite l'URI réconciliée dans la propriété med:classificationATC — ne pas utiliser le code littéral de ce prédicat pour filtrer."@fr;
   sh:minCount "1"^^xsd:integer;
   sh:maxCount "1"^^xsd:integer;
   sh:nodeKind sh:Literal;
