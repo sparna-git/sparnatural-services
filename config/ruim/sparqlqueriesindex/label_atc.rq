@@ -5,4 +5,3 @@ SELECT ?entity ?value WHERE {
   ?spec med:libelleATC ?libelleAtc .
   BIND(CONCAT(STR(?code), " - ", STR(?libelleAtc)) AS ?value)
 }
-limit 300

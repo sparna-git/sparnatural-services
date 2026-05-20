@@ -3,4 +3,3 @@ SELECT ?entity ?value WHERE {
   ?entity skos:altLabel ?value .
   FILTER(LANG(?value) = "fr" || LANG(?value) = "")
 }
-limit 300

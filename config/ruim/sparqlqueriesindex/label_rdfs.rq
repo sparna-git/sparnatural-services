@@ -4,4 +4,3 @@ SELECT ?entity ?value WHERE {
   FILTER(LANG(?value) = "fr" || LANG(?value) = "")
   FILTER(!STRSTARTS(STR(?entity), "http://data.esante.gouv.fr/whocc/atc/"))
 }
-limit 300
