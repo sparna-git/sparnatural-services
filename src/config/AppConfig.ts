@@ -1,7 +1,11 @@
 import "reflect-metadata";
 import { container, DependencyContainer } from "tsyringe";
 import { Project } from "./Project";
-import { ProjectConfig, ReconciliationServiceConfig, SparqlReconcileServiceConfig } from "./ProjectConfig";
+import {
+  ProjectConfig,
+  ReconciliationServiceConfig,
+  SparqlReconcileServiceConfig,
+} from "./ProjectConfig";
 import { ConfigProvider } from "./ConfigProvider";
 import { AppLogger } from "../utils/AppLogger";
 import { MistralText2QueryService } from "../services/impl/MistralText2QueryService";
@@ -117,11 +121,15 @@ export class AppConfig {
       // then wrap them all in a ChainedReconcileService.
       projectContainer.register("reconciliation", {
         useFactory: (c) => {
-          const services: ReconcileServiceIfc[] = reconciliationList.map((cfg) => {
-            const child = c.createChildContainer();
-            child.register("reconciliation.config", { useValue: cfg });
-            return child.resolve<ReconcileServiceIfc>(cfg.implementation as any);
-          });
+          const services: ReconcileServiceIfc[] = reconciliationList.map(
+            (cfg) => {
+              const child = c.createChildContainer();
+              child.register("reconciliation.config", { useValue: cfg });
+              return child.resolve<ReconcileServiceIfc>(
+                cfg.implementation as any,
+              );
+            },
+          );
           return new ChainedReconcileService(services);
         },
       });

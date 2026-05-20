@@ -63,10 +63,21 @@ export interface LuceneGraphDBReconcileServiceConfig {
   luceneIndexName?: string;
 }
 
+export interface FieldQueryConfig {
+  field: string;
+  boost?: number;
+  /** Inline SPARQL query string. Mutually exclusive with queryFile. */
+  query?: string;
+  /** Path to a .rq file relative to the working directory. Mutually exclusive with query. */
+  queryFile?: string;
+}
+
 export interface LunrReconcileServiceConfig {
   cacheSize?: number;
   maxResults?: number;
+  /** @deprecated use sparqlQueries instead */
   sparqlQuery?: string;
+  sparqlQueries?: FieldQueryConfig[];
   indexCachePath?: string;
 }
 

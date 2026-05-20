@@ -1,0 +1,6 @@
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+SELECT ?entity ?value WHERE {
+  ?entity skos:altLabel ?value .
+  FILTER(LANG(?value) = "fr" || LANG(?value) = "")
+}
+limit 300

@@ -1,0 +1,8 @@
+PREFIX med: <http://data.esante.gouv.fr/ansm/medicament/>
+SELECT ?entity ?value WHERE {
+  ?spec med:classificationATC ?entity .
+  ?spec med:codeATC ?code .
+  ?spec med:libelleATC ?libelleAtc .
+  BIND(CONCAT(STR(?code), " - ", STR(?libelleAtc)) AS ?value)
+}
+limit 300

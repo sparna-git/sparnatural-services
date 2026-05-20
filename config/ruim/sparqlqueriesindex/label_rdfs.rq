@@ -1,0 +1,7 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?entity ?value WHERE {
+  ?entity rdfs:label ?value .
+  FILTER(LANG(?value) = "fr" || LANG(?value) = "")
+  FILTER(!STRSTARTS(STR(?entity), "http://data.esante.gouv.fr/whocc/atc/"))
+}
+limit 300
