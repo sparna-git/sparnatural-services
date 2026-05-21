@@ -17,7 +17,13 @@ export async function registerTools(
 
   const [{ shaclTypes }, shapesGraphMeta] = await Promise.all([
     projectConfigAdapter.getProjectConfig(projectId),
-    projectConfigAdapter.getShapesGraphMeta(projectId).catch(() => ({ title: undefined, description: undefined, agentInstruction: undefined })),
+    projectConfigAdapter
+      .getShapesGraphMeta(projectId)
+      .catch(() => ({
+        title: undefined,
+        description: undefined,
+        agentInstruction: undefined,
+      })),
   ]);
 
   const shapesGraphContext =

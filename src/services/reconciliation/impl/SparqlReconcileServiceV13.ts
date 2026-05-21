@@ -1,26 +1,24 @@
 import axios from "axios";
-import { getSHACLConfig } from "../config/SCHACL";
+import { getSHACLConfig } from "../../../config/SCHACL";
 import {
   ReconcileOutput,
   ReconcileServiceIfc,
   ReconcileInput,
   ReconcileResult,
   ManifestType,
-} from "./ReconcileServiceIfc";
+} from "../interfaces/ReconcileServiceIfc";
 import { inject, injectable } from "tsyringe";
-import { SparqlReconcileServiceConfig } from "../config/ProjectConfig";
+import { SparqlReconcileServiceV13Config } from "../../../config/ProjectConfig";
 import {
   collectUnresolvedLabels,
   buildLabelToUriMap,
   injectResolvedUris,
-} from "../utils/UriReconciliationHelperOld";
+} from "../helpers/UriReconciliationHelperV13";
 
 type CacheEntry = { results: ReconcileResult[]; lastAccessed: Date };
 
-@injectable({ token: "SparqlReconcileService" })
-// this indicates it is the default implementation for this service
-@injectable({ token: "default:reconciliation" })
-export class SparqlReconcileService implements ReconcileServiceIfc {
+@injectable({ token: "SparqlReconcileServiceV13" })
+export class SparqlReconcileServiceV13 implements ReconcileServiceIfc {
   public static DEFAULT_MAX_RESULTS = 10;
   public static DEFAULT_CACHE_SIZE = 1000;
 
@@ -37,17 +35,17 @@ export class SparqlReconcileService implements ReconcileServiceIfc {
     @inject("project.id") projectId?: string,
     @inject("project.sparqlEndpoint") sparqlEndpoint?: string,
     @inject("reconciliation.config")
-    reconciliationConfig?: SparqlReconcileServiceConfig,
+    reconciliationConfig?: SparqlReconcileServiceV13Config,
   ) {
     this.projectId = projectId || "";
     this.sparqlEndpoint = sparqlEndpoint || "";
 
     this.maxResults =
       reconciliationConfig?.maxResults ||
-      SparqlReconcileService.DEFAULT_MAX_RESULTS;
+      SparqlReconcileServiceV13.DEFAULT_MAX_RESULTS;
     this.cacheSize =
       reconciliationConfig?.cacheSize ||
-      SparqlReconcileService.DEFAULT_CACHE_SIZE;
+      SparqlReconcileServiceV13.DEFAULT_CACHE_SIZE;
   }
 
   // --- Manifest ---
@@ -98,13 +96,11 @@ export class SparqlReconcileService implements ReconcileServiceIfc {
     uniqueEntries.forEach(([key, qobj]) => {
       chain = chain.then(() => {
         const name = qobj.query.trim();
-        console.log("[QOBJ]", qobj);
         const cacheKey = encodeURIComponent(
           name.toLowerCase() +
             (qobj.type ? `|${qobj.type}` : "") +
             (includeTypes ? "|openrefine" : "|simple"),
         );
-        console.log("[cacheKey]", cacheKey);
 
         // Résultat déjà en cache ?
         if (
@@ -155,8 +151,9 @@ export class SparqlReconcileService implements ReconcileServiceIfc {
   }
 
   /**
-   * Takes a complete parsed SparnaturalQuery (old structure: branches → line.criterias → criteria.rdfTerm),
-   * finds all URI_NOT_FOUND labels, reconciles them via SPARQL, and injects the resolved URIs back.
+   * Takes a complete parsed SparnaturalQuery (v13), finds all URI_NOT_FOUND labels,
+   * reconciles them via SPARQL, and injects the resolved URIs back.
+   * All the collect/inject logic is handled here — callers just pass the query.
    */
   async resolveQueryUris(parsedQuery: any): Promise<any> {
     const labelsToResolve = collectUnresolvedLabels(parsedQuery);
@@ -170,10 +167,10 @@ export class SparqlReconcileService implements ReconcileServiceIfc {
       `[reconciliation] 🔎 Resolving ${
         Object.keys(labelsToResolve).length
       } label(s):`,
-      Object.values(labelsToResolve).map((l: any) => l.query),
+      Object.values(labelsToResolve).map((l) => l.query),
     );
 
-    const queries = SparqlReconcileService.parseQueries(labelsToResolve);
+    const queries = SparqlReconcileServiceV13.parseQueries(labelsToResolve);
     const uriRes = await this.reconcileQueries(queries, false);
     const labelToUri = buildLabelToUriMap(labelsToResolve, uriRes);
     injectResolvedUris(parsedQuery, labelToUri);
@@ -255,32 +252,18 @@ export class SparqlReconcileService implements ReconcileServiceIfc {
     // Nouvelle methode
     const { postProcessor } = await getSHACLConfig(this.projectId);
 
-    let escapedName = name.replace(/"/g, '\\"');
-    // fisrst lettre of escapedName to uppercase
-    escapedName = escapedName.charAt(0).toUpperCase() + escapedName.slice(1);
-    const normalized = escapedName.toLowerCase();
-    /*console.log("normalized value :", normalized);
-    console.log(
-      `Recherche SPARQL pour "${name}" (type: ${typeUri || "none"})...`,
-    );
-    */
+    const escapedName = name.replace(/"/g, '\\"');
+
+    //
     // QUERY 1 : rdfs:label
 
     const query1 = `
     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
     SELECT ?x WHERE {
-      { 
-       { ?x rdfs:label "${escapedName}"@en } 
-        UNION 
-       { ?x rdfs:label "${escapedName}"@fr } 
-        UNION
-        { ?x rdfs:label "${normalized}"@en }
-        UNION
-        { ?x rdfs:label "${normalized}"@fr }
-      }
+      { { ?x rdfs:label "${escapedName}"@en } UNION { ?x rdfs:label "${escapedName}"@fr } }
     }
     LIMIT ${this.maxResults}
-    `;
+  `;
 
     let bindings: any[] = [];
 
@@ -302,16 +285,12 @@ export class SparqlReconcileService implements ReconcileServiceIfc {
         // QUERY 2 : SKOS prefLabel / altLabel
 
         const query2 = `
-       PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+        PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
         SELECT ?x WHERE {
           {
             { ?x skos:prefLabel|skos:altLabel|skos:notation "${escapedName}"@en }
             UNION
             { ?x skos:prefLabel|skos:altLabel|skos:notation "${escapedName}"@fr }
-            UNION
-            { ?x skos:prefLabel|skos:altLabel|skos:notation "${normalized}"@en }
-            UNION
-            { ?x skos:prefLabel|skos:altLabel|skos:notation "${normalized}"@fr }
           }
         }
         LIMIT ${this.maxResults}

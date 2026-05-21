@@ -1,7 +1,7 @@
 // This endpoint generates automatically the text2query prompt for a given project.
 // The SHACL file path is read from the project config (config.yaml) using the projectKey.
 import express from "express";
-import { T2QPromptGenerator } from "../services/T2QPromptGeneratorService";
+import { T2QPromptGenerator } from "../services/prompts/impl/T2QPromptGeneratorService";
 import { AppConfig } from "../config/AppConfig";
 
 const router = express.Router({ mergeParams: true });

@@ -5,7 +5,7 @@ import {
   ReconcileOutput,
   ReconcileServiceIfc,
   ManifestType,
-} from "./ReconcileServiceIfc";
+} from "../interfaces/ReconcileServiceIfc";
 
 const ISIDORE_RESOURCE_SUGGEST_URL =
   "https://api.isidore.science/resource/suggest";
@@ -128,7 +128,10 @@ export class IsidoreApiReconcileService implements ReconcileServiceIfc {
       }
 
       const entityType = classIriToIsidoreType(qobj.type);
-      const candidates = await getIsidoreSuggestCandidates(qobj.query, entityType);
+      const candidates = await getIsidoreSuggestCandidates(
+        qobj.query,
+        entityType,
+      );
 
       output[key] = {
         result: candidates.map((c, i) => ({

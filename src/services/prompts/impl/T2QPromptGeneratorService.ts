@@ -1,11 +1,11 @@
-import { T2QPromptGeneratorIfc } from "./T2QPromptGeneratorIfc";
+import { T2QPromptGeneratorIfc } from "../interfaces/T2QPromptGeneratorIfc";
 import { inject, injectable } from "tsyringe";
-import { PromptGeneratorT2QConfig } from "../config/ProjectConfig";
+import { PromptGeneratorT2QConfig } from "../../../config/ProjectConfig";
 import {
   T2Q_STATIC_PART_BEFORE,
   T2Q_STATIC_PART_AFTER,
-} from "../utils/T2QPromptParts";
-import { getSHACLConfig } from "../config/SCHACL";
+} from "../helpers/T2QPromptParts";
+import { getSHACLConfig } from "../../../config/SCHACL";
 
 import {
   PropertyShape,
@@ -19,7 +19,7 @@ import {
   DagNodeIfc,
   Resource,
 } from "rdf-shacl-commons";
-import { loadAdditionalInstructions } from "../config/AdditionalInstructions";
+import { loadAdditionalInstructions } from "../../../config/AdditionalInstructions";
 
 @injectable({ token: "T2QPromptGenerator" })
 @injectable({ token: "default:t2qPromptGenerator" })
@@ -60,13 +60,15 @@ export class T2QPromptGenerator implements T2QPromptGeneratorIfc {
 
   /** Strip markdown syntax from a description before injecting into the prompt.
    *  Accepts string, string[] (joined with space), or null/undefined. */
-  private static stripMarkdown(text: string | string[] | null | undefined): string {
+  private static stripMarkdown(
+    text: string | string[] | null | undefined,
+  ): string {
     const raw = Array.isArray(text) ? text.join(" ") : (text ?? "");
     return raw
       .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1") // [text](url) → text
-      .replace(/`([^`]+)`/g, "$1")              // `code` → code
-      .replace(/\*\*([^*]+)\*\*/g, "$1")        // **bold** → bold
-      .replace(/\*([^*]+)\*/g, "$1")            // *italic* → italic
+      .replace(/`([^`]+)`/g, "$1") // `code` → code
+      .replace(/\*\*([^*]+)\*\*/g, "$1") // **bold** → bold
+      .replace(/\*([^*]+)\*/g, "$1") // *italic* → italic
       .trim();
   }
 

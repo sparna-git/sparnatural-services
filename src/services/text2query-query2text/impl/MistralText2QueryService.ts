@@ -1,10 +1,10 @@
 import { Text2QueryServiceIfc } from "../interfaces/Text2QueryServiceIfc";
-import { ReconcileServiceIfc } from "../ReconcileServiceIfc";
+import { ReconcileServiceIfc } from "../../reconciliation/interfaces/ReconcileServiceIfc";
 import { Mistral } from "@mistralai/mistralai";
 
-import strictSchema from "../../schemas/newSchema.strict.v2.schema.json";
+import strictSchema from "../../../schemas/newSchema.strict.v2.schema.json";
 import { inject, injectable } from "tsyringe";
-import { MistralText2QueryServiceConfig } from "../../config/ProjectConfig";
+import { MistralText2QueryServiceConfig } from "../../../config/ProjectConfig";
 @injectable({ token: "MistralText2QueryService" })
 // this indicates it is the default implementation for this service
 @injectable({ token: "default:text2query" })

@@ -84,33 +84,17 @@ projects:
       - implementation: LunrReconcileService
         cacheSize: 1000
         maxResults: 10
-        indexCachePath: ./cache/ruim/lunr-index.json
-        sparqlQuery: |
-          PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-          PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-          PREFIX med: <http://data.esante.gouv.fr/ansm/medicament/>
-
-          SELECT ?entity ?label WHERE {
-            {
-              # Labels principaux — toutes les entités avec rdfs:label (hors espace ATC)
-              ?entity rdfs:label ?label .
-              FILTER(LANG(?label) = "fr" || LANG(?label) = "")
-              FILTER(!STRSTARTS(STR(?entity), "http://data.esante.gouv.fr/whocc/atc/"))
-            }
-            UNION
-            {
-              # Synonymes — skos:altLabel sur Substances et Présentations
-              ?entity skos:altLabel ?label .
-              FILTER(LANG(?label) = "fr" || LANG(?label) = "")
-            }
-            UNION
-            {
-              ?spec med:classificationATC ?entity .
-              ?spec med:codeATC ?code .
-              ?spec med:libelleATC ?libelleAtc .
-              BIND(CONCAT(STR(?code), " - ", STR(?libelleAtc)) AS ?label)
-            }
-          }
+        indexCachePath: ./cache/ruim/lunr-index-ruim.json
+        sparqlQueries:
+          - field: label
+            boost: 10
+            queryFile: ./config/ruim/sparqlqueriesindex/label_rdfs.rq
+          - field: label
+            boost: 10
+            queryFile: ./config/ruim/sparqlqueriesindex/label_atc.rq
+          - field: altLabel
+            boost: 5
+            queryFile: ./config/ruim/sparqlqueriesindex/altlabel_skos.rq
   isidore:
     shacl: ./config/isidore/isidore-shapes.ttl
     sparqlEndpoint: https://isidore-ref.huma-num.fr/sparql
@@ -135,20 +119,39 @@ projects:
     shacl: ./config/ruim/RUIM-SHACL-instances.ttl
     sparqlEndpoint: https://data.sparna.fr/graphdb/repositories/RUIM
     shaclTypes:
+      - http://data.esante.gouv.fr/ansm/medicament/SpecialitePharmaceutique
       - http://data.esante.gouv.fr/ansm/medicament/Presentation
       - http://data.esante.gouv.fr/ansm/medicament/UniteCommuneDeDispensation
-      - http://data.esante.gouv.fr/ansm/medicament/SpecialitePharmaceutique
-      - http://data.esante.gouv.fr/ansm/medicament/Evenement
-      - http://data.esante.gouv.fr/ansm/medicament/Substance
       - http://data.esante.gouv.fr/ansm/medicament/GroupeGenerique
-      - http://data.esante.gouv.fr/ansm/medicament/Organisation
+      - http://data.esante.gouv.fr/ansm/medicament/Element
       - http://data.esante.gouv.fr/ansm/medicament/ElementPresentation
-      - http://data.esante.gouv.fr/ansm/medicament/TypeEvenement
+      - http://data.esante.gouv.fr/ansm/medicament/DosageConcentration
+      - http://data.esante.gouv.fr/ansm/medicament/DosagePresentation
+      - http://data.esante.gouv.fr/ansm/medicament/Unite
+      - http://data.esante.gouv.fr/ansm/medicament/ExpressionDeDosage
+      - http://data.esante.gouv.fr/ansm/medicament/Organisation
+      - http://data.esante.gouv.fr/ansm/medicament/Substance
+      - http://data.esante.gouv.fr/ansm/medicament/Voie
+      - http://data.esante.gouv.fr/ansm/medicament/Forme
+      - http://data.esante.gouv.fr/ansm/medicament/UniteDePresentation
+      - http://data.esante.gouv.fr/ansm/medicament/TypeContenant
+      - http://data.esante.gouv.fr/ansm/medicament/JustificationNiveauVirtualisation
+      - http://data.esante.gouv.fr/ansm/medicament/JustificationNiveauPrescriptibilite
+      - http://data.esante.gouv.fr/ansm/medicament/NiveauVirtualisation
+      - http://data.esante.gouv.fr/ansm/medicament/NiveauPrescriptibilite
+      - http://data.esante.gouv.fr/ansm/medicament/TypeDose
+      - http://data.esante.gouv.fr/ansm/medicament/Gamme
+      - http://data.esante.gouv.fr/ansm/medicament/PrescriptionEnDC
+      - http://data.esante.gouv.fr/ansm/medicament/PPhParSubstance
+      - http://data.esante.gouv.fr/ansm/medicament/PPhParSubstanceDosage
+      - http://data.esante.gouv.fr/ansm/medicament/PPhParSubstanceForme
+      - http://data.esante.gouv.fr/ansm/medicament/PPhParSubstanceDosageForme
+      - http://data.esante.gouv.fr/ansm/medicament/Evenement
+      - http://data.esante.gouv.fr/ansm/medicament/Autorisation
+      - http://data.esante.gouv.fr/ansm/medicament/ChangementDeStatut
       - http://data.esante.gouv.fr/ansm/medicament/TypeProcedure
       - http://data.esante.gouv.fr/ansm/medicament/StatutSpecialite
-      - http://data.esante.gouv.fr/ansm/medicament/NiveauPrescriptibilite
-      - http://data.esante.gouv.fr/ansm/medicament/JustificationNiveauPrescriptibilite
-      - http://data.esante.gouv.fr/ansm/medicament/Voie
+      - http://data.esante.gouv.fr/ansm/medicament/TypeEvenement
       - http://data.esante.gouv.fr/ema/sms
     domains:
       - sparna-git.github.io
@@ -157,36 +160,18 @@ projects:
     reconciliation:
       implementation: LunrReconcileService
       cacheSize: 1000
-      maxResults: 10
-      indexCachePath: ./cache/ruim/lunr-index.json
-      sparqlQuery: |
-        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-        PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-        PREFIX med: <http://data.esante.gouv.fr/ansm/medicament/>
-
-        SELECT ?entity ?label WHERE {
-          {
-            # Labels principaux — toutes les entités avec rdfs:label (hors espace ATC)
-            ?entity rdfs:label ?label .
-            FILTER(LANG(?label) = "fr" || LANG(?label) = "")
-            FILTER(!STRSTARTS(STR(?entity), "http://data.esante.gouv.fr/whocc/atc/"))
-          }
-          UNION
-          {
-            # Synonymes — skos:altLabel sur Substances et Présentations
-            ?entity skos:altLabel ?label .
-            FILTER(LANG(?label) = "fr" || LANG(?label) = "")
-          }
-          UNION
-          {
-            # Entités ATC : URIs sans triplets propres, labels dénormalisés sur les Spécialités.
-            # Format Sparnatural : "CODE - libellé"
-            ?spec med:classificationATC ?entity .
-            ?spec med:codeATC ?code .
-            ?spec med:libelleATC ?libelleAtc .
-            BIND(CONCAT(STR(?code), " - ", STR(?libelleAtc)) AS ?label)
-          }
-        }
+      maxResults: 6
+      indexCachePath: ./cache/ruim/lunr-index-ruim.json
+      sparqlQueries:
+        - field: label
+          boost: 10
+          queryFile: ./config/ruim/sparqlqueriesindex/label_rdfs.rq
+        - field: label
+          boost: 10
+          queryFile: ./config/ruim/sparqlqueriesindex/label_atc.rq
+        - field: altLabel
+          boost: 5
+          queryFile: ./config/ruim/sparqlqueriesindex/altlabel_skos.rq
     t2qPromptGenerator:
       implementation: T2QPromptGenerator
       additionalInstructions: ./config/ruim/additionalInstructions.txt

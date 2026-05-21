@@ -9,13 +9,13 @@
  */
 
 import { inject, injectable } from "tsyringe";
-import { Q2TPromptGeneratorIfc } from "./Q2TPromptGeneratorIfc";
-import { PromptGeneratorQ2TConfig } from "../config/ProjectConfig";
+import { Q2TPromptGeneratorIfc } from "../interfaces/Q2TPromptGeneratorIfc";
+import { PromptGeneratorQ2TConfig } from "../../../config/ProjectConfig";
 import {
   Q2T_STATIC_PART_BEFORE,
   Q2T_STATIC_PART_AFTER,
-} from "../utils/Q2TPromptParts";
-import { getSHACLConfig } from "../config/SCHACL";
+} from "../helpers/Q2TPromptParts";
+import { getSHACLConfig } from "../../../config/SCHACL";
 
 import {
   PropertyShape,
@@ -25,7 +25,7 @@ import {
   ShaclModel,
 } from "rdf-shacl-commons";
 
-import { loadAdditionalInstructions } from "../config/AdditionalInstructions";
+import { loadAdditionalInstructions } from "../../../config/AdditionalInstructions";
 
 @injectable({ token: "Q2TPromptGenerator" })
 @injectable({ token: "default:q2tPromptGenerator" })

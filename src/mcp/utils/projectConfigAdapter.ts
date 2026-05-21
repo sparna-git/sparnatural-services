@@ -12,7 +12,7 @@ import {
 import type {
   ReconcileInput,
   ReconcileOutput,
-} from "../../services/ReconcileServiceIfc";
+} from "../../services/reconciliation/interfaces/ReconcileServiceIfc";
 export interface ProjectConfig {
   projectId: string;
   sparqlEndpoint: string;

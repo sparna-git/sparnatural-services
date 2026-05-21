@@ -5,15 +5,15 @@ import {
   ReconcileInput,
   ReconcileResult,
   ManifestType,
-} from "./ReconcileServiceIfc";
+} from "../interfaces/ReconcileServiceIfc";
 import { inject, injectable } from "tsyringe";
-import { LuceneGraphDBReconcileServiceConfig } from "../config/ProjectConfig";
+import { LuceneGraphDBReconcileServiceConfig } from "../../../config/ProjectConfig";
 import {
   collectUnresolvedLabels,
   buildLabelToUriMap,
   injectResolvedUris,
-} from "../utils/UriReconciliationHelperV13";
-import { getSHACLConfig } from "../config/SCHACL";
+} from "../helpers/UriReconciliationHelperV13";
+import { getSHACLConfig } from "../../../config/SCHACL";
 
 type CacheEntry = { results: ReconcileResult[]; lastAccessed: Date };
 type SearchResult = { uri: string; label: string };

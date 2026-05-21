@@ -1,7 +1,7 @@
 import { Mistral } from "@mistralai/mistralai";
 import { Query2TextServiceIfc } from "../interfaces/Query2TextServiceIfc";
 import { inject, injectable } from "tsyringe";
-import { MistralQuery2TextServiceConfig } from "../../config/ProjectConfig";
+import { MistralQuery2TextServiceConfig } from "../../../config/ProjectConfig";
 
 @injectable({ token: "MistralQuery2TextService" })
 // this indicates it is the default implementation for this service
@@ -15,7 +15,7 @@ export class MistralQuery2TextService implements Query2TextServiceIfc {
 
   constructor(
     @inject("query2text.config")
-    query2textConfig?: MistralQuery2TextServiceConfig
+    query2textConfig?: MistralQuery2TextServiceConfig,
   ) {
     this.config = query2textConfig!;
   }

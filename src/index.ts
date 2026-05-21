@@ -21,8 +21,8 @@ import { checkDomainMiddleware } from "./middleware/checkDomainMiddleware";
 import { createMcpRouter } from "./mcp/server";
 
 import { ConfigProvider } from "./config/ConfigProvider";
-import { LunrReconcileService } from "./services/LunrReconcileService";
-import { ChainedReconcileService } from "./services/ChainedReconcileService";
+import { LunrReconcileService } from "./services/reconciliation/impl/lunr/LunrReconcileService";
+import { ChainedReconcileService } from "./services/reconciliation/ChainedReconcileService";
 
 dotenv.config();
 
@@ -150,7 +150,10 @@ app.listen(PORT, () => {
     for (const lunr of lunrServices) {
       console.log(`[lunr] Warming up index for project "${projectKey}"…`);
       lunr.warmUp().catch((err) => {
-        console.error(`[lunr] Index warm-up failed for project "${projectKey}":`, err);
+        console.error(
+          `[lunr] Index warm-up failed for project "${projectKey}":`,
+          err,
+        );
       });
     }
   }

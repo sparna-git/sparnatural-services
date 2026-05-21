@@ -2,24 +2,24 @@ import { inject, injectable } from "tsyringe";
 import {
   NoOpQuery2TextService,
   Query2TextServiceIfc,
-} from "../services/interfaces/Query2TextServiceIfc";
+} from "../services/text2query-query2text/interfaces/Query2TextServiceIfc";
 import {
   NoOpText2QueryService,
   Text2QueryServiceIfc,
-} from "../services/interfaces/Text2QueryServiceIfc";
+} from "../services/text2query-query2text/interfaces/Text2QueryServiceIfc";
 import {
   NoOpReconcileService,
   ReconcileServiceIfc,
-} from "../services/ReconcileServiceIfc";
+} from "../services/reconciliation/interfaces/ReconcileServiceIfc";
 
 import {
   Q2TPromptGeneratorIfc,
   NoOpQ2TPromptGenerator,
-} from "../services/Q2TPromptGeneratorIfc";
+} from "../services/prompts/interfaces/Q2TPromptGeneratorIfc";
 import {
   T2QPromptGeneratorIfc,
   NoOpT2QPromptGenerator,
-} from "../services/T2QPromptGeneratorIfc";
+} from "../services/prompts/interfaces/T2QPromptGeneratorIfc";
 
 @injectable({ token: "Project" })
 export class Project {

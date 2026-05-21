@@ -8,19 +8,19 @@ import {
 } from "./ProjectConfig";
 import { ConfigProvider } from "./ConfigProvider";
 import { AppLogger } from "../utils/AppLogger";
-import { MistralText2QueryService } from "../services/impl/MistralText2QueryService";
-import { MistralQuery2TextService } from "../services/impl/MistralQuery2TextService";
-import { RestText2QueryService } from "../services/impl/RestText2QueryService";
-import { RestQuery2TextService } from "../services/impl/RestQuery2TextService";
-import { Q2TPromptGenerator } from "../services/Q2TPromptGeneratorService";
-import { T2QPromptGenerator } from "../services/T2QPromptGeneratorService";
-import { SparqlReconcileService } from "../services/SparqlReconcileService";
-import { SparqlReconcileServiceV13 } from "../services/SparqlReconcileServiceV13";
-import { LuceneGraphDBReconcileService } from "../services/LuceneGraphDBReconcileService";
-import { LunrReconcileService } from "../services/LunrReconcileService";
-import { IsidoreApiReconcileService } from "../services/IsidoreApiReconcileService";
-import { ChainedReconcileService } from "../services/ChainedReconcileService";
-import { ReconcileServiceIfc } from "../services/ReconcileServiceIfc";
+import { MistralText2QueryService } from "../services/text2query-query2text/impl/MistralText2QueryService";
+import { MistralQuery2TextService } from "../services/text2query-query2text/impl/MistralQuery2TextService";
+import { RestText2QueryService } from "../services/text2query-query2text/impl/RestText2QueryService";
+import { RestQuery2TextService } from "../services/text2query-query2text/impl/RestQuery2TextService";
+import { Q2TPromptGenerator } from "../services/prompts/impl/Q2TPromptGeneratorService";
+import { T2QPromptGenerator } from "../services/prompts/impl/T2QPromptGeneratorService";
+import { SparqlReconcileService } from "../services/reconciliation/impl/SparqlReconcileService";
+import { SparqlReconcileServiceV13 } from "../services/reconciliation/impl/SparqlReconcileServiceV13";
+import { LuceneGraphDBReconcileService } from "../services/reconciliation/impl/LuceneGraphDBReconcileService";
+import { LunrReconcileService } from "../services/reconciliation/impl/lunr/LunrReconcileService";
+import { IsidoreApiReconcileService } from "../services/reconciliation/impl/IsidoreApiReconcileService";
+import { ChainedReconcileService } from "../services/reconciliation/ChainedReconcileService";
+import { ReconcileServiceIfc } from "../services/reconciliation/interfaces/ReconcileServiceIfc";
 /*
 const DEFAULT_RECONCILIATION_CONFIG: SparqlReconcileServiceConfig = {
   cacheSize: SparqlReconcileService.DEFAULT_CACHE_SIZE,

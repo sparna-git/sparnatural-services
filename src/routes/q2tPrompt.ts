@@ -1,7 +1,7 @@
 // This endpoint generates automatically the query2text prompt for a given project.
 // The SHACL file path is read from the project config (config.yaml) using the projectKey.
 import express from "express";
-import { Q2TPromptGenerator } from "../services/Q2TPromptGeneratorService";
+import { Q2TPromptGenerator } from "../services/prompts/impl/Q2TPromptGeneratorService";
 import { AppConfig } from "../config/AppConfig";
 
 const router = express.Router({ mergeParams: true });

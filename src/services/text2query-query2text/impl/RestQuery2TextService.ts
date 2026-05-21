@@ -1,14 +1,14 @@
 import axios from "axios";
 import { Query2TextServiceIfc } from "../interfaces/Query2TextServiceIfc";
 import { inject, injectable } from "tsyringe";
-import { RestQuery2TextServiceConfig } from "../../config/ProjectConfig";
+import { RestQuery2TextServiceConfig } from "../../../config/ProjectConfig";
 
 @injectable({ token: "RestQuery2TextService" })
 export class RestQuery2TextService implements Query2TextServiceIfc {
   private config: RestQuery2TextServiceConfig;
 
   constructor(
-    @inject("query2text.config") query2textConfig?: RestQuery2TextServiceConfig
+    @inject("query2text.config") query2textConfig?: RestQuery2TextServiceConfig,
   ) {
     this.config = query2textConfig!;
   }
@@ -20,7 +20,7 @@ export class RestQuery2TextService implements Query2TextServiceIfc {
       const messageContent = `LANGUAGE: ${lang}\n\nQUERY:\n${JSON.stringify(
         jsonQuery,
         null,
-        2
+        2,
       )}`;
 
       const response = await axios.post(
@@ -35,7 +35,7 @@ export class RestQuery2TextService implements Query2TextServiceIfc {
             Authorization: `Bearer ${process.env.MISTRAL_API_KEY}`,
             "Content-Type": "application/json",
           },
-        }
+        },
       );
 
       const result = response.data.choices?.[0]?.message?.content;
@@ -43,7 +43,7 @@ export class RestQuery2TextService implements Query2TextServiceIfc {
     } catch (error: any) {
       console.error(
         "Erreur Mistral (OldQuery2TextService.summarize) :",
-        error?.response?.data || error.message
+        error?.response?.data || error.message,
       );
       return "Erreur lors de la génération du résumé avec Mistral.";
     }

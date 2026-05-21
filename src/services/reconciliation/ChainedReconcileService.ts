@@ -3,17 +3,17 @@ import {
   ReconcileInput,
   ReconcileOutput,
   ReconcileServiceIfc,
-} from "./ReconcileServiceIfc";
+} from "./interfaces/ReconcileServiceIfc";
 import {
   collectUnresolvedLabels as collectOld,
   buildLabelToUriMap as buildOld,
   injectResolvedUris as injectOld,
-} from "../utils/UriReconciliationHelperOld";
+} from "./helpers/UriReconciliationHelperOld";
 import {
   collectUnresolvedLabels as collectV13,
   buildLabelToUriMap as buildV13,
   injectResolvedUris as injectV13,
-} from "../utils/UriReconciliationHelperV13";
+} from "./helpers/UriReconciliationHelperV13";
 
 /**
  * Tries each service in order for every reconcile query.
@@ -32,7 +32,10 @@ export class ChainedReconcileService implements ReconcileServiceIfc {
     for (const [key, qobj] of Object.entries(queries)) {
       let resolved = false;
       for (const service of this.services) {
-        const result = await service.reconcileQueries({ [key]: qobj }, includeTypes);
+        const result = await service.reconcileQueries(
+          { [key]: qobj },
+          includeTypes,
+        );
         if (result[key]?.result?.length > 0) {
           output[key] = result[key];
           resolved = true;
@@ -56,7 +59,9 @@ export class ChainedReconcileService implements ReconcileServiceIfc {
     const labelsToResolve = collectFn(parsedQuery);
 
     if (Object.keys(labelsToResolve).length === 0) {
-      console.log("[chained-reconciliation] ✅ No URI_NOT_FOUND labels to resolve.");
+      console.log(
+        "[chained-reconciliation] ✅ No URI_NOT_FOUND labels to resolve.",
+      );
       return parsedQuery;
     }
 

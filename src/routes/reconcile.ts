@@ -1,8 +1,7 @@
 import express from "express";
 import logger from "../utils/logger";
-import { ConfigProvider } from "../config/ConfigProvider";
-import { ReconcileServiceIfc } from "../services/ReconcileServiceIfc";
-import { SparqlReconcileService } from "../services/SparqlReconcileService";
+
+import { SparqlReconcileService } from "../services/reconciliation/impl/SparqlReconcileService";
 import { AppConfig } from "../config/AppConfig";
 
 const router = express.Router({ mergeParams: true });
@@ -20,7 +19,7 @@ router.post("/", async (req: express.Request<{ projectKey: string }>, res) => {
       body: req.body,
       headers: req.headers,
     },
-    "API call started: reconciliation"
+    "API call started: reconciliation",
   );
 
   const project = AppConfig.getInstance().getProject(projectKey);
@@ -38,7 +37,7 @@ router.post("/", async (req: express.Request<{ projectKey: string }>, res) => {
   try {
     const responsePayload = await service.reconcileQueries(
       queries,
-      includeTypes
+      includeTypes,
     );
     return res.json(responsePayload);
   } catch (err) {

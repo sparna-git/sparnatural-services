@@ -1,11 +1,11 @@
 import axios from "axios";
-import { SparnaturalQuery } from "../../zod/query";
+import { SparnaturalQuery } from "../../../zod/query";
 import { z } from "zod";
-import { EmptyRequestError } from "../../errors/emptyRequestError";
-import { ReconcileServiceIfc } from "../ReconcileServiceIfc";
+import { EmptyRequestError } from "../../../errors/emptyRequestError";
+import { ReconcileServiceIfc } from "../../reconciliation/interfaces/ReconcileServiceIfc";
 import { Text2QueryServiceIfc } from "../interfaces/Text2QueryServiceIfc";
 import { inject, injectable } from "tsyringe";
-import { RestText2QueryServiceConfig } from "../../config/ProjectConfig";
+import { RestText2QueryServiceConfig } from "../../../config/ProjectConfig";
 
 @injectable({ token: "RestText2QueryService" })
 export class RestText2QueryService implements Text2QueryServiceIfc {
