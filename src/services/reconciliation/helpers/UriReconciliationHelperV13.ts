@@ -14,8 +14,9 @@ export interface LabelToResolve {
 
 // 1. COLLECT — find all URI_NOT_FOUND labels in the query tree
 /**
- * Walks the v13 SparnaturalQuery tree and collects every unique
- * URI_NOT_FOUND label that needs reconciliation.
+ * Walks the v13 SparnaturalQuery tree and collects every URI_NOT_FOUND label
+ * that needs reconciliation. Duplicates are kept — callers (reconcileQueries
+ * implementations) deduplicate by normalized query before searching.
  *
  * @returns A record like { label_0: { query: "France", type: "http://...Country" }, ... }
  */
@@ -23,18 +24,13 @@ export function collectUnresolvedLabels(
   parsed: any,
 ): Record<string, LabelToResolve> {
   const labelsToResolve: Record<string, LabelToResolve> = {};
-  const seen = new Set<string>();
   let idx = 0;
 
   function addLabel(label: string, rdfType?: string) {
-    const normalized = label.trim().toLowerCase();
-    if (!seen.has(normalized)) {
-      seen.add(normalized);
-      labelsToResolve[`label_${idx++}`] = {
-        query: label,
-        type: rdfType,
-      };
-    }
+    labelsToResolve[`label_${idx++}`] = {
+      query: label,
+      type: rdfType,
+    };
   }
 
   /**

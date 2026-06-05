@@ -6,18 +6,30 @@ import { getSHACLConfig, loadShaclTtl } from "../../config/SCHACL";
 import { ShapesGraph } from "rdf-shacl-commons";
 import {
   extractNodeShapes,
+  extractNodeShapesOverview,
   extractPrefixesFromTtl,
   type NodeShapeInfo,
+  type NodeShapeOverviewInfo,
 } from "./shaclParser";
 import type {
   ReconcileInput,
   ReconcileOutput,
 } from "../../services/reconciliation/interfaces/ReconcileServiceIfc";
+import type {
+  UseCase,
+  TerminologyMapping,
+  FewShot,
+} from "../../config/ProjectConfig";
+import { loadFewShots } from "../../config/FewShots";
+
 export interface ProjectConfig {
   projectId: string;
   sparqlEndpoint: string;
   shaclPath?: string;
   shaclTypes?: string[];
+  useCases?: UseCase[];
+  terminology?: TerminologyMapping[];
+  fewShotsFile?: string;
 }
 
 /**
@@ -29,7 +41,12 @@ export interface ProjectConfigAdapter {
   getShaclNodeShapes(
     projectId: string,
     lang?: string,
+    shapes?: string[],
   ): Promise<{ shapes: NodeShapeInfo[]; prefixes: [string, string][] }>;
+  getShaclNodeShapesOverview(
+    projectId: string,
+    lang?: string,
+  ): Promise<{ shapes: NodeShapeOverviewInfo[]; prefixes: [string, string][] }>;
   getShapesGraphMeta(
     projectId: string,
     lang?: string,
@@ -45,6 +62,9 @@ export interface ProjectConfigAdapter {
     includeTypes?: boolean,
   ): Promise<ReconcileOutput>;
   checkSparqlReachable(projectId: string): Promise<boolean>;
+  /** Returns the curated NL+SPARQL samples for the project, or `undefined`
+   *  if no `fewShotsFile` is configured or the file is missing. */
+  getFewShots(projectId: string): Promise<FewShot[] | undefined>;
 }
 
 /**
@@ -73,7 +93,15 @@ export class ConfigBackedProjectConfigAdapter implements ProjectConfigAdapter {
       sparqlEndpoint: projectConfig.sparqlEndpoint,
       shaclPath: projectConfig.shacl,
       shaclTypes: projectConfig.shaclTypes,
+      useCases: projectConfig.useCases,
+      terminology: projectConfig.terminology,
+      fewShotsFile: projectConfig.fewShotsFile,
     };
+  }
+
+  async getFewShots(projectId: string): Promise<FewShot[] | undefined> {
+    const { fewShotsFile } = await this.getProjectConfig(projectId);
+    return loadFewShots(fewShotsFile);
   }
 
   // For simplicity, this method directly executes the SPARQL query against the endpoint.
@@ -116,16 +144,54 @@ export class ConfigBackedProjectConfigAdapter implements ProjectConfigAdapter {
     }
   }
 
-  // get NodeShapes from the SHACL file
+  // get NodeShapes from the SHACL file, optionally filtered by shapeIri
   async getShaclNodeShapes(
     projectId: string,
     lang = "fr",
+    shapes?: string[],
   ): Promise<{ shapes: NodeShapeInfo[]; prefixes: [string, string][] }> {
     await this.getProjectConfig(projectId);
     const { ttl } = loadShaclTtl(projectId);
     const { model } = await getSHACLConfig(projectId);
     const prefixes = extractPrefixesFromTtl(ttl);
-    const shapes = extractNodeShapes(model, lang, prefixes);
+    // Extract shapes in compact form (when prefixes present) for returning
+    const extractedCompact = extractNodeShapes(model, lang, prefixes);
+
+    // If a shapes filter is provided, accept either compacted prefixes
+    // (e.g. "med:Voie") or full IRIs (e.g. "http://.../medicament/Voie").
+    if (shapes && shapes.length > 0) {
+      // Also extract raw IRIs (no compaction) to allow matching full IRIs
+      const extractedRaw = extractNodeShapes(model, lang, []);
+      const filterSet = new Set(shapes);
+
+      const filtered: NodeShapeInfo[] = [];
+      for (let i = 0; i < extractedCompact.length; i++) {
+        const compactIri = extractedCompact[i].shapeIri;
+        const rawIri = extractedRaw[i]?.shapeIri;
+        if (filterSet.has(compactIri) || filterSet.has(rawIri)) {
+          filtered.push(extractedCompact[i]);
+        }
+      }
+
+      return { shapes: filtered, prefixes };
+    }
+
+    return { shapes: extractedCompact, prefixes };
+  }
+
+  // get compact overview (topology only, no descriptions/agentInstructions)
+  async getShaclNodeShapesOverview(
+    projectId: string,
+    lang = "fr",
+  ): Promise<{
+    shapes: NodeShapeOverviewInfo[];
+    prefixes: [string, string][];
+  }> {
+    await this.getProjectConfig(projectId);
+    const { ttl } = loadShaclTtl(projectId);
+    const { model } = await getSHACLConfig(projectId);
+    const prefixes = extractPrefixesFromTtl(ttl);
+    const shapes = extractNodeShapesOverview(model, lang, prefixes);
     return { shapes, prefixes };
   }
 

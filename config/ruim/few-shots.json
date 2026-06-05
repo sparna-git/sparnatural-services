@@ -1,0 +1,7 @@
+[
+  {
+    "question": "Toutes les spécialités dont la voie est \"intraveineuse\" ou \"intramusculaire\" et dont le libellé CIP contient 'multidose'",
+    "sparql": "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nSELECT DISTINCT ?Presentation_1 ?Presentation_1_label WHERE {\n  ?Presentation_1 rdf:type <http://data.esante.gouv.fr/ansm/medicament/Presentation>.\n  OPTIONAL { ?Presentation_1 rdfs:label ?Presentation_1_label. }\n  ?Presentation_1 rdfs:label ?Text.\n  FILTER(REGEX(STR(?Text), \"multidose\", \"i\"))\n  ?Presentation_1 <http://data.esante.gouv.fr/ansm/medicament/presente> ?SpecialitePharmaceutique.\n  ?SpecialitePharmaceutique rdf:type <http://data.esante.gouv.fr/ansm/medicament/SpecialitePharmaceutique>;\n    <http://data.esante.gouv.fr/ansm/medicament/voie> ?Voie.\n  VALUES ?Voie {\n    <http://data.esante.gouv.fr/ansm/medicament/Voie_13>\n    <http://data.esante.gouv.fr/ansm/medicament/Voie_16>\n  }\n}",
+    "shapes": ["med:Presentation", "med:SpecialitePharmaceutique", "med:Voie"]
+  }
+]

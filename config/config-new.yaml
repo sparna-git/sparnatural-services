@@ -88,10 +88,9 @@ projects:
         sparqlQueries:
           - field: label
             boost: 10
-            queryFile: ./config/ruim/sparqlqueriesindex/label_rdfs.rq
-          - field: label
-            boost: 10
-            queryFile: ./config/ruim/sparqlqueriesindex/label_atc.rq
+            queryFiles:
+              - ./config/ruim/sparqlqueriesindex/label_rdfs.rq
+              - ./config/ruim/sparqlqueriesindex/label_atc.rq
           - field: altLabel
             boost: 5
             queryFile: ./config/ruim/sparqlqueriesindex/altlabel_skos.rq
@@ -118,6 +117,57 @@ projects:
   ruim-mcp:
     shacl: ./config/ruim/RUIM-SHACL-instances.ttl
     sparqlEndpoint: https://data.sparna.fr/graphdb/repositories/RUIM
+    fewShotsFile: ./config/ruim/few-shots.json
+    useCases:
+      - title: "Correspondances CIP/UCD par ATC"
+        entryPoint: "`SpecialitePharmaceutique` filtré sur `med:codeATC`"
+        joins: "-> `Presentation` -> `UCD`"
+      - title: "Spécialités par substance active"
+        entryPoint: "`Substance` réconciliée -> `med:estSubstanceActiveDans`"
+        joins: "-> `SpecialitePharmaceutique`"
+      - title: "Génériques d'une spécialité"
+        entryPoint: "`GroupeGenerique` avec `med:specialiteDeReference`"
+        joins: "-> `med:specialiteGenerique`"
+      - title: "Présentations actives d'un laboratoire"
+        entryPoint: "`Organisation` réconciliée -> `med:titulaireCourant`"
+        joins: "-> `SpecialitePharmaceutique` -> `Presentation`"
+      - title: "Toutes les spécialités d'une forme"
+        entryPoint: "`Forme` filtrée sur libellé -> `med:formeManufacturee`"
+        joins: "<- `SpecialitePharmaceutique`"
+    terminology:
+      - user: "Code CIS"
+        domain: "Identifiant de spécialité"
+        sparql: "`med:CIS`"
+      - user: "Code CIP / code-barres"
+        domain: "Présentation"
+        sparql: "`med:CIP13`, `med:CIP7`"
+      - user: "Code UCD"
+        domain: "Unité commune de dispensation"
+        sparql: "`med:codeUCD13`, `med:codeUCD7`"
+      - user: "Code ATC"
+        domain: "Classification anatomique"
+        sparql: "`med:codeATC` (littéral), `med:classificationATC` (URI)"
+      - user: "Princeps"
+        domain: "Spécialité de référence"
+        sparql: "`med:specialiteDeReference` dans `med:GroupeGenerique`"
+      - user: "Générique"
+        domain: "Spécialité générique"
+        sparql: "`med:specialiteGenerique` dans `med:GroupeGenerique`"
+      - user: "Laboratoire / titulaire"
+        domain: "Organisation"
+        sparql: "`med:titulaireCourant` -> `med:Organisation`"
+      - user: "Forme galénique"
+        domain: "Forme manufacturée"
+        sparql: "`med:formeManufacturee` -> `med:Forme`"
+      - user: "Voie d'administration"
+        domain: "Voie"
+        sparql: "`med:voie` -> `med:Voie`"
+      - user: "Substance active"
+        domain: "Substance"
+        sparql: "`med:substanceActive` -> `med:Substance`"
+      - user: "Statut AMM"
+        domain: "Statut courant"
+        sparql: "`med:statutCourant` -> `med:StatutSpecialite`"
     shaclTypes:
       - http://data.esante.gouv.fr/ansm/medicament/SpecialitePharmaceutique
       - http://data.esante.gouv.fr/ansm/medicament/Presentation
@@ -165,10 +215,9 @@ projects:
       sparqlQueries:
         - field: label
           boost: 10
-          queryFile: ./config/ruim/sparqlqueriesindex/label_rdfs.rq
-        - field: label
-          boost: 10
-          queryFile: ./config/ruim/sparqlqueriesindex/label_atc.rq
+          queryFiles:
+            - ./config/ruim/sparqlqueriesindex/label_rdfs.rq
+            - ./config/ruim/sparqlqueriesindex/label_atc.rq
         - field: altLabel
           boost: 5
           queryFile: ./config/ruim/sparqlqueriesindex/altlabel_skos.rq

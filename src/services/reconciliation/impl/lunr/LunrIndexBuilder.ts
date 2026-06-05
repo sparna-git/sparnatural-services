@@ -204,11 +204,16 @@ export class LunrIndexBuilder {
     return response.data.results.bindings;
   }
 
-  private async resolveQuery(fq: FieldQueryConfig): Promise<string> {
-    if (fq.query) return fq.query;
-    if (fq.queryFile) return fs.promises.readFile(fq.queryFile, "utf-8");
+  private async resolveQueries(fq: FieldQueryConfig): Promise<string[]> {
+    if (fq.query) return [fq.query];
+    if (fq.queryFiles?.length)
+      return Promise.all(
+        fq.queryFiles.map((f) => fs.promises.readFile(f, "utf-8")),
+      );
+    if (fq.queryFile)
+      return [await fs.promises.readFile(fq.queryFile, "utf-8")];
     throw new Error(
-      `[lunr-recon] FieldQueryConfig for field "${fq.field}" has neither query nor queryFile.`,
+      `[lunr-recon] FieldQueryConfig for field "${fq.field}" has neither query nor queryFile(s).`,
     );
   }
 
@@ -216,9 +221,12 @@ export class LunrIndexBuilder {
     fq: FieldQueryConfig,
   ): Promise<FieldBinding[]> {
     logger.info({}, `[lunr-recon] Loading field "${fq.field}"…`);
-    const query = await this.resolveQuery(fq);
-    const bindings = await this.fetchSparqlBindings(query);
-    const docs = bindings
+    const queries = await this.resolveQueries(fq);
+    const allBindings = await Promise.all(
+      queries.map((q) => this.fetchSparqlBindings(q)),
+    );
+    const docs = allBindings
+      .flat()
       .filter((b) => b.entity && b.value)
       .map((b) => ({ entity: b.entity.value, value: b.value.value }));
     logger.info({}, `[lunr-recon] "${fq.field}": ${docs.length} binding(s).`);
