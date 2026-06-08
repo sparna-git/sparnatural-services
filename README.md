@@ -1,4 +1,11 @@
-# Sparnatural services platform
+# Sparnatural services platform / MCP-over-SPARQL
+
+This server contains 2 things :
+  1. A set of API to be integrated with [Sparnatural](https://sparnatural.eu), in particular for the [connection of Sparnatural with AI Agents](https://sparna-git.github.io/sparnatural-ai/doc-page.html)
+  2. The "MCP-over-SPARQL" experiment to expose knowledge graphs through the MCP protocol
+
+Both features rely on the same underlying config file, to configure the projects being exposed.
+
 
 ## Running locally on dev
 
