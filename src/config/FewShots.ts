@@ -6,7 +6,6 @@ import type { FewShot } from "./ProjectConfig";
 const FewShotSchema = z.object({
   question: z.string().min(1),
   sparql: z.string().min(1),
-  shapes: z.array(z.string().min(1)),
 });
 
 const FewShotsFileSchema = z.array(FewShotSchema);

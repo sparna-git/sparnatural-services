@@ -220,8 +220,12 @@ export async function registerTools(
           (await projectConfigAdapter.getFewShots(projectId)) ?? [];
         const payload = { projectId, fewShots };
         return {
-          structuredContent: payload,
-          content: [],
+          content: [
+            {
+              type: "text",
+              text: JSON.stringify(payload, null, 2),
+            },
+          ],
         };
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
@@ -383,7 +387,21 @@ export async function registerTools(
             prefixes: prefixesRecord,
             nodeshapes: shapes,
           },
-          content: [],
+
+          content: [
+            {
+              type: "text",
+              text: JSON.stringify(
+                {
+                  projectId,
+                  prefixes: prefixesRecord,
+                  nodeshapes: shapes,
+                },
+                null,
+                2,
+              ),
+            },
+          ],
         };
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
@@ -489,7 +507,12 @@ export async function registerTools(
 
         return {
           structuredContent: result,
-          content: [],
+          content: [
+            {
+              type: "text",
+              text: JSON.stringify(result, null, 2),
+            },
+          ],
         };
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
@@ -537,7 +560,13 @@ export async function registerTools(
 
         return {
           structuredContent: result,
-          content: [],
+          // return result json
+          content: [
+            {
+              type: "text",
+              text: JSON.stringify(result, null, 2),
+            },
+          ],
         };
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);

@@ -37,9 +37,6 @@ export interface FewShot {
   /** Curated SPARQL that correctly answers the question. Used by the
    *  agent as a template — predicates and filters may need adapting. */
   sparql: string;
-  /** Compacted NodeShape IRIs referenced by this query. Tells the agent
-   *  which shapes to pass to discover_nodeshapes before adapting. */
-  shapes: string[];
 }
 
 export interface ProjectConfig {
