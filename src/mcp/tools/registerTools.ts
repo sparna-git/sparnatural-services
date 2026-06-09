@@ -270,16 +270,16 @@ export async function registerTools(
         prefixes: z
           .record(z.string(), z.string())
           .describe(
-            "Prefix declarations from the SHACL file. Keys are prefix names (e.g. 'med'), values are namespace URIs. All IRIs in nodeshapes are already compacted using these prefixes.",
+            "Prefix declarations from the SHACL file. Keys are prefix names (e.g. 'med'), values are namespace URIs. All IRIs in node shapes are already compacted using these prefixes.",
           ),
         nodeshapes: z
           .array(
             z.object({
-              shapeIri: z.string().describe("IRI of this NodeShape."),
+              shapeIri: z.string().describe("IRI of this node shape."),
               label: z
                 .string()
                 .optional()
-                .describe("Human-readable label of the shape."),
+                .describe("Human-readable label of the node shape."),
               description: z
                 .string()
                 .optional()
@@ -290,17 +290,17 @@ export async function registerTools(
                 .string()
                 .optional()
                 .describe(
-                  "Specific instructions for the agent on how to use this shape in queries.",
+                  "Specific instructions for the agent on how to use this shape in queries, e.g. if there are particular restrictions or specific things to know.",
                 ),
               targetClasses: z
                 .array(z.string())
                 .describe(
-                  "The rdf:type IRIs of instances described by this NodeShape. Use them as rdf:type constraints in SPARQL queries.",
+                  "The rdf:type IRIs of resources targeted by this node shape. Use them as rdf:type constraints in SPARQL queries.",
                 ),
               targetSparql: z
                 .array(z.string())
                 .optional()
-                .describe("SPARQL-based target definitions, if any."),
+                .describe("SPARQL-based target definitions of the shape, if any. Use the corresponding criterias in SPARQL queries."),
               properties: z
                 .array(
                   z.object({
@@ -322,7 +322,7 @@ export async function registerTools(
                       .string()
                       .optional()
                       .describe(
-                        "Specific instructions for the agent on how to use this property in queries.",
+                        "Specific instructions for the agent on how to use this property in queries, e.g. if there are particular restrictions or specific things to know.",
                       ),
                     minCount: z
                       .number()
@@ -334,19 +334,19 @@ export async function registerTools(
                       .number()
                       .optional()
                       .describe(
-                        "Maximum cardinality. If 1, expect a single value per instance.",
+                        "Maximum cardinality. If 1, expect a single value per instance, if absent or greater than one, multiple values may exist for each resource - use a GROUP_CONCAT aggregation to avoid multiplying the lines in the result set.",
                       ),
                     classes: z
                       .array(z.string())
                       .optional()
                       .describe(
-                        "When present, this is an object property pointing to instances of these classes. Follow the link to the corresponding NodeShape to discover further predicates.",
+                        "When present, indicates that the predicate points to instances of these classes. Follow the link to the corresponding Node Shape to discover further predicates.",
                       ),
                     datatypes: z
                       .array(z.string())
                       .optional()
                       .describe(
-                        "When present, this is a datatype property holding literal values of this XSD/RDF datatype.",
+                        "When present, indicate that the predicate has literal values with this datatype.",
                       ),
                     values: z
                       .array(z.string())
@@ -356,10 +356,10 @@ export async function registerTools(
                       ),
                   }),
                 )
-                .describe("The declared properties of this NodeShape."),
+                .describe("Properties available on resources that are targeted by this node shape."),
             }),
           )
-          .describe("The list of all NodeShapes in the schema."),
+          .describe("The list of all node shapes in the schema."),
       },
     },
     async ({ lang, shapes: shapesFilter }) => {
