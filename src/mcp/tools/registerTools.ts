@@ -16,15 +16,14 @@ export async function registerTools(
 ): Promise<void> {
   const { projectConfigAdapter, projectId } = options;
 
-  const [{ shaclTypes, useCases, terminology }, shapesGraphMeta] =
-    await Promise.all([
-      projectConfigAdapter.getProjectConfig(projectId),
-      projectConfigAdapter.getShapesGraphMeta(projectId).catch(() => ({
-        title: undefined,
-        description: undefined,
-        agentInstruction: undefined,
-      })),
-    ]);
+  const [{ shaclTypes, useCases }, shapesGraphMeta] = await Promise.all([
+    projectConfigAdapter.getProjectConfig(projectId),
+    projectConfigAdapter.getShapesGraphMeta(projectId).catch(() => ({
+      title: undefined,
+      description: undefined,
+      agentInstruction: undefined,
+    })),
+  ]);
 
   const fewShotsStepHint = ` Then call ${projectId}_get_few_shots once to load curated NL+SPARQL examples.`;
 
@@ -169,7 +168,6 @@ export async function registerTools(
           shapes,
           prefixes: prefixesRecord,
           useCases,
-          terminology,
         });
 
         return {
@@ -300,7 +298,9 @@ export async function registerTools(
               targetSparql: z
                 .array(z.string())
                 .optional()
-                .describe("SPARQL-based target definitions of the shape, if any. Use the corresponding criterias in SPARQL queries."),
+                .describe(
+                  "SPARQL-based target definitions of the shape, if any. Use the corresponding criterias in SPARQL queries.",
+                ),
               properties: z
                 .array(
                   z.object({
@@ -356,7 +356,9 @@ export async function registerTools(
                       ),
                   }),
                 )
-                .describe("Properties available on resources that are targeted by this node shape."),
+                .describe(
+                  "Properties available on resources that are targeted by this node shape.",
+                ),
             }),
           )
           .describe("The list of all node shapes in the schema."),

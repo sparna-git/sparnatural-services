@@ -15,11 +15,7 @@ import type {
   ReconcileInput,
   ReconcileOutput,
 } from "../../services/reconciliation/interfaces/ReconcileServiceIfc";
-import type {
-  UseCase,
-  TerminologyMapping,
-  FewShot,
-} from "../../config/ProjectConfig";
+import type { UseCase, FewShot } from "../../config/ProjectConfig";
 import { loadFewShots } from "../../config/FewShots";
 
 export interface ProjectConfig {
@@ -28,7 +24,6 @@ export interface ProjectConfig {
   shaclPath?: string;
   shaclTypes?: string[];
   useCases?: UseCase[];
-  terminology?: TerminologyMapping[];
   fewShotsFile?: string;
 }
 
@@ -97,7 +92,6 @@ export class ConfigBackedProjectConfigAdapter implements ProjectConfigAdapter {
       shaclPath: projectConfig.shacl,
       shaclTypes: projectConfig.shaclTypes,
       useCases: projectConfig.useCases,
-      terminology: projectConfig.terminology,
       fewShotsFile: projectConfig.fewShotsFile,
     };
   }
