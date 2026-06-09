@@ -134,6 +134,9 @@ projects:
       - title: "Toutes les spécialités d'une forme"
         entryPoint: "`Forme` filtrée sur libellé -> `med:formeManufacturee`"
         joins: "<- `SpecialitePharmaceutique`"
+      - title: "Composition d'une spécialité"
+        entryPoint: "`SpecialitePharmaceutique` filtrée sur libellé -> `med:seComposeDe`"
+        joins: "<- `Element` -> `med:substanceActive`|`med:fractionTherapeutique` (composition formelle) + <- `Element` -> `med:expressionDeDosage` (composition textuelle)"
     terminology:
       - user: "Code CIS"
         domain: "Identifiant de spécialité"
