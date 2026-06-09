@@ -24,8 +24,6 @@
 @prefix dc: <http://purl.org/dc/elements/1.1/> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix skosxl: <http://www.w3.org/2008/05/skos-xl#> .
-@prefix config-core: <http://data.sparna.fr/ontologies/sparnatural-config-core#> .
-
 
 <http://data.esante.gouv.fr/ansm/medicament> a owl:Ontology;
   rdfs:label "Modèle de données du Référentiel Unique d'Interopérabilité du Médicament (RUIM)"@fr;
@@ -34,7 +32,7 @@
   dct:created "2022-03-01"^^xsd:date;
   dct:modified "2025-03-01"^^xsd:date;
   dct:publisher "ANS"@fr;
-  dcat:distribution _:d85f7e570c704b5b9b53672428339dae692;
+  dcat:distribution _:91358f30d9824e0aa6957b2381cfbb4c875;
   owl:versionInfo "6.0";
   foaf:depiction <images/ruim-overview.png>;
   dct:description """### Description générale
@@ -132,7 +130,7 @@ La modélisation des [autorisations](#med:Autorisation) sur les spécialités pe
 
 _Note : dans les tableaux ci-dessous, les attributs effectivement renseignés dans laversion actuelle du référentiel sont surlignés en vert._"""@fr .
 
-_:d85f7e570c704b5b9b53672428339dae692 dct:format <https://www.iana.org/assignments/media-types/text/turtle>;
+_:91358f30d9824e0aa6957b2381cfbb4c875 dct:format <https://www.iana.org/assignments/media-types/text/turtle>;
   dcat:downloadURL <RUIM-SHACL.zip> .
 
 med:SpecialitePharmaceutique a sh:NodeShape, rdfs:Class;
@@ -152,25 +150,21 @@ Une spécialité porte également l’[historique de tous ses noms](#med:Special
 Le [titulaire courant de la spécialité](#med:SpecialitePharmaceutique_med:titulaireCourant) est indiqué. Ce titulaire peut évoluer dans le temps, mais seul le titulaire courant est indiqué. 
 
 D’autres caractéristiques de la spécialité liées à son AMM et à son statut courant sont décrites dans la partie “[Autorisations](#med:Autorisation)”. Se reporter également à la section sur les dosages pour la description qualitative et quantitative de la spécialité."""@fr;
+  sh:agentInstruction "Utiliser le service de réconciliation reconcile_entities pour chercher une spécialité par son nom, ne pas utiliser de recherche SPARQL sur rdfs:label"@fr;
   foaf:depiction <images/specialites.png>, <images/composition_qualitative.png>, med:Diagramme_SpecialitesPresentationsUCD;
   sh:closed "true"^^xsd:boolean;
-  sh:ignoredProperties _:d85f7e570c704b5b9b53672428339dae693;
+  sh:ignoredProperties _:91358f30d9824e0aa6957b2381cfbb4c876;
   sh:nodeKind sh:IRI;
   sh:pattern "^http://data.esante.gouv.fr/ansm/medicament/SpecialitePharmaceutique_.*$";
-  shacl-play:background-color "C45911";
-  sh:property med:P78, med:P79, med:P80, med:P81, med:P82, med:P83, med:P84, med:P85,
-    med:P86, med:P87, med:P88, med:P89, med:P90, med:P91, med:P92, med:P93, med:P94, med:P95,
-    med:P96, med:P97, med:P98, med:P99, med:P100, med:P101, med:P102, med:P103, med:P104,
-    med:P105, med:P106, med:P107;
-  sh:sparql med:BusinessRule_14, med:BusinessRule_15 .
+  shacl-play:background-color "C45911" .
 
-_:d85f7e570c704b5b9b53672428339dae693 rdf:first rdf:type;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae694 .
+_:91358f30d9824e0aa6957b2381cfbb4c876 rdf:first rdf:type;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c877 .
 
-_:d85f7e570c704b5b9b53672428339dae694 rdf:first rdfs:subClassOf;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae695 .
+_:91358f30d9824e0aa6957b2381cfbb4c877 rdf:first rdfs:subClassOf;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c878 .
 
-_:d85f7e570c704b5b9b53672428339dae695 rdf:first owl:equivalentClass;
+_:91358f30d9824e0aa6957b2381cfbb4c878 rdf:first owl:equivalentClass;
   rdf:rest rdf:nil .
 
 med:Presentation a sh:NodeShape, rdfs:Class;
@@ -180,44 +174,41 @@ med:Presentation a sh:NodeShape, rdfs:Class;
 Une présentation porte également l’[historique](#med:Presentation_med:libelle) de tous ses noms. 
 
 La [forme manufacturée](#med:Presentation_med:formeManufacturee) ainsi que les [voies d’administration possibles](#med:Presentation_med:voie) sont indiquées sur les présentations. La forme peut être plus spécifique que la forme indiquée au niveau de la spécialité, par exemple _\"solution\"_ sur la spécialité, et _\"solution en ampoule\"_ ou _\"solution en flacon\"_ sur des présentations."""@fr;
+  sh:agentInstruction "Utiliser le service de réconciliation reconcile_entities pour chercher une présentation par son nom, ne pas utiliser de recherche SPARQL sur rdfs:label"@fr;
   foaf:depiction <images/presentations.png>, med:Diagramme_SpecialitesPresentationsUCD;
   sh:closed "true"^^xsd:boolean;
-  sh:ignoredProperties _:d85f7e570c704b5b9b53672428339dae696;
+  sh:ignoredProperties _:91358f30d9824e0aa6957b2381cfbb4c879;
   sh:nodeKind sh:IRI;
   sh:pattern "^http://data.esante.gouv.fr/ansm/medicament/Presentation_.*$";
-  shacl-play:background-color "7030A0";
-  sh:property med:P143, med:P144, med:P145, med:P146, med:P147, med:P148, med:P149,
-    med:P150, med:P151, med:P152, med:P153, med:P154, med:P155, med:P156, med:P157, med:P158,
-    med:P159, med:P160, med:P161, med:P162;
-  sh:sparql med:BusinessRule_3, med:BusinessRule_4, med:BusinessRule_10, med:BusinessRule_16 .
+  shacl-play:background-color "7030A0" .
 
-_:d85f7e570c704b5b9b53672428339dae696 rdf:first rdf:type;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae697 .
+_:91358f30d9824e0aa6957b2381cfbb4c879 rdf:first rdf:type;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c880 .
 
-_:d85f7e570c704b5b9b53672428339dae697 rdf:first rdfs:subClassOf;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae698 .
+_:91358f30d9824e0aa6957b2381cfbb4c880 rdf:first rdfs:subClassOf;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c881 .
 
-_:d85f7e570c704b5b9b53672428339dae698 rdf:first owl:equivalentClass;
+_:91358f30d9824e0aa6957b2381cfbb4c881 rdf:first owl:equivalentClass;
   rdf:rest rdf:nil .
 
 med:UniteCommuneDeDispensation a sh:NodeShape, rdfs:Class;
   rdfs:label "Unité commune de dispensation"@fr;
   rdfs:comment "Une Unité Commune de dispensation est identifiée par son code [UCD13](#med:UniteCommuneDeDispensation_med:codeUCD13). Elle est liée d’une part [à sa spécialité pharmaceutique](#med:UniteCommuneDeDispensation_med:uniteDeDispensationDe) (une et une seule) et d’autre part [aux présentations](#med:UniteCommuneDeDispensation_med:presenteDans) dans lesquelles elle se retrouve (une UCD peut se retrouver dans plusieurs présentations). L’UCD porte l’[historique](#med:UniteCommuneDeDispensation_med:libelle) de tous ses noms."@fr;
+  sh:agentInstruction "Utiliser le service de réconciliation reconcile_entities pour chercher une UCD par son nom, ne pas utiliser de recherche SPARQL sur rdfs:label"@fr;
   foaf:depiction <images/ucd.png>, med:Diagramme_SpecialitesPresentationsUCD;
   sh:closed "true"^^xsd:boolean;
-  sh:ignoredProperties _:d85f7e570c704b5b9b53672428339dae699;
+  sh:ignoredProperties _:91358f30d9824e0aa6957b2381cfbb4c882;
   sh:nodeKind sh:IRI;
   sh:pattern "^http://data.esante.gouv.fr/ansm/medicament/UCD_.*$";
-  shacl-play:background-color "D52FCD";
-  sh:property med:P136, med:P137, med:P138, med:P139, med:P140, med:P141 .
+  shacl-play:background-color "D52FCD" .
 
-_:d85f7e570c704b5b9b53672428339dae699 rdf:first rdf:type;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae700 .
+_:91358f30d9824e0aa6957b2381cfbb4c882 rdf:first rdf:type;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c883 .
 
-_:d85f7e570c704b5b9b53672428339dae700 rdf:first rdfs:subClassOf;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae701 .
+_:91358f30d9824e0aa6957b2381cfbb4c883 rdf:first rdfs:subClassOf;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c884 .
 
-_:d85f7e570c704b5b9b53672428339dae701 rdf:first owl:equivalentClass;
+_:91358f30d9824e0aa6957b2381cfbb4c884 rdf:first owl:equivalentClass;
   rdf:rest rdf:nil .
 
 med:GroupeGenerique a sh:NodeShape, rdfs:Class;
@@ -225,19 +216,18 @@ med:GroupeGenerique a sh:NodeShape, rdfs:Class;
   rdfs:comment "Les groupes génériques regroupent les spécialités par des liens de différentes natures. Chaque groupe générique indique en général une [spécialité de référence](#med:GroupeGenerique_med:specialiteDeReference) (mais pas toujours, certains groupes n’ont aucune spécialité de référence), et donne les spécialités génériques [équivalentes](#med:GroupeGenerique_med:specialiteGenerique) et les autres spécialités [substituables](#med:GroupeGenerique_med:specialiteSubstituable)."@fr;
   foaf:depiction <images/groupes_generiques.png>;
   sh:closed "true"^^xsd:boolean;
-  sh:ignoredProperties _:d85f7e570c704b5b9b53672428339dae702;
+  sh:ignoredProperties _:91358f30d9824e0aa6957b2381cfbb4c885;
   sh:nodeKind sh:IRI;
   sh:pattern "^http://data.esante.gouv.fr/ansm/medicament/GroupeGenerique_.*$";
-  shacl-play:background-color "C45911";
-  sh:property med:P130, med:P131, med:P132, med:P133, med:P134 .
+  shacl-play:background-color "C45911" .
 
-_:d85f7e570c704b5b9b53672428339dae702 rdf:first rdf:type;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae703 .
+_:91358f30d9824e0aa6957b2381cfbb4c885 rdf:first rdf:type;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c886 .
 
-_:d85f7e570c704b5b9b53672428339dae703 rdf:first rdfs:subClassOf;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae704 .
+_:91358f30d9824e0aa6957b2381cfbb4c886 rdf:first rdfs:subClassOf;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c887 .
 
-_:d85f7e570c704b5b9b53672428339dae704 rdf:first owl:equivalentClass;
+_:91358f30d9824e0aa6957b2381cfbb4c887 rdf:first owl:equivalentClass;
   rdf:rest rdf:nil .
 
 med:Element a sh:NodeShape, rdfs:Class;
@@ -247,20 +237,18 @@ med:Element a sh:NodeShape, rdfs:Class;
 Les éléments sont identifiés par leur [numéro d’ordre séquentiel](#med:Element_med:identifiantElement) dans la spécialité. Ils sont associés à leur forme manufacturée (donnée sous [forme littérale](#med:Element_med:formeManufactureeLitterale) et sous forme de [référence à une liste contrôlée de formes](#med:Element_med:formeManufacturee))"""@fr;
   foaf:depiction <images/elements.png>, <images/composition_qualitative.png>, med:Diagramme_ElementDosages;
   sh:closed "true"^^xsd:boolean;
-  sh:ignoredProperties _:d85f7e570c704b5b9b53672428339dae705;
+  sh:ignoredProperties _:91358f30d9824e0aa6957b2381cfbb4c888;
   sh:nodeKind sh:IRI;
   sh:pattern "^http://data.esante.gouv.fr/ansm/medicament/Element_.*$";
-  shacl-play:background-color "2F5696";
-  sh:property med:P109, med:P110, med:P111, med:P112, med:P113, med:P114, med:P115,
-    med:P116, med:P117, med:P118, med:P119 .
+  shacl-play:background-color "2F5696" .
 
-_:d85f7e570c704b5b9b53672428339dae705 rdf:first rdf:type;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae706 .
+_:91358f30d9824e0aa6957b2381cfbb4c888 rdf:first rdf:type;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c889 .
 
-_:d85f7e570c704b5b9b53672428339dae706 rdf:first rdfs:subClassOf;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae707 .
+_:91358f30d9824e0aa6957b2381cfbb4c889 rdf:first rdfs:subClassOf;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c890 .
 
-_:d85f7e570c704b5b9b53672428339dae707 rdf:first owl:equivalentClass;
+_:91358f30d9824e0aa6957b2381cfbb4c890 rdf:first owl:equivalentClass;
   rdf:rest rdf:nil .
 
 med:ElementPresentation a sh:NodeShape, rdfs:Class;
@@ -272,21 +260,18 @@ Les éléments de présentation peuvent être classés dans des catégories de p
 - Sur un [PhPID1](#med:ElementPresentation_med:classementSubstance) si la spécialité est non-virtualisable."""@fr;
   foaf:depiction <images/elements_presentation.png>, med:Diagramme_ElementDosages;
   sh:closed "true"^^xsd:boolean;
-  sh:ignoredProperties _:d85f7e570c704b5b9b53672428339dae708;
+  sh:ignoredProperties _:91358f30d9824e0aa6957b2381cfbb4c891;
   sh:nodeKind sh:IRI;
   sh:pattern "^http://data.esante.gouv.fr/ansm/medicament/ElementPresentation_.*$";
-  shacl-play:background-color "2F5696";
-  sh:property med:P164, med:P165, med:P166, med:P167, med:P168, med:P169, med:P170,
-    med:P171, med:P172, med:P173, med:P174, med:P175, med:P176;
-  sh:sparql med:BusinessRule_5, med:BusinessRule_6, med:BusinessRule_7, med:BusinessRule_8 .
+  shacl-play:background-color "2F5696" .
 
-_:d85f7e570c704b5b9b53672428339dae708 rdf:first rdf:type;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae709 .
+_:91358f30d9824e0aa6957b2381cfbb4c891 rdf:first rdf:type;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c892 .
 
-_:d85f7e570c704b5b9b53672428339dae709 rdf:first rdfs:subClassOf;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae710 .
+_:91358f30d9824e0aa6957b2381cfbb4c892 rdf:first rdfs:subClassOf;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c893 .
 
-_:d85f7e570c704b5b9b53672428339dae710 rdf:first owl:equivalentClass;
+_:91358f30d9824e0aa6957b2381cfbb4c893 rdf:first owl:equivalentClass;
   rdf:rest rdf:nil .
 
 med:DosageConcentration a sh:NodeShape, rdfs:Class;
@@ -294,21 +279,20 @@ med:DosageConcentration a sh:NodeShape, rdfs:Class;
   rdfs:comment "Les dosages en concentration donnent la [concentration](#med:DosageConcentration_med:quantiteSubstance) de [substance](#med:DosageConcentration_med:substance), exprimée dans une certaine [unité](#med:DosageConcentration_med:unite) de concentration (comme _“mg/mL”_, _“mg/g”_, etc.), ou éventuellement une plage de concentration ([inférieure](#med:DosageConcentration_med:quantiteSubstanceInf) / [supérieure](#med:DosageConcentration_med:quantiteSubstanceSup))."@fr;
   foaf:depiction <images/dosages_concentration.png>, med:Diagramme_ElementDosages;
   sh:closed "true"^^xsd:boolean;
-  sh:ignoredProperties _:d85f7e570c704b5b9b53672428339dae711;
+  sh:ignoredProperties _:91358f30d9824e0aa6957b2381cfbb4c894;
   sh:nodeKind sh:IRI;
   sh:pattern "^http://data.esante.gouv.fr/ansm/medicament/Dosage_.*$";
   shacl-play:background-color "808080";
   sh:property med:P63, med:P64, med:P65, med:P66, med:P67, med:P68, med:P69, med:P70,
-    med:P71;
-  sh:sparql med:BusinessRule_9 .
+    med:P71 .
 
-_:d85f7e570c704b5b9b53672428339dae711 rdf:first rdf:type;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae712 .
+_:91358f30d9824e0aa6957b2381cfbb4c894 rdf:first rdf:type;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c895 .
 
-_:d85f7e570c704b5b9b53672428339dae712 rdf:first rdfs:subClassOf;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae713 .
+_:91358f30d9824e0aa6957b2381cfbb4c895 rdf:first rdfs:subClassOf;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c896 .
 
-_:d85f7e570c704b5b9b53672428339dae713 rdf:first owl:equivalentClass;
+_:91358f30d9824e0aa6957b2381cfbb4c896 rdf:first owl:equivalentClass;
   rdf:rest rdf:nil .
 
 med:DosagePresentation a sh:NodeShape, rdfs:Class;
@@ -319,40 +303,39 @@ med:DosagePresentation a sh:NodeShape, rdfs:Class;
 - à une [unité de présentation](#med:DosagePresentation_med:uniteDePresentation) (_“10 mg dans une seringue”_)"""@fr;
   foaf:depiction <images/dosages_presentation.png>, med:Diagramme_ElementDosages;
   sh:closed "true"^^xsd:boolean;
-  sh:ignoredProperties _:d85f7e570c704b5b9b53672428339dae714;
+  sh:ignoredProperties _:91358f30d9824e0aa6957b2381cfbb4c897;
   sh:nodeKind sh:IRI;
   sh:pattern "^http://data.esante.gouv.fr/ansm/medicament/Dosage_.*$";
   shacl-play:background-color "808080";
   sh:property med:P51, med:P52, med:P53, med:P54, med:P55, med:P56, med:P57, med:P58,
-    med:P59, med:P60, med:P61;
-  sh:sparql med:BusinessRule_9 .
+    med:P59, med:P60, med:P61 .
 
-_:d85f7e570c704b5b9b53672428339dae714 rdf:first rdf:type;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae715 .
+_:91358f30d9824e0aa6957b2381cfbb4c897 rdf:first rdf:type;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c898 .
 
-_:d85f7e570c704b5b9b53672428339dae715 rdf:first rdfs:subClassOf;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae716 .
+_:91358f30d9824e0aa6957b2381cfbb4c898 rdf:first rdfs:subClassOf;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c899 .
 
-_:d85f7e570c704b5b9b53672428339dae716 rdf:first owl:equivalentClass;
+_:91358f30d9824e0aa6957b2381cfbb4c899 rdf:first owl:equivalentClass;
   rdf:rest rdf:nil .
 
 med:Unite a sh:NodeShape, rdfs:Class;
   rdfs:label "Unité"@fr;
   rdfs:comment "Unité de mesure d'un dosage."@fr;
   sh:closed "true"^^xsd:boolean;
-  sh:ignoredProperties _:d85f7e570c704b5b9b53672428339dae717;
+  sh:ignoredProperties _:91358f30d9824e0aa6957b2381cfbb4c900;
   sh:nodeKind sh:IRI;
   sh:pattern "^http://data.esante.gouv.fr/ansm/medicament/Unite_.*$";
   shacl-play:background-color "808080";
-  sh:property med:P73, med:P74, med:P75, med:P76 .
+  sh:property med:P73, med:P74 .
 
-_:d85f7e570c704b5b9b53672428339dae717 rdf:first rdf:type;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae718 .
+_:91358f30d9824e0aa6957b2381cfbb4c900 rdf:first rdf:type;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c901 .
 
-_:d85f7e570c704b5b9b53672428339dae718 rdf:first rdfs:subClassOf;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae719 .
+_:91358f30d9824e0aa6957b2381cfbb4c901 rdf:first rdfs:subClassOf;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c902 .
 
-_:d85f7e570c704b5b9b53672428339dae719 rdf:first owl:equivalentClass;
+_:91358f30d9824e0aa6957b2381cfbb4c902 rdf:first owl:equivalentClass;
   rdf:rest rdf:nil .
 
 med:ExpressionDeDosage a sh:NodeShape, rdfs:Class;
@@ -365,248 +348,234 @@ med:ExpressionDeDosage a sh:NodeShape, rdfs:Class;
  - L'[expression de la quantité de substance](#med:ExpressionDeDosage_med:expressionQuantite) (_“8 mg”_), et la [référence](#med:ExpressionDeDosage_med:referenceDosage) pour laquelle la quantité de substance est donnée (_“pour 100 ml de solution buvable”_, _“pour une gélule”_). Ces deux informations sont données en variante “brute” (non normalisée), et en variante normalisée, c’est-à-dire nettoyée ; typiquement l’expression de la quantité de substance répète la référence dosage, et quand c’est le cas, la référence dosage est supprimée de l’expression de la quantité (_“6 g pour 100 ml de solution buvable”_ devient _“6 g”_)."""@fr;
   foaf:depiction <images/expressions_de_dosage.png>, med:Diagramme_ElementDosages;
   sh:closed "true"^^xsd:boolean;
-  sh:ignoredProperties _:d85f7e570c704b5b9b53672428339dae720;
+  sh:ignoredProperties _:91358f30d9824e0aa6957b2381cfbb4c903;
   sh:nodeKind sh:IRI;
   sh:pattern "^http://data.esante.gouv.fr/ansm/medicament/ExpressionDeDosage_.*$";
-  shacl-play:background-color "808080";
-  sh:property med:P121, med:P122, med:P123, med:P124, med:P125, med:P126, med:P127,
-    med:P128 .
+  shacl-play:background-color "808080" .
 
-_:d85f7e570c704b5b9b53672428339dae720 rdf:first rdf:type;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae721 .
+_:91358f30d9824e0aa6957b2381cfbb4c903 rdf:first rdf:type;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c904 .
 
-_:d85f7e570c704b5b9b53672428339dae721 rdf:first rdfs:subClassOf;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae722 .
+_:91358f30d9824e0aa6957b2381cfbb4c904 rdf:first rdfs:subClassOf;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c905 .
 
-_:d85f7e570c704b5b9b53672428339dae722 rdf:first owl:equivalentClass;
+_:91358f30d9824e0aa6957b2381cfbb4c905 rdf:first owl:equivalentClass;
   rdf:rest rdf:nil .
 
 med:Organisation a sh:NodeShape, rdfs:Class;
   rdfs:label "Organisation"@fr;
   rdfs:comment "Une organisation, typiquement un laboratoire pharmaceutique."@fr;
   sh:closed "true"^^xsd:boolean;
-  sh:ignoredProperties _:d85f7e570c704b5b9b53672428339dae723;
+  sh:ignoredProperties _:91358f30d9824e0aa6957b2381cfbb4c906;
   sh:nodeKind sh:IRI;
   sh:pattern "^http://data.esante.gouv.fr/ansm/medicament/Organisation_.*$";
-  shacl-play:background-color "00B050";
-  sh:property med:P178, med:P179, med:P180 .
+  shacl-play:background-color "00B050" .
 
-_:d85f7e570c704b5b9b53672428339dae723 rdf:first rdf:type;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae724 .
+_:91358f30d9824e0aa6957b2381cfbb4c906 rdf:first rdf:type;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c907 .
 
-_:d85f7e570c704b5b9b53672428339dae724 rdf:first rdfs:subClassOf;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae725 .
+_:91358f30d9824e0aa6957b2381cfbb4c907 rdf:first rdfs:subClassOf;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c908 .
 
-_:d85f7e570c704b5b9b53672428339dae725 rdf:first owl:equivalentClass;
+_:91358f30d9824e0aa6957b2381cfbb4c908 rdf:first owl:equivalentClass;
   rdf:rest rdf:nil .
 
 med:Substance a sh:NodeShape, rdfs:Class;
   rdfs:label "Substance"@fr;
   rdfs:comment "Les substances sont identifiées par un [identifiant interne ANSM](#med:Substance_dct:identifier). Elles peuvent être associées à un [code SMS](#med:Substance_med:codeSMS) quand un équivalent existe. Au moins un [libellé](#med:Substance_rdfs:label) en français est donné à la substance, avec potentiellement plusieurs [synonymes](#med:Substance_skos:altLabel:)."@fr;
+  sh:agentInstruction "Utiliser le service de réconciliation reconcile_entities pour chercher une substance par son nom, ne pas utiliser de recherche SPARQL sur rdfs:label"@fr;
   foaf:depiction med:Diagramme_SpecialitesPresentationsUCD;
   sh:closed "true"^^xsd:boolean;
-  sh:ignoredProperties _:d85f7e570c704b5b9b53672428339dae726;
+  sh:ignoredProperties _:91358f30d9824e0aa6957b2381cfbb4c909;
   sh:nodeKind sh:IRI;
   sh:pattern "^http://data.esante.gouv.fr/ansm/medicament/Substance_.*$";
-  shacl-play:background-color "00B050";
-  sh:property med:P182, med:P183, med:P184, med:P185, med:P186, med:P187, med:P188,
-    med:P189;
-  sh:sparql med:BusinessRule_11, med:BusinessRule_12, med:BusinessRule_13 .
+  shacl-play:background-color "00B050" .
 
-_:d85f7e570c704b5b9b53672428339dae726 rdf:first rdf:type;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae727 .
+_:91358f30d9824e0aa6957b2381cfbb4c909 rdf:first rdf:type;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c910 .
 
-_:d85f7e570c704b5b9b53672428339dae727 rdf:first rdfs:subClassOf;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae728 .
+_:91358f30d9824e0aa6957b2381cfbb4c910 rdf:first rdfs:subClassOf;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c911 .
 
-_:d85f7e570c704b5b9b53672428339dae728 rdf:first owl:equivalentClass;
+_:91358f30d9824e0aa6957b2381cfbb4c911 rdf:first owl:equivalentClass;
   rdf:rest rdf:nil .
 
 med:Voie a sh:NodeShape, rdfs:Class;
   rdfs:label "Voie (d'administration)"@fr;
   sh:closed "true"^^xsd:boolean;
-  sh:ignoredProperties _:d85f7e570c704b5b9b53672428339dae729;
+  sh:ignoredProperties _:91358f30d9824e0aa6957b2381cfbb4c912;
   sh:nodeKind sh:IRI;
   sh:pattern "^http://data.esante.gouv.fr/ansm/medicament/Voie_.*$";
-  shacl-play:background-color "00B050";
-  sh:property med:P191, med:P192, med:P193, med:P194, med:P195 .
+  shacl-play:background-color "00B050" .
 
-_:d85f7e570c704b5b9b53672428339dae729 rdf:first rdf:type;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae730 .
+_:91358f30d9824e0aa6957b2381cfbb4c912 rdf:first rdf:type;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c913 .
 
-_:d85f7e570c704b5b9b53672428339dae730 rdf:first rdfs:subClassOf;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae731 .
+_:91358f30d9824e0aa6957b2381cfbb4c913 rdf:first rdfs:subClassOf;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c914 .
 
-_:d85f7e570c704b5b9b53672428339dae731 rdf:first owl:equivalentClass;
+_:91358f30d9824e0aa6957b2381cfbb4c914 rdf:first owl:equivalentClass;
   rdf:rest rdf:nil .
 
 med:Forme a sh:NodeShape, rdfs:Class;
   rdfs:label "Forme"@fr;
   rdfs:comment "La forme pharmaceutique (également appelée \"forme médicamenteuse\" ou \"forme galénique\") correspond à la forme sous laquelle le médicament se présente (comprimé, gélule, sirop, collyre, crème, solution injectable, etc.). Elle est spécialement conçue pour la [voie d'administration](#med:Voie) à laquelle le médicament est destiné."@fr;
   sh:closed "true"^^xsd:boolean;
-  sh:ignoredProperties _:d85f7e570c704b5b9b53672428339dae732;
+  sh:ignoredProperties _:91358f30d9824e0aa6957b2381cfbb4c915;
   sh:nodeKind sh:IRI;
   sh:pattern "^http://data.esante.gouv.fr/ansm/medicament/Forme_.*$";
-  shacl-play:background-color "00B050";
-  sh:property med:P197, med:P198, med:P199 .
+  shacl-play:background-color "00B050" .
 
-_:d85f7e570c704b5b9b53672428339dae732 rdf:first rdf:type;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae733 .
+_:91358f30d9824e0aa6957b2381cfbb4c915 rdf:first rdf:type;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c916 .
 
-_:d85f7e570c704b5b9b53672428339dae733 rdf:first rdfs:subClassOf;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae734 .
+_:91358f30d9824e0aa6957b2381cfbb4c916 rdf:first rdfs:subClassOf;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c917 .
 
-_:d85f7e570c704b5b9b53672428339dae734 rdf:first owl:equivalentClass;
+_:91358f30d9824e0aa6957b2381cfbb4c917 rdf:first owl:equivalentClass;
   rdf:rest rdf:nil .
 
 med:UniteDePresentation a sh:NodeShape, rdfs:Class;
   rdfs:label "Unité de présentation"@fr;
   sh:closed "true"^^xsd:boolean;
-  sh:ignoredProperties _:d85f7e570c704b5b9b53672428339dae735;
+  sh:ignoredProperties _:91358f30d9824e0aa6957b2381cfbb4c918;
   sh:nodeKind sh:IRI;
   sh:pattern "^http://data.esante.gouv.fr/ansm/medicament/UniteDePresentation_.*$";
-  shacl-play:background-color "00B050";
-  sh:property med:P201, med:P202 .
+  shacl-play:background-color "00B050" .
 
-_:d85f7e570c704b5b9b53672428339dae735 rdf:first rdf:type;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae736 .
+_:91358f30d9824e0aa6957b2381cfbb4c918 rdf:first rdf:type;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c919 .
 
-_:d85f7e570c704b5b9b53672428339dae736 rdf:first rdfs:subClassOf;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae737 .
+_:91358f30d9824e0aa6957b2381cfbb4c919 rdf:first rdfs:subClassOf;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c920 .
 
-_:d85f7e570c704b5b9b53672428339dae737 rdf:first owl:equivalentClass;
+_:91358f30d9824e0aa6957b2381cfbb4c920 rdf:first owl:equivalentClass;
   rdf:rest rdf:nil .
 
 med:TypeContenant a sh:NodeShape, rdfs:Class;
   rdfs:label "Type de contenant"@fr;
   rdfs:comment "Liste contrôlée des types de contenant, utilisée pour coder le [conditionnement primaire](#med:ElementPresentation_med:typeContenant) des éléments de présentation."@fr;
   sh:closed "true"^^xsd:boolean;
-  sh:ignoredProperties _:d85f7e570c704b5b9b53672428339dae738;
+  sh:ignoredProperties _:91358f30d9824e0aa6957b2381cfbb4c921;
   sh:nodeKind sh:IRI;
   sh:pattern "^http://data.esante.gouv.fr/ansm/medicament/Conditionnement_.*$";
-  shacl-play:background-color "00B050";
-  sh:property med:P204, med:P205 .
+  shacl-play:background-color "00B050" .
 
-_:d85f7e570c704b5b9b53672428339dae738 rdf:first rdf:type;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae739 .
+_:91358f30d9824e0aa6957b2381cfbb4c921 rdf:first rdf:type;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c922 .
 
-_:d85f7e570c704b5b9b53672428339dae739 rdf:first rdfs:subClassOf;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae740 .
+_:91358f30d9824e0aa6957b2381cfbb4c922 rdf:first rdfs:subClassOf;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c923 .
 
-_:d85f7e570c704b5b9b53672428339dae740 rdf:first owl:equivalentClass;
+_:91358f30d9824e0aa6957b2381cfbb4c923 rdf:first owl:equivalentClass;
   rdf:rest rdf:nil .
 
 med:JustificationNiveauVirtualisation a sh:NodeShape, rdfs:Class;
   rdfs:label "Justification du niveau de virtualisation"@fr;
   rdfs:comment "Liste contrôlée des justification du niveau de virtualisation d'une spécialité (\"pas de principe actif\", etc.), utilisée par la propriété de [justification du niveau de virtualisation](#med:SpecialitePharmaceutique_med:justificationNiveauDeVirtualisation)"@fr;
   sh:closed "true"^^xsd:boolean;
-  sh:ignoredProperties _:d85f7e570c704b5b9b53672428339dae741;
+  sh:ignoredProperties _:91358f30d9824e0aa6957b2381cfbb4c924;
   sh:nodeKind sh:IRI;
   sh:pattern "^http://data.esante.gouv.fr/ansm/medicament/JustificationNiveauVirtualisation_.*$";
-  shacl-play:background-color "00B050";
-  sh:property med:P211, med:P212 .
+  shacl-play:background-color "00B050" .
 
-_:d85f7e570c704b5b9b53672428339dae741 rdf:first rdf:type;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae742 .
+_:91358f30d9824e0aa6957b2381cfbb4c924 rdf:first rdf:type;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c925 .
 
-_:d85f7e570c704b5b9b53672428339dae742 rdf:first rdfs:subClassOf;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae743 .
+_:91358f30d9824e0aa6957b2381cfbb4c925 rdf:first rdfs:subClassOf;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c926 .
 
-_:d85f7e570c704b5b9b53672428339dae743 rdf:first owl:equivalentClass;
+_:91358f30d9824e0aa6957b2381cfbb4c926 rdf:first owl:equivalentClass;
   rdf:rest rdf:nil .
 
 med:JustificationNiveauPrescriptibilite a sh:NodeShape, rdfs:Class;
   rdfs:label "Justification du niveau de prescriptibilité"@fr;
   rdfs:comment "Liste contrôlée des justifications du niveau de prescriptiilité en dénomination commune (\"plus de trois substances\", \"gaz médicinal\", etc.), utilisée par la propriété de [justification du niveau de prescriptibilité des spécialités](#med:SpecialitePharmaceutique_med:justificationPrescriptibiliteEnDC)"@fr;
   sh:closed "true"^^xsd:boolean;
-  sh:ignoredProperties _:d85f7e570c704b5b9b53672428339dae744;
+  sh:ignoredProperties _:91358f30d9824e0aa6957b2381cfbb4c927;
   sh:nodeKind sh:IRI;
   sh:pattern "^http://data.esante.gouv.fr/ansm/medicament/JustificationNiveauPrescriptibilite_.*$";
-  shacl-play:background-color "00B050";
-  sh:property med:P214 .
+  shacl-play:background-color "00B050" .
 
-_:d85f7e570c704b5b9b53672428339dae744 rdf:first rdf:type;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae745 .
+_:91358f30d9824e0aa6957b2381cfbb4c927 rdf:first rdf:type;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c928 .
 
-_:d85f7e570c704b5b9b53672428339dae745 rdf:first rdfs:subClassOf;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae746 .
+_:91358f30d9824e0aa6957b2381cfbb4c928 rdf:first rdfs:subClassOf;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c929 .
 
-_:d85f7e570c704b5b9b53672428339dae746 rdf:first owl:equivalentClass;
+_:91358f30d9824e0aa6957b2381cfbb4c929 rdf:first owl:equivalentClass;
   rdf:rest rdf:nil .
 
 med:NiveauVirtualisation a sh:NodeShape, rdfs:Class;
   rdfs:label "Niveau de Virtualisation"@fr;
   rdfs:comment "Liste des différentes modalités selon lesquelles une spécialité peut se virtualiser : non virtualisable, virtualisable partiellement (en PhPID 1 seulement), virtualisable complètement (en PhPID 4). Cette liste est utilisée par coder le [niveau de virtualisation](#med:SpecialitePharmaceutique_med:niveauDeVirtualisation) des spécialités."@fr;
   sh:closed "true"^^xsd:boolean;
-  sh:ignoredProperties _:d85f7e570c704b5b9b53672428339dae747;
+  sh:ignoredProperties _:91358f30d9824e0aa6957b2381cfbb4c930;
   sh:nodeKind sh:IRI;
   sh:pattern "^http://data.esante.gouv.fr/ansm/medicament/NiveauVirtualisation_.*$";
-  shacl-play:background-color "00B050";
-  sh:property med:P246, med:P247 .
+  shacl-play:background-color "00B050" .
 
-_:d85f7e570c704b5b9b53672428339dae747 rdf:first rdf:type;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae748 .
+_:91358f30d9824e0aa6957b2381cfbb4c930 rdf:first rdf:type;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c931 .
 
-_:d85f7e570c704b5b9b53672428339dae748 rdf:first rdfs:subClassOf;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae749 .
+_:91358f30d9824e0aa6957b2381cfbb4c931 rdf:first rdfs:subClassOf;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c932 .
 
-_:d85f7e570c704b5b9b53672428339dae749 rdf:first owl:equivalentClass;
+_:91358f30d9824e0aa6957b2381cfbb4c932 rdf:first owl:equivalentClass;
   rdf:rest rdf:nil .
 
 med:NiveauPrescriptibilite a sh:NodeShape, rdfs:Class;
   rdfs:label "Niveau de Prescriptibilité"@fr;
   rdfs:comment "Liste des catégories de spécialités selon la possibilité de les prescrire en dénomination commune : non prescriptible, prescriptible avec nom de marque, prescriptible. Cette liste est utilisée par coder la [prescriptibilité en DC](#med:SpecialitePharmaceutique_med:prescriptibiliteEnDC) des spécialités."@fr;
   sh:closed "true"^^xsd:boolean;
-  sh:ignoredProperties _:d85f7e570c704b5b9b53672428339dae750;
+  sh:ignoredProperties _:91358f30d9824e0aa6957b2381cfbb4c933;
   sh:nodeKind sh:IRI;
   sh:pattern "^http://data.esante.gouv.fr/ansm/medicament/NiveauPrescriptibilite_.*$";
-  shacl-play:background-color "00B050";
-  sh:property med:P249, med:P250 .
+  shacl-play:background-color "00B050" .
 
-_:d85f7e570c704b5b9b53672428339dae750 rdf:first rdf:type;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae751 .
+_:91358f30d9824e0aa6957b2381cfbb4c933 rdf:first rdf:type;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c934 .
 
-_:d85f7e570c704b5b9b53672428339dae751 rdf:first rdfs:subClassOf;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae752 .
+_:91358f30d9824e0aa6957b2381cfbb4c934 rdf:first rdfs:subClassOf;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c935 .
 
-_:d85f7e570c704b5b9b53672428339dae752 rdf:first owl:equivalentClass;
+_:91358f30d9824e0aa6957b2381cfbb4c935 rdf:first owl:equivalentClass;
   rdf:rest rdf:nil .
 
 med:TypeDose a sh:NodeShape, rdfs:Class;
   rdfs:label "Type de dose"@fr;
   rdfs:comment "Liste des types de doses possibles : unidose, multidose."@fr;
   sh:closed "true"^^xsd:boolean;
-  sh:ignoredProperties _:d85f7e570c704b5b9b53672428339dae753;
+  sh:ignoredProperties _:91358f30d9824e0aa6957b2381cfbb4c936;
   sh:nodeKind sh:IRI;
   sh:pattern "^http://data.esante.gouv.fr/ansm/medicament/TypeDose_.*$";
   shacl-play:background-color "00B050" .
 
-_:d85f7e570c704b5b9b53672428339dae753 rdf:first rdf:type;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae754 .
+_:91358f30d9824e0aa6957b2381cfbb4c936 rdf:first rdf:type;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c937 .
 
-_:d85f7e570c704b5b9b53672428339dae754 rdf:first rdfs:subClassOf;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae755 .
+_:91358f30d9824e0aa6957b2381cfbb4c937 rdf:first rdfs:subClassOf;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c938 .
 
-_:d85f7e570c704b5b9b53672428339dae755 rdf:first owl:equivalentClass;
+_:91358f30d9824e0aa6957b2381cfbb4c938 rdf:first owl:equivalentClass;
   rdf:rest rdf:nil .
 
 med:Gamme a sh:NodeShape, rdfs:Class;
   rdfs:label "Gamme"@fr;
   rdfs:comment "Gamme commerciale"@fr;
   sh:closed "true"^^xsd:boolean;
-  sh:ignoredProperties _:d85f7e570c704b5b9b53672428339dae756;
+  sh:ignoredProperties _:91358f30d9824e0aa6957b2381cfbb4c939;
   sh:nodeKind sh:IRI;
   sh:pattern "^http://data.esante.gouv.fr/ansm/medicament/Gamme_.*$";
-  shacl-play:background-color "00B050";
-  sh:property med:P207, med:P208, med:P209 .
+  shacl-play:background-color "00B050" .
 
-_:d85f7e570c704b5b9b53672428339dae756 rdf:first rdf:type;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae757 .
+_:91358f30d9824e0aa6957b2381cfbb4c939 rdf:first rdf:type;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c940 .
 
-_:d85f7e570c704b5b9b53672428339dae757 rdf:first rdfs:subClassOf;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae758 .
+_:91358f30d9824e0aa6957b2381cfbb4c940 rdf:first rdfs:subClassOf;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c941 .
 
-_:d85f7e570c704b5b9b53672428339dae758 rdf:first owl:equivalentClass;
+_:91358f30d9824e0aa6957b2381cfbb4c941 rdf:first owl:equivalentClass;
   rdf:rest rdf:nil .
 
 med:PrescriptionEnDC a sh:NodeShape, rdfs:Class;
@@ -622,20 +591,20 @@ med:PrescriptionEnDC a sh:NodeShape, rdfs:Class;
 Les prescriptions en DC sont par ailleurs liées à/aux médicaments virtuels Medicabase dont elles sont dérivées, et au [PhPID4 correspondant](#med:PrescriptionEnDC_med:classementSubstanceDosageForme) à cette prescription en DC."""@fr;
   foaf:depiction <images/prescriptions_dc.png>, med:Diagramme_PrescriptionEnDC;
   sh:closed "true"^^xsd:boolean;
-  sh:ignoredProperties _:d85f7e570c704b5b9b53672428339dae759;
+  sh:ignoredProperties _:91358f30d9824e0aa6957b2381cfbb4c942;
   sh:nodeKind sh:IRI;
   sh:pattern "^http://data.esante.gouv.fr/ansm/medicament/PrescriptionEnDC_.*$";
   shacl-play:background-color "F94107";
   sh:property med:P37, med:P38, med:P39, med:P40, med:P41, med:P42, med:P43, med:P44,
     med:P45, med:P46, med:P47, med:P48, med:P49 .
 
-_:d85f7e570c704b5b9b53672428339dae759 rdf:first rdf:type;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae760 .
+_:91358f30d9824e0aa6957b2381cfbb4c942 rdf:first rdf:type;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c943 .
 
-_:d85f7e570c704b5b9b53672428339dae760 rdf:first rdfs:subClassOf;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae761 .
+_:91358f30d9824e0aa6957b2381cfbb4c943 rdf:first rdfs:subClassOf;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c944 .
 
-_:d85f7e570c704b5b9b53672428339dae761 rdf:first owl:equivalentClass;
+_:91358f30d9824e0aa6957b2381cfbb4c944 rdf:first owl:equivalentClass;
   rdf:rest rdf:nil .
 
 med:PPhParSubstance a sh:NodeShape, rdfs:Class;
@@ -643,19 +612,19 @@ med:PPhParSubstance a sh:NodeShape, rdfs:Class;
   rdfs:comment "Produit pharmaceutique de niveau 1 (PhPID1) défini par les [substances qui portent le dosage](#med:PPhParSubstance_med:substancePortantLeDosage)."@fr;
   foaf:depiction <images/phpid123.png>, med:Diagramme_PhPIDs;
   sh:closed "true"^^xsd:boolean;
-  sh:ignoredProperties _:d85f7e570c704b5b9b53672428339dae762;
+  sh:ignoredProperties _:91358f30d9824e0aa6957b2381cfbb4c945;
   sh:nodeKind sh:IRI;
   sh:pattern "^http://data.esante.gouv.fr/ansm/medicament/PPhParSubstance_.*$";
   shacl-play:background-color "4472C4";
   sh:property med:P11, med:P12, med:P13 .
 
-_:d85f7e570c704b5b9b53672428339dae762 rdf:first rdf:type;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae763 .
+_:91358f30d9824e0aa6957b2381cfbb4c945 rdf:first rdf:type;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c946 .
 
-_:d85f7e570c704b5b9b53672428339dae763 rdf:first rdfs:subClassOf;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae764 .
+_:91358f30d9824e0aa6957b2381cfbb4c946 rdf:first rdfs:subClassOf;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c947 .
 
-_:d85f7e570c704b5b9b53672428339dae764 rdf:first owl:equivalentClass;
+_:91358f30d9824e0aa6957b2381cfbb4c947 rdf:first owl:equivalentClass;
   rdf:rest rdf:nil .
 
 med:PPhParSubstanceDosage a sh:NodeShape, rdfs:Class;
@@ -663,20 +632,19 @@ med:PPhParSubstanceDosage a sh:NodeShape, rdfs:Class;
   rdfs:comment "Produit pharmaceutique de niveau 2 (PhPID2) défini par les [substances qui portent le dosage](#med:PPhParSubstanceDosage_med:substancePortantLeDosage) + les dosages [présentation](#med:PPhParSubstanceDosage_med:dosagePresentation) et [concentration](#med:PPhParSubstanceDosage_med:dosageConcentration) de ce produit. Le PhPID2 [précise](#med:PPhParSubstanceDosage_med:precisePPhParSubstance) un PhPID1."@fr;
   foaf:depiction <images/phpid123.png>, med:Diagramme_PhPIDs;
   sh:closed "true"^^xsd:boolean;
-  sh:ignoredProperties _:d85f7e570c704b5b9b53672428339dae765;
+  sh:ignoredProperties _:91358f30d9824e0aa6957b2381cfbb4c948;
   sh:nodeKind sh:IRI;
   sh:pattern "^http://data.esante.gouv.fr/ansm/medicament/PPhParSubstanceDosage_.*$";
   shacl-play:background-color "4472C4";
-  sh:property med:P15, med:P16, med:P17, med:P18, med:P19, med:P20;
-  sh:sparql med:BusinessRule_1 .
+  sh:property med:P15, med:P16, med:P17, med:P18, med:P19, med:P20 .
 
-_:d85f7e570c704b5b9b53672428339dae765 rdf:first rdf:type;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae766 .
+_:91358f30d9824e0aa6957b2381cfbb4c948 rdf:first rdf:type;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c949 .
 
-_:d85f7e570c704b5b9b53672428339dae766 rdf:first rdfs:subClassOf;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae767 .
+_:91358f30d9824e0aa6957b2381cfbb4c949 rdf:first rdfs:subClassOf;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c950 .
 
-_:d85f7e570c704b5b9b53672428339dae767 rdf:first owl:equivalentClass;
+_:91358f30d9824e0aa6957b2381cfbb4c950 rdf:first owl:equivalentClass;
   rdf:rest rdf:nil .
 
 med:PPhParSubstanceForme a sh:NodeShape, rdfs:Class;
@@ -684,19 +652,19 @@ med:PPhParSubstanceForme a sh:NodeShape, rdfs:Class;
   rdfs:comment "Produit pharmaceutique de niveau 3 (PhPID3) défini par les [substances qui portent le dosage](#med:PPhParSubstanceForme_med:substancePortantLeDosage) + la [forme administrable](#med:PPhParSubstanceDosageForme_med:formeAdministrable) du produit. Le PhPID3 [précise](#med:PPhParSubstanceDosage_med:precisePPhParSubstance) un PhPID1."@fr;
   foaf:depiction <images/phpid123.png>, med:Diagramme_PhPIDs;
   sh:closed "true"^^xsd:boolean;
-  sh:ignoredProperties _:d85f7e570c704b5b9b53672428339dae768;
+  sh:ignoredProperties _:91358f30d9824e0aa6957b2381cfbb4c951;
   sh:nodeKind sh:IRI;
   sh:pattern "^http://data.esante.gouv.fr/ansm/medicament/PPhParSubstanceForme_.*$";
   shacl-play:background-color "4472C4";
   sh:property med:P22, med:P23, med:P24, med:P25, med:P26 .
 
-_:d85f7e570c704b5b9b53672428339dae768 rdf:first rdf:type;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae769 .
+_:91358f30d9824e0aa6957b2381cfbb4c951 rdf:first rdf:type;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c952 .
 
-_:d85f7e570c704b5b9b53672428339dae769 rdf:first rdfs:subClassOf;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae770 .
+_:91358f30d9824e0aa6957b2381cfbb4c952 rdf:first rdfs:subClassOf;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c953 .
 
-_:d85f7e570c704b5b9b53672428339dae770 rdf:first owl:equivalentClass;
+_:91358f30d9824e0aa6957b2381cfbb4c953 rdf:first owl:equivalentClass;
   rdf:rest rdf:nil .
 
 med:PPhParSubstanceDosageForme a sh:NodeShape, rdfs:Class;
@@ -704,151 +672,143 @@ med:PPhParSubstanceDosageForme a sh:NodeShape, rdfs:Class;
   rdfs:comment "Produit pharmaceutique de niveau 4 (PhPID4) défini par les [substances qui portent le dosage](#med:PPhParSubstanceDosageForme_med:substancePortantLeDosage) + les dosages [présentation](#med:PPhParSubstanceDosageForme_med:dosagePresentation) et [concentration](#med:PPhParSubstanceDosageForme_med:dosageConcentration) de ce produit + la [forme administrable](#med:PPhParSubstanceDosageForme_med:formeAdministrable) de ce produit. Les PhPID4 [précisent](#med:PPhParSubstanceDosageForme_med:precisePPhParSubstanceDosage) un PhPID2 et un PHPID3."@fr;
   foaf:depiction <images/phpid4.png>, med:Diagramme_PhPIDs;
   sh:closed "true"^^xsd:boolean;
-  sh:ignoredProperties _:d85f7e570c704b5b9b53672428339dae771;
+  sh:ignoredProperties _:91358f30d9824e0aa6957b2381cfbb4c954;
   sh:nodeKind sh:IRI;
   sh:pattern "^http://data.esante.gouv.fr/ansm/medicament/PPhParSubstanceDosageForme_.*$";
   shacl-play:background-color "4472C4";
-  sh:property med:P28, med:P29, med:P30, med:P31, med:P32, med:P33, med:P34, med:P35;
-  sh:sparql med:BusinessRule_2 .
+  sh:property med:P28, med:P29, med:P30, med:P31, med:P32, med:P33, med:P34, med:P35 .
 
-_:d85f7e570c704b5b9b53672428339dae771 rdf:first rdf:type;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae772 .
+_:91358f30d9824e0aa6957b2381cfbb4c954 rdf:first rdf:type;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c955 .
 
-_:d85f7e570c704b5b9b53672428339dae772 rdf:first rdfs:subClassOf;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae773 .
+_:91358f30d9824e0aa6957b2381cfbb4c955 rdf:first rdfs:subClassOf;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c956 .
 
-_:d85f7e570c704b5b9b53672428339dae773 rdf:first owl:equivalentClass;
+_:91358f30d9824e0aa6957b2381cfbb4c956 rdf:first owl:equivalentClass;
   rdf:rest rdf:nil .
 
 med:Evenement a sh:NodeShape, rdfs:Class;
   rdfs:label "Evènement"@fr;
   rdfs:comment "Un événement réglementaire [concerne](#med:Evenement_med:concerne) une [Spécialité](#med:Specialite) ou une [Présentation](#med:Presentation) et est caractérisé par son [type d'événement](#med:Evenement_med:typeEvenement) et sa [date d'effet](#med:Evenement_med:dateEffet)."@fr;
-  sh:ignoredProperties _:d85f7e570c704b5b9b53672428339dae774;
+  sh:ignoredProperties _:91358f30d9824e0aa6957b2381cfbb4c957;
   sh:nodeKind sh:IRI;
   sh:pattern "^http://data.esante.gouv.fr/ansm/medicament/Evenement_.*$";
-  shacl-play:background-color "FFD564";
-  sh:property med:P216, med:P217, med:P218, med:P219, med:P220, med:P221 .
+  shacl-play:background-color "FFD564" .
 
-_:d85f7e570c704b5b9b53672428339dae774 rdf:first rdf:type;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae775 .
+_:91358f30d9824e0aa6957b2381cfbb4c957 rdf:first rdf:type;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c958 .
 
-_:d85f7e570c704b5b9b53672428339dae775 rdf:first rdfs:subClassOf;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae776 .
+_:91358f30d9824e0aa6957b2381cfbb4c958 rdf:first rdfs:subClassOf;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c959 .
 
-_:d85f7e570c704b5b9b53672428339dae776 rdf:first owl:equivalentClass;
+_:91358f30d9824e0aa6957b2381cfbb4c959 rdf:first owl:equivalentClass;
   rdf:rest rdf:nil .
 
 med:Autorisation a sh:NodeShape, rdfs:Class;
   rdfs:label "Autorisation"@fr;
   rdfs:comment "Les Autorisations sont les [évènements](#med:Evenement) principaux de la série d’évènements réglementaires d'une spécialité ; elles sont délivrées suite à une [procédure](#med:Autorisation_med:typeProcedure) d’un certain type. Le [régime de procédure courant d’une Spécialité](#med:SpecialitePharmaceutique_med:typeProcedureCourante) peut être différent du type de procédure de son autorisation d’origine, dans le cas où un évènement de changement de type de procédure est intervenu."@fr;
   foaf:depiction <images/autorisations.png>;
-  med:closedBySuperClasses "true"^^xsd:boolean;
-  sh:ignoredProperties _:d85f7e570c704b5b9b53672428339dae777;
+  sh:closed "true"^^xsd:boolean;
+  sh:ignoredProperties _:91358f30d9824e0aa6957b2381cfbb4c960;
   sh:nodeKind sh:IRI;
   sh:pattern "^http://data.esante.gouv.fr/ansm/medicament/Autorisation_.*$";
-  shacl-play:background-color "FFD564";
-  sh:property med:P216, med:P217, med:P218, med:P219, med:P220, med:P221, med:P223 .
+  shacl-play:background-color "FFD564" .
 
-_:d85f7e570c704b5b9b53672428339dae777 rdf:first rdf:type;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae778 .
+_:91358f30d9824e0aa6957b2381cfbb4c960 rdf:first rdf:type;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c961 .
 
-_:d85f7e570c704b5b9b53672428339dae778 rdf:first rdfs:subClassOf;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae779 .
+_:91358f30d9824e0aa6957b2381cfbb4c961 rdf:first rdfs:subClassOf;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c962 .
 
-_:d85f7e570c704b5b9b53672428339dae779 rdf:first owl:equivalentClass;
+_:91358f30d9824e0aa6957b2381cfbb4c962 rdf:first owl:equivalentClass;
   rdf:rest rdf:nil .
 
 med:ChangementDeStatut a sh:NodeShape, rdfs:Class;
   rdfs:label "Changement de statut"@fr;
   rdfs:comment "Les changements de statut sont des [événénements](#med:Evenement) qui concernent les suspensions, abrogations, etc. faisant varier le statut de la spécialité."@fr;
-  med:closedBySuperClasses "true"^^xsd:boolean;
-  sh:ignoredProperties _:d85f7e570c704b5b9b53672428339dae780;
+  sh:closed "true"^^xsd:boolean;
+  sh:ignoredProperties _:91358f30d9824e0aa6957b2381cfbb4c963;
   sh:nodeKind sh:IRI;
   sh:pattern "^http://data.esante.gouv.fr/ansm/medicament/ChangementDeStatut_.*$";
-  shacl-play:background-color "FFD564";
-  sh:property med:P216, med:P217, med:P218, med:P219, med:P220, med:P221 .
+  shacl-play:background-color "FFD564" .
 
-_:d85f7e570c704b5b9b53672428339dae780 rdf:first rdf:type;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae781 .
+_:91358f30d9824e0aa6957b2381cfbb4c963 rdf:first rdf:type;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c964 .
 
-_:d85f7e570c704b5b9b53672428339dae781 rdf:first rdfs:subClassOf;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae782 .
+_:91358f30d9824e0aa6957b2381cfbb4c964 rdf:first rdfs:subClassOf;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c965 .
 
-_:d85f7e570c704b5b9b53672428339dae782 rdf:first owl:equivalentClass;
+_:91358f30d9824e0aa6957b2381cfbb4c965 rdf:first owl:equivalentClass;
   rdf:rest rdf:nil .
 
 med:TypeProcedure a sh:NodeShape, rdfs:Class;
   rdfs:label "Type de procédure"@fr;
   rdfs:comment "Liste de toutes les catégories de procédures que peut décrire le référentiel du médicament sur les spécialités pharmaceutiques. Cette liste est utilisée pour code le [type de procédure courante](#med:SpecialitePharmaceutique_med:typeProcedureCourante) d'une spécialité."@fr;
   sh:closed "true"^^xsd:boolean;
-  sh:ignoredProperties _:d85f7e570c704b5b9b53672428339dae783;
+  sh:ignoredProperties _:91358f30d9824e0aa6957b2381cfbb4c966;
   sh:nodeKind sh:IRI;
   sh:pattern "^http://data.esante.gouv.fr/ansm/medicament/TypeProcedure_.*$";
-  shacl-play:background-color "00B050";
-  sh:property med:P239, med:P240, med:P241, med:P242, med:P243, med:P244 .
+  shacl-play:background-color "00B050" .
 
-_:d85f7e570c704b5b9b53672428339dae783 rdf:first rdf:type;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae784 .
+_:91358f30d9824e0aa6957b2381cfbb4c966 rdf:first rdf:type;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c967 .
 
-_:d85f7e570c704b5b9b53672428339dae784 rdf:first rdfs:subClassOf;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae785 .
+_:91358f30d9824e0aa6957b2381cfbb4c967 rdf:first rdfs:subClassOf;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c968 .
 
-_:d85f7e570c704b5b9b53672428339dae785 rdf:first owl:equivalentClass;
+_:91358f30d9824e0aa6957b2381cfbb4c968 rdf:first owl:equivalentClass;
   rdf:rest rdf:nil .
 
 med:StatutSpecialite a sh:NodeShape, rdfs:Class;
   rdfs:label "Statut de Spécialité"@fr;
   rdfs:comment "Le statut est l'état de l'autorisation de la spécialité pharmaceutique : actif, archivé, suspendu, retiré... Cette liste est utilisée pour coder le [statut courant d'une spécialité](#med:SpecialitePharmaceutique_med:statutCourant)."@fr;
   sh:closed "true"^^xsd:boolean;
-  sh:ignoredProperties _:d85f7e570c704b5b9b53672428339dae786;
+  sh:ignoredProperties _:91358f30d9824e0aa6957b2381cfbb4c969;
   sh:nodeKind sh:IRI;
   sh:pattern "^http://data.esante.gouv.fr/ansm/medicament/StatutSpecialite_.*$";
-  shacl-play:background-color "00B050";
-  sh:property med:P232, med:P233, med:P234, med:P235, med:P236, med:P237 .
+  shacl-play:background-color "00B050" .
 
-_:d85f7e570c704b5b9b53672428339dae786 rdf:first rdf:type;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae787 .
+_:91358f30d9824e0aa6957b2381cfbb4c969 rdf:first rdf:type;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c970 .
 
-_:d85f7e570c704b5b9b53672428339dae787 rdf:first rdfs:subClassOf;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae788 .
+_:91358f30d9824e0aa6957b2381cfbb4c970 rdf:first rdfs:subClassOf;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c971 .
 
-_:d85f7e570c704b5b9b53672428339dae788 rdf:first owl:equivalentClass;
+_:91358f30d9824e0aa6957b2381cfbb4c971 rdf:first owl:equivalentClass;
   rdf:rest rdf:nil .
 
 med:TypeEvenement a sh:NodeShape, rdfs:Class;
   rdfs:label "Type d'évènement"@fr;
   rdfs:comment "Liste de toutes les catégories d'[événements](#med:Evenement) que peut décrire le référentiel du médicament, aussi bien sur les spécialités que sur les présentations."@fr;
   sh:closed "true"^^xsd:boolean;
-  sh:ignoredProperties _:d85f7e570c704b5b9b53672428339dae789;
+  sh:ignoredProperties _:91358f30d9824e0aa6957b2381cfbb4c972;
   sh:nodeKind sh:IRI;
   sh:pattern "^http://data.esante.gouv.fr/ansm/medicament/TypeEvenement_.*$";
-  shacl-play:background-color "00B050";
-  sh:property med:P225, med:P226, med:P227, med:P228, med:P229, med:P230 .
+  shacl-play:background-color "00B050" .
 
-_:d85f7e570c704b5b9b53672428339dae789 rdf:first rdf:type;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae790 .
+_:91358f30d9824e0aa6957b2381cfbb4c972 rdf:first rdf:type;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c973 .
 
-_:d85f7e570c704b5b9b53672428339dae790 rdf:first rdfs:subClassOf;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae791 .
+_:91358f30d9824e0aa6957b2381cfbb4c973 rdf:first rdfs:subClassOf;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c974 .
 
-_:d85f7e570c704b5b9b53672428339dae791 rdf:first owl:equivalentClass;
+_:91358f30d9824e0aa6957b2381cfbb4c974 rdf:first owl:equivalentClass;
   rdf:rest rdf:nil .
 
 med:BlankNode_LabelWithDates a sh:NodeShape, rdfs:Class;
   rdfs:label "Libellé historique"@fr;
   rdfs:comment "Cette entité capture un libellé associé à une date de début et une date de fin d'utilisation de ce libellé."@fr;
   sh:closed "true"^^xsd:boolean;
-  sh:ignoredProperties _:d85f7e570c704b5b9b53672428339dae792;
-  sh:nodeKind sh:BlankNode;
-  sh:property med:P252, med:P253, med:P254 .
+  sh:ignoredProperties _:91358f30d9824e0aa6957b2381cfbb4c975;
+  sh:nodeKind sh:BlankNode .
 
-_:d85f7e570c704b5b9b53672428339dae792 rdf:first rdf:type;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae793 .
+_:91358f30d9824e0aa6957b2381cfbb4c975 rdf:first rdf:type;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c976 .
 
-_:d85f7e570c704b5b9b53672428339dae793 rdf:first rdfs:subClassOf;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae794 .
+_:91358f30d9824e0aa6957b2381cfbb4c976 rdf:first rdfs:subClassOf;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c977 .
 
-_:d85f7e570c704b5b9b53672428339dae794 rdf:first owl:equivalentClass;
+_:91358f30d9824e0aa6957b2381cfbb4c977 rdf:first owl:equivalentClass;
   rdf:rest rdf:nil .
 
 med:P11 sh:path skos:notation;
@@ -867,9 +827,9 @@ Nom de la substance ou concaténation des noms des substances, séparés par un 
   sh:nodeKind sh:Literal;
   sh:datatype rdf:langString;
   dash:propertyRole dash:LabelRole;
-  sh:languageIn _:d85f7e570c704b5b9b53672428339dae795 .
+  sh:languageIn _:91358f30d9824e0aa6957b2381cfbb4c978 .
 
-_:d85f7e570c704b5b9b53672428339dae795 rdf:first "fr";
+_:91358f30d9824e0aa6957b2381cfbb4c978 rdf:first "fr";
   rdf:rest rdf:nil .
 
 med:P13 sh:path med:substancePortantLeDosage;
@@ -898,9 +858,9 @@ Nom de la substance ou concaténation des noms des substances, séparés par un 
   sh:nodeKind sh:Literal;
   sh:datatype rdf:langString;
   dash:propertyRole dash:LabelRole;
-  sh:languageIn _:d85f7e570c704b5b9b53672428339dae796 .
+  sh:languageIn _:91358f30d9824e0aa6957b2381cfbb4c979 .
 
-_:d85f7e570c704b5b9b53672428339dae796 rdf:first "fr";
+_:91358f30d9824e0aa6957b2381cfbb4c979 rdf:first "fr";
   rdf:rest rdf:nil .
 
 med:P17 sh:path med:substancePortantLeDosage;
@@ -951,9 +911,9 @@ Nom de la substance ou concaténation des noms des substances, séparés par un 
   sh:nodeKind sh:Literal;
   sh:datatype rdf:langString;
   dash:propertyRole dash:LabelRole;
-  sh:languageIn _:d85f7e570c704b5b9b53672428339dae797 .
+  sh:languageIn _:91358f30d9824e0aa6957b2381cfbb4c980 .
 
-_:d85f7e570c704b5b9b53672428339dae797 rdf:first "fr";
+_:91358f30d9824e0aa6957b2381cfbb4c980 rdf:first "fr";
   rdf:rest rdf:nil .
 
 med:P24 sh:path med:substancePortantLeDosage;
@@ -999,9 +959,9 @@ Nom de la substance ou concaténation des noms des substances, séparés par un 
   sh:nodeKind sh:Literal;
   sh:datatype rdf:langString;
   dash:propertyRole dash:LabelRole;
-  sh:languageIn _:d85f7e570c704b5b9b53672428339dae798 .
+  sh:languageIn _:91358f30d9824e0aa6957b2381cfbb4c981 .
 
-_:d85f7e570c704b5b9b53672428339dae798 rdf:first "fr";
+_:91358f30d9824e0aa6957b2381cfbb4c981 rdf:first "fr";
   rdf:rest rdf:nil .
 
 med:P30 sh:path med:substancePortantLeDosage;
@@ -1069,9 +1029,9 @@ Nom de la substance ou concaténation des noms des substances, séparés par un 
   sh:nodeKind sh:Literal;
   sh:datatype rdf:langString;
   dash:propertyRole dash:LabelRole;
-  sh:languageIn _:d85f7e570c704b5b9b53672428339dae799 .
+  sh:languageIn _:91358f30d9824e0aa6957b2381cfbb4c982 .
 
-_:d85f7e570c704b5b9b53672428339dae799 rdf:first "fr";
+_:91358f30d9824e0aa6957b2381cfbb4c982 rdf:first "fr";
   rdf:rest rdf:nil .
 
 med:P39 sh:path med:dateDebut;
@@ -1346,6 +1306,8 @@ med:P75 sh:path med:multiplicateurPourcent;
   sh:nodeKind sh:Literal;
   sh:datatype xsd:decimal .
 
+med:Unite sh:property med:P75, med:P76 .
+
 med:P76 sh:path skos:exactMatch;
   sh:name "correspondance QUDT";
   sh:description """Correspondance avec l'URI de l'unité dans le vocabulaire des unités QUDT (https://www.qudt.org/doc/DOC_VOCAB-UNITS.html)
@@ -1362,6 +1324,11 @@ med:P78 sh:path med:CIS;
   sh:datatype xsd:string;
   shacl-play:background-color "#EAF1DD" .
 
+med:SpecialitePharmaceutique sh:property med:P78, med:P79, med:P80, med:P81, med:P82,
+    med:P83, med:P84, med:P85, med:P86, med:P87, med:P88, med:P89, med:P90, med:P91, med:P92,
+    med:P93, med:P94, med:P95, med:P96, med:P97, med:P98, med:P99, med:P100, med:P101,
+    med:P102, med:P103, med:P104, med:P105, med:P106, med:P107 .
+
 med:P79 sh:path rdfs:label;
   sh:name "libellé de la spécialité";
   sh:description "Nom de spécialité";
@@ -1370,10 +1337,10 @@ med:P79 sh:path rdfs:label;
   sh:nodeKind sh:Literal;
   sh:datatype rdf:langString;
   dash:propertyRole dash:LabelRole;
-  sh:languageIn _:d85f7e570c704b5b9b53672428339dae800;
+  sh:languageIn _:91358f30d9824e0aa6957b2381cfbb4c983;
   shacl-play:background-color "#EAF1DD" .
 
-_:d85f7e570c704b5b9b53672428339dae800 rdf:first "fr";
+_:91358f30d9824e0aa6957b2381cfbb4c983 rdf:first "fr";
   rdf:rest rdf:nil .
 
 med:P80 sh:path med:actif;
@@ -1411,8 +1378,7 @@ Pour certaines spécialités archivées, il est possible que la référence à l
 
 med:P84 sh:path med:codeATC;
   sh:name "code ATC";
-  sh:description "Code ATC sous forme littérale (par exemple 'G04CA01'). Le code est explicitement répété en plus de la référence à l'URI principalement pour des questions d'affichage car le simple libellé de la catégorie est ambigü.";
-  # sh:agentInstruction "Pour filtrer une spécialité par classification ATC, utiliser la réconciliation avec le type <http://data.esante.gouv.fr/ema/sms> pour trouver l'entité ATC. Les entités ATC sont indexées sous la forme 'CODE - libellé' (ex: 'G04CA01 - Antagonistes des récepteurs alpha-adrénergiques'). Injecter ensuite l'URI réconciliée dans la propriété med:classificationATC — ne pas utiliser le code littéral de ce prédicat pour filtrer."@fr;
+  sh:description "Code ATC sous forme littérale (par exemple “G04CA01”). Le code est explicitement répété en plus de la référence à l'URI principalement pour des questions d'affichage car le simple libellé de la catégorie est ambigü.";
   sh:minCount "1"^^xsd:integer;
   sh:maxCount "1"^^xsd:integer;
   sh:nodeKind sh:Literal;
@@ -1620,6 +1586,9 @@ med:P109 sh:path med:identifiantElement;
   sh:datatype xsd:string;
   shacl-play:background-color "#EAF1DD" .
 
+med:Element sh:property med:P109, med:P110, med:P111, med:P112, med:P113, med:P114,
+    med:P115, med:P116, med:P117, med:P118, med:P119 .
+
 med:P110 sh:path rdfs:label;
   sh:name "libellé de l'élémént";
   sh:description "Libellé de l'élément";
@@ -1718,6 +1687,9 @@ med:P121 sh:path rdfs:label;
   dash:propertyRole dash:LabelRole;
   shacl-play:background-color "#EAF1DD" .
 
+med:ExpressionDeDosage sh:property med:P121, med:P122, med:P123, med:P124, med:P125,
+    med:P126, med:P127, med:P128 .
+
 med:P122 sh:path med:substance;
   sh:name "substance de référence";
   sh:description "substance pour laquelle ce dosage est donné";
@@ -1787,6 +1759,8 @@ med:P130 sh:path skos:notation;
   sh:datatype xsd:string;
   shacl-play:background-color "#EAF1DD" .
 
+med:GroupeGenerique sh:property med:P130, med:P131, med:P132, med:P133, med:P134 .
+
 med:P131 sh:path rdfs:label;
   sh:name "libellé du groupe";
   sh:description """Libellé du groupe générique, par exemple \"PRASUGREL (CHLORHYDRATE DE) équivalent à PRASUGREL 10 mg - PRASUGREL
@@ -1828,6 +1802,9 @@ med:P136 sh:path med:codeUCD13;
   sh:nodeKind sh:Literal;
   sh:datatype xsd:string;
   shacl-play:background-color "#EAF1DD" .
+
+med:UniteCommuneDeDispensation sh:property med:P136, med:P137, med:P138, med:P139,
+    med:P140, med:P141 .
 
 med:P137 sh:path med:codeUCD7;
   sh:name "UCD 7";
@@ -1880,6 +1857,10 @@ med:P143 sh:path med:CIP13;
   sh:datatype xsd:string;
   shacl-play:background-color "#EAF1DD" .
 
+med:Presentation sh:property med:P143, med:P144, med:P145, med:P146, med:P147, med:P148,
+    med:P149, med:P150, med:P152, med:P153, med:P154, med:P155, med:P156, med:P157, med:P158,
+    med:P159, med:P160, med:P161, med:P162 .
+
 med:P144 sh:path med:CIP7;
   sh:name "CIP7";
   sh:description "Code CIP constitué de 7 chiffres (ancien code). Il n'est pas toujours présent, c'est un identifiant historique.";
@@ -1896,10 +1877,10 @@ med:P145 sh:path rdfs:label;
   sh:nodeKind sh:Literal;
   sh:datatype rdf:langString;
   dash:propertyRole dash:LabelRole;
-  sh:languageIn _:d85f7e570c704b5b9b53672428339dae801;
+  sh:languageIn _:91358f30d9824e0aa6957b2381cfbb4c984;
   shacl-play:background-color "#EAF1DD" .
 
-_:d85f7e570c704b5b9b53672428339dae801 rdf:first "fr";
+_:91358f30d9824e0aa6957b2381cfbb4c984 rdf:first "fr";
   rdf:rest rdf:nil .
 
 med:P146 sh:path skos:altLabel;
@@ -1909,10 +1890,10 @@ med:P146 sh:path skos:altLabel;
   sh:maxCount "1"^^xsd:integer;
   sh:nodeKind sh:Literal;
   sh:datatype rdf:langString;
-  sh:languageIn _:d85f7e570c704b5b9b53672428339dae802;
+  sh:languageIn _:91358f30d9824e0aa6957b2381cfbb4c985;
   shacl-play:background-color "#EAF1DD" .
 
-_:d85f7e570c704b5b9b53672428339dae802 rdf:first "fr";
+_:91358f30d9824e0aa6957b2381cfbb4c985 rdf:first "fr";
   rdf:rest rdf:nil .
 
 med:P147 sh:path med:nombreUniteDeDispensation;
@@ -1947,14 +1928,6 @@ med:P150 sh:path med:contientUniteDeDispensation;
   sh:maxCount "1"^^xsd:integer;
   sh:nodeKind sh:IRI;
   sh:class med:UniteCommuneDeDispensation;
-  shacl-play:background-color "#EAF1DD" .
-
-med:P151 sh:path rdfs:subClassOf;
-  sh:name "classement";
-  sh:description "Une Présentation porte 2 informations de classement : elle est toujours sous-classe de med:Présentation, mais également sous-classe de la Spécialité qu'elle présente. Les Présentations héritent de toutes les caractéristiques de leur Spécialité.";
-  sh:minCount "2"^^xsd:integer;
-  sh:maxCount "2"^^xsd:integer;
-  sh:nodeKind sh:IRI;
   shacl-play:background-color "#EAF1DD" .
 
 med:P152 sh:path med:prescriptibleComme;
@@ -2041,13 +2014,8 @@ med:P164 sh:path med:compose;
   sh:class med:Presentation;
   shacl-play:background-color "#EAF1DD" .
 
-med:P165 sh:path rdfs:subClassOf;
-  sh:name "classement";
-  sh:description "Un élément présentation porte 2 informations de classement : il est toujours sous-classe de med:ElementPresentation mais également sous-classe de l'élément de spécialité correspondant. Les élément de présentations héritent de toutes les caractéristiques de l'élément de spécialité correspondant.";
-  sh:minCount "2"^^xsd:integer;
-  sh:maxCount "2"^^xsd:integer;
-  sh:nodeKind sh:IRI;
-  shacl-play:background-color "#EAF1DD" .
+med:ElementPresentation sh:property med:P164, med:P166, med:P167, med:P168, med:P169,
+    med:P170, med:P171, med:P172, med:P173, med:P174, med:P175, med:P176 .
 
 med:P166 sh:path med:identifiantElement;
   sh:name "identifiant de l'élément";
@@ -2143,6 +2111,8 @@ med:P178 sh:path skos:notation;
   sh:datatype xsd:string;
   shacl-play:background-color "#EAF1DD" .
 
+med:Organisation sh:property med:P178, med:P179, med:P180 .
+
 med:P179 sh:path rdfs:label;
   sh:name "libellé";
   sh:description "Nom de l'organisation, issu de la base ANSM";
@@ -2171,6 +2141,9 @@ med:P182 sh:path skos:notation;
   sh:datatype xsd:string;
   shacl-play:background-color "#EAF1DD" .
 
+med:Substance sh:property med:P182, med:P183, med:P184, med:P185, med:P186, med:P187,
+    med:P188, med:P189 .
+
 med:P183 sh:path dct:created;
   sh:name "date de création";
   sh:description "Date de création de la substance dans le système";
@@ -2195,10 +2168,10 @@ med:P185 sh:path rdfs:label;
   sh:nodeKind sh:Literal;
   sh:datatype rdf:langString;
   dash:propertyRole dash:LabelRole;
-  sh:languageIn _:d85f7e570c704b5b9b53672428339dae803;
+  sh:languageIn _:91358f30d9824e0aa6957b2381cfbb4c986;
   shacl-play:background-color "#EAF1DD" .
 
-_:d85f7e570c704b5b9b53672428339dae803 rdf:first "fr";
+_:91358f30d9824e0aa6957b2381cfbb4c986 rdf:first "fr";
   rdf:rest rdf:nil .
 
 med:P186 sh:path skos:altLabel;
@@ -2206,10 +2179,10 @@ med:P186 sh:path skos:altLabel;
   sh:description "Libellé synonyme de cette substance";
   sh:nodeKind sh:Literal;
   sh:datatype rdf:langString;
-  sh:languageIn _:d85f7e570c704b5b9b53672428339dae804;
+  sh:languageIn _:91358f30d9824e0aa6957b2381cfbb4c987;
   shacl-play:background-color "#EAF1DD" .
 
-_:d85f7e570c704b5b9b53672428339dae804 rdf:first "fr";
+_:91358f30d9824e0aa6957b2381cfbb4c987 rdf:first "fr";
   rdf:rest rdf:nil .
 
 med:P187 sh:path med:estSubstanceActiveDans;
@@ -2243,6 +2216,8 @@ med:P191 sh:path skos:notation;
   sh:datatype xsd:string;
   shacl-play:background-color "#EAF1DD" .
 
+med:Voie sh:property med:P191, med:P192, med:P193, med:P194, med:P195 .
+
 med:P192 sh:path rdfs:label;
   sh:name "libellé";
   sh:description "Libellé de la voie";
@@ -2250,10 +2225,10 @@ med:P192 sh:path rdfs:label;
   sh:nodeKind sh:Literal;
   sh:datatype rdf:langString;
   dash:propertyRole dash:LabelRole;
-  sh:languageIn _:d85f7e570c704b5b9b53672428339dae805;
+  sh:languageIn _:91358f30d9824e0aa6957b2381cfbb4c988;
   shacl-play:background-color "#EAF1DD" .
 
-_:d85f7e570c704b5b9b53672428339dae805 rdf:first "fr";
+_:91358f30d9824e0aa6957b2381cfbb4c988 rdf:first "fr";
   rdf:rest rdf:nil .
 
 med:P193 sh:path med:codeEDQM;
@@ -2286,6 +2261,8 @@ med:P197 sh:path skos:notation;
   sh:nodeKind sh:Literal;
   sh:datatype xsd:string .
 
+med:Forme sh:property med:P197, med:P198, med:P199 .
+
 med:P198 sh:path rdfs:label;
   sh:name "libellé";
   sh:description "Libellé de la forme";
@@ -2293,9 +2270,9 @@ med:P198 sh:path rdfs:label;
   sh:nodeKind sh:Literal;
   sh:datatype rdf:langString;
   dash:propertyRole dash:LabelRole;
-  sh:languageIn _:d85f7e570c704b5b9b53672428339dae806 .
+  sh:languageIn _:91358f30d9824e0aa6957b2381cfbb4c989 .
 
-_:d85f7e570c704b5b9b53672428339dae806 rdf:first "fr";
+_:91358f30d9824e0aa6957b2381cfbb4c989 rdf:first "fr";
   rdf:rest rdf:nil .
 
 med:P199 sh:path skos:exactMatch;
@@ -2311,6 +2288,8 @@ med:P201 sh:path skos:notation;
   sh:nodeKind sh:Literal;
   sh:datatype xsd:string .
 
+med:UniteDePresentation sh:property med:P201, med:P202 .
+
 med:P202 sh:path rdfs:label;
   sh:name "libellé";
   sh:description "Libellé de l'unité de présentation";
@@ -2318,9 +2297,9 @@ med:P202 sh:path rdfs:label;
   sh:nodeKind sh:Literal;
   sh:datatype rdf:langString;
   dash:propertyRole dash:LabelRole;
-  sh:languageIn _:d85f7e570c704b5b9b53672428339dae807 .
+  sh:languageIn _:91358f30d9824e0aa6957b2381cfbb4c990 .
 
-_:d85f7e570c704b5b9b53672428339dae807 rdf:first "fr";
+_:91358f30d9824e0aa6957b2381cfbb4c990 rdf:first "fr";
   rdf:rest rdf:nil .
 
 med:P204 sh:path skos:notation;
@@ -2331,6 +2310,8 @@ med:P204 sh:path skos:notation;
   sh:nodeKind sh:Literal;
   sh:datatype xsd:string .
 
+med:TypeContenant sh:property med:P204, med:P205 .
+
 med:P205 sh:path rdfs:label;
   sh:name "libellé";
   sh:description "Libellé";
@@ -2338,9 +2319,9 @@ med:P205 sh:path rdfs:label;
   sh:nodeKind sh:Literal;
   sh:datatype rdf:langString;
   dash:propertyRole dash:LabelRole;
-  sh:languageIn _:d85f7e570c704b5b9b53672428339dae808 .
+  sh:languageIn _:91358f30d9824e0aa6957b2381cfbb4c991 .
 
-_:d85f7e570c704b5b9b53672428339dae808 rdf:first "fr";
+_:91358f30d9824e0aa6957b2381cfbb4c991 rdf:first "fr";
   rdf:rest rdf:nil .
 
 med:P207 sh:path skos:notation;
@@ -2352,6 +2333,8 @@ med:P207 sh:path skos:notation;
   sh:datatype xsd:string;
   shacl-play:background-color "#EAF1DD" .
 
+med:Gamme sh:property med:P207, med:P208, med:P209 .
+
 med:P208 sh:path rdfs:label;
   sh:name "libellé";
   sh:description "Libellé";
@@ -2360,10 +2343,10 @@ med:P208 sh:path rdfs:label;
   sh:nodeKind sh:Literal;
   sh:datatype rdf:langString;
   dash:propertyRole dash:LabelRole;
-  sh:languageIn _:d85f7e570c704b5b9b53672428339dae809;
+  sh:languageIn _:91358f30d9824e0aa6957b2381cfbb4c992;
   shacl-play:background-color "#EAF1DD" .
 
-_:d85f7e570c704b5b9b53672428339dae809 rdf:first "fr";
+_:91358f30d9824e0aa6957b2381cfbb4c992 rdf:first "fr";
   rdf:rest rdf:nil .
 
 med:P209 sh:path med:gammeInclut;
@@ -2381,19 +2364,24 @@ med:P211 sh:path rdfs:label;
   sh:nodeKind sh:Literal;
   sh:datatype rdf:langString;
   dash:propertyRole dash:LabelRole;
-  sh:languageIn _:d85f7e570c704b5b9b53672428339dae810 .
+  sh:languageIn _:91358f30d9824e0aa6957b2381cfbb4c993 .
 
-_:d85f7e570c704b5b9b53672428339dae810 rdf:first "fr";
+med:JustificationNiveauVirtualisation sh:property med:P211 .
+
+_:91358f30d9824e0aa6957b2381cfbb4c993 rdf:first "fr";
   rdf:rest rdf:nil .
 
-med:P212 sh:path skos:example;
-  sh:name "exemple";
+med:P212 sh:path skos:example .
+
+med:JustificationNiveauVirtualisation sh:property med:P212 .
+
+med:P212 sh:name "exemple";
   sh:description "Exemple de valeur";
   sh:nodeKind sh:Literal;
   sh:datatype rdf:langString;
-  sh:languageIn _:d85f7e570c704b5b9b53672428339dae811 .
+  sh:languageIn _:91358f30d9824e0aa6957b2381cfbb4c994 .
 
-_:d85f7e570c704b5b9b53672428339dae811 rdf:first "fr";
+_:91358f30d9824e0aa6957b2381cfbb4c994 rdf:first "fr";
   rdf:rest rdf:nil .
 
 med:P214 sh:path rdfs:label;
@@ -2403,9 +2391,11 @@ med:P214 sh:path rdfs:label;
   sh:nodeKind sh:Literal;
   sh:datatype rdf:langString;
   dash:propertyRole dash:LabelRole;
-  sh:languageIn _:d85f7e570c704b5b9b53672428339dae812 .
+  sh:languageIn _:91358f30d9824e0aa6957b2381cfbb4c995 .
 
-_:d85f7e570c704b5b9b53672428339dae812 rdf:first "fr";
+med:JustificationNiveauPrescriptibilite sh:property med:P214 .
+
+_:91358f30d9824e0aa6957b2381cfbb4c995 rdf:first "fr";
   rdf:rest rdf:nil .
 
 med:P216 sh:path rdfs:label;
@@ -2416,10 +2406,18 @@ med:P216 sh:path rdfs:label;
   sh:nodeKind sh:Literal;
   sh:datatype rdf:langString;
   dash:propertyRole dash:LabelRole;
-  sh:languageIn _:d85f7e570c704b5b9b53672428339dae813;
+  sh:languageIn _:91358f30d9824e0aa6957b2381cfbb4c996;
   shacl-play:background-color "#EAF1DD" .
 
-_:d85f7e570c704b5b9b53672428339dae813 rdf:first "fr";
+med:Evenement sh:property med:P216, med:P217, med:P218, med:P219, med:P220, med:P221 .
+
+med:Autorisation sh:property med:P216, med:P217, med:P218, med:P219, med:P220, med:P221,
+    med:P223 .
+
+med:ChangementDeStatut sh:property med:P216, med:P217, med:P218, med:P219, med:P220,
+    med:P221 .
+
+_:91358f30d9824e0aa6957b2381cfbb4c996 rdf:first "fr";
   rdf:rest rdf:nil .
 
 med:P217 sh:path med:dateNotification;
@@ -2452,18 +2450,18 @@ med:P220 sh:path med:concerne;
   sh:minCount "1"^^xsd:integer;
   sh:maxCount "1"^^xsd:integer;
   sh:nodeKind sh:IRI;
-  sh:or _:d85f7e570c704b5b9b53672428339dae814;
+  sh:or _:91358f30d9824e0aa6957b2381cfbb4c997;
   shacl-play:background-color "#EAF1DD" .
 
-_:d85f7e570c704b5b9b53672428339dae814 rdf:first _:d85f7e570c704b5b9b53672428339dae815;
-  rdf:rest _:d85f7e570c704b5b9b53672428339dae816 .
+_:91358f30d9824e0aa6957b2381cfbb4c997 rdf:first _:91358f30d9824e0aa6957b2381cfbb4c998;
+  rdf:rest _:91358f30d9824e0aa6957b2381cfbb4c999 .
 
-_:d85f7e570c704b5b9b53672428339dae815 sh:class med:SpecialitePharmaceutique .
+_:91358f30d9824e0aa6957b2381cfbb4c998 sh:class med:SpecialitePharmaceutique .
 
-_:d85f7e570c704b5b9b53672428339dae816 rdf:first _:d85f7e570c704b5b9b53672428339dae817;
+_:91358f30d9824e0aa6957b2381cfbb4c999 rdf:first _:91358f30d9824e0aa6957b2381cfbb4c1000;
   rdf:rest rdf:nil .
 
-_:d85f7e570c704b5b9b53672428339dae817 sh:class med:Presentation .
+_:91358f30d9824e0aa6957b2381cfbb4c1000 sh:class med:Presentation .
 
 med:P221 sh:path med:typeEvenement;
   sh:name "type d'évènement";
@@ -2489,10 +2487,12 @@ med:P225 sh:path rdfs:label;
   sh:nodeKind sh:Literal;
   sh:datatype rdf:langString;
   dash:propertyRole dash:LabelRole;
-  sh:languageIn _:d85f7e570c704b5b9b53672428339dae818;
+  sh:languageIn _:91358f30d9824e0aa6957b2381cfbb4c1001;
   shacl-play:background-color "#EAF1DD" .
 
-_:d85f7e570c704b5b9b53672428339dae818 rdf:first "fr";
+med:TypeEvenement sh:property med:P225, med:P226, med:P227, med:P228, med:P229, med:P230 .
+
+_:91358f30d9824e0aa6957b2381cfbb4c1001 rdf:first "fr";
   rdf:rest rdf:nil .
 
 med:P226 sh:path skos:definition;
@@ -2501,10 +2501,10 @@ med:P226 sh:path skos:definition;
   sh:maxCount "1"^^xsd:integer;
   sh:nodeKind sh:Literal;
   sh:datatype rdf:langString;
-  sh:languageIn _:d85f7e570c704b5b9b53672428339dae819;
+  sh:languageIn _:91358f30d9824e0aa6957b2381cfbb4c1002;
   shacl-play:background-color "#EAF1DD" .
 
-_:d85f7e570c704b5b9b53672428339dae819 rdf:first "fr";
+_:91358f30d9824e0aa6957b2381cfbb4c1002 rdf:first "fr";
   rdf:rest rdf:nil .
 
 med:P227 sh:path skos:notation;
@@ -2548,10 +2548,13 @@ med:P232 sh:path rdfs:label;
   sh:nodeKind sh:Literal;
   sh:datatype rdf:langString;
   dash:propertyRole dash:LabelRole;
-  sh:languageIn _:d85f7e570c704b5b9b53672428339dae820;
+  sh:languageIn _:91358f30d9824e0aa6957b2381cfbb4c1003;
   shacl-play:background-color "#EAF1DD" .
 
-_:d85f7e570c704b5b9b53672428339dae820 rdf:first "fr";
+med:StatutSpecialite sh:property med:P232, med:P233, med:P234, med:P235, med:P236,
+    med:P237 .
+
+_:91358f30d9824e0aa6957b2381cfbb4c1003 rdf:first "fr";
   rdf:rest rdf:nil .
 
 med:P233 sh:path skos:definition;
@@ -2560,10 +2563,10 @@ med:P233 sh:path skos:definition;
   sh:maxCount "1"^^xsd:integer;
   sh:nodeKind sh:Literal;
   sh:datatype rdf:langString;
-  sh:languageIn _:d85f7e570c704b5b9b53672428339dae821;
+  sh:languageIn _:91358f30d9824e0aa6957b2381cfbb4c1004;
   shacl-play:background-color "#EAF1DD" .
 
-_:d85f7e570c704b5b9b53672428339dae821 rdf:first "fr";
+_:91358f30d9824e0aa6957b2381cfbb4c1004 rdf:first "fr";
   rdf:rest rdf:nil .
 
 med:P234 sh:path skos:notation;
@@ -2607,10 +2610,12 @@ med:P239 sh:path rdfs:label;
   sh:nodeKind sh:Literal;
   sh:datatype rdf:langString;
   dash:propertyRole dash:LabelRole;
-  sh:languageIn _:d85f7e570c704b5b9b53672428339dae822;
+  sh:languageIn _:91358f30d9824e0aa6957b2381cfbb4c1005;
   shacl-play:background-color "#EAF1DD" .
 
-_:d85f7e570c704b5b9b53672428339dae822 rdf:first "fr";
+med:TypeProcedure sh:property med:P239, med:P240, med:P241, med:P242, med:P243, med:P244 .
+
+_:91358f30d9824e0aa6957b2381cfbb4c1005 rdf:first "fr";
   rdf:rest rdf:nil .
 
 med:P240 sh:path skos:definition;
@@ -2619,10 +2624,10 @@ med:P240 sh:path skos:definition;
   sh:maxCount "1"^^xsd:integer;
   sh:nodeKind sh:Literal;
   sh:datatype rdf:langString;
-  sh:languageIn _:d85f7e570c704b5b9b53672428339dae823;
+  sh:languageIn _:91358f30d9824e0aa6957b2381cfbb4c1006;
   shacl-play:background-color "#EAF1DD" .
 
-_:d85f7e570c704b5b9b53672428339dae823 rdf:first "fr";
+_:91358f30d9824e0aa6957b2381cfbb4c1006 rdf:first "fr";
   rdf:rest rdf:nil .
 
 med:P241 sh:path skos:notation;
@@ -2665,9 +2670,11 @@ med:P246 sh:path rdfs:label;
   sh:nodeKind sh:Literal;
   sh:datatype rdf:langString;
   dash:propertyRole dash:LabelRole;
-  sh:languageIn _:d85f7e570c704b5b9b53672428339dae824 .
+  sh:languageIn _:91358f30d9824e0aa6957b2381cfbb4c1007 .
 
-_:d85f7e570c704b5b9b53672428339dae824 rdf:first "fr";
+med:NiveauVirtualisation sh:property med:P246, med:P247 .
+
+_:91358f30d9824e0aa6957b2381cfbb4c1007 rdf:first "fr";
   rdf:rest rdf:nil .
 
 med:P247 sh:path skos:notation;
@@ -2685,9 +2692,11 @@ med:P249 sh:path rdfs:label;
   sh:nodeKind sh:Literal;
   sh:datatype rdf:langString;
   dash:propertyRole dash:LabelRole;
-  sh:languageIn _:d85f7e570c704b5b9b53672428339dae825 .
+  sh:languageIn _:91358f30d9824e0aa6957b2381cfbb4c1008 .
 
-_:d85f7e570c704b5b9b53672428339dae825 rdf:first "fr";
+med:NiveauPrescriptibilite sh:property med:P249, med:P250 .
+
+_:91358f30d9824e0aa6957b2381cfbb4c1008 rdf:first "fr";
   rdf:rest rdf:nil .
 
 med:P250 sh:path skos:notation;
@@ -2705,6 +2714,8 @@ med:P252 sh:path med:dateDebut;
   sh:maxCount "1"^^xsd:integer;
   sh:nodeKind sh:Literal;
   sh:datatype xsd:date .
+
+med:BlankNode_LabelWithDates sh:property med:P252, med:P253, med:P254 .
 
 med:P253 sh:path med:dateFin;
   sh:name "jusqu'au";
@@ -2733,6 +2744,8 @@ WHERE {
  }
 }""" .
 
+med:PPhParSubstanceDosage sh:sparql med:BusinessRule_1 .
+
 med:BusinessRule_2 a sh:SPARQLConstraint;
   dct:description "Toutes les substance de dosage d'un PhPID 4 doivent être présentes dans la liste des substances de ce PhPID"@fr;
   sh:message "La substance \"{?substanceDosage}\" n'existe pas dans la liste des substances de ce PhPID.";
@@ -2745,6 +2758,8 @@ WHERE {
  }
 }""" .
 
+med:PPhParSubstanceDosageForme sh:sparql med:BusinessRule_2 .
+
 med:BusinessRule_3 a sh:SPARQLConstraint;
   dct:description "Seules les Présentations de Spécialités prescriptibles en DC peuvent avoir une prescription en DC."@fr;
   sh:message "La Présentation est liée à une prescription en DC sans que sa spécialitée soit prescriptible en DC.";
@@ -2756,9 +2771,12 @@ WHERE {
  FILTER NOT EXISTS {
  $this med:presente/med:prescriptibiliteEnDC ?niveauDc .
  # prescriptible en DC + avec nom de marque
- FILTER( ?niveauDc IN(med:NiveauPrescriptibilite_315 med:NiveauPrescriptibilite_317))
+ FILTER( ?niveauDc IN(med:NiveauPrescriptibilite_315, med:NiveauPrescriptibilite_317))
  }
 }""" .
+
+med:Presentation sh:sparql med:BusinessRule_3, med:BusinessRule_4, med:BusinessRule_10,
+    med:BusinessRule_16 .
 
 med:BusinessRule_4 a sh:SPARQLConstraint;
   dct:description "Toutes les Présentations de Spécialités prescriptibles en DC devraient avoir une prescription en DC"@fr;
@@ -2769,7 +2787,7 @@ SELECT $this
 WHERE {
  $this med:presente/med:prescriptibiliteEnDC ?niveauDc .
  # prescriptible en DC + avec nom de marque
- FILTER( ?niveauDc IN(med:NiveauPrescriptibilite_315 med:NiveauPrescriptibilite_317))
+ FILTER( ?niveauDc IN(med:NiveauPrescriptibilite_315, med:NiveauPrescriptibilite_317))
  FILTER NOT EXISTS {
  $this med:prescriptibleComme ?dc .
  }
@@ -2788,6 +2806,9 @@ WHERE {
  FILTER( ?niveauVirt IN(med:Categorie_xx, med:Categorie_yy))
  }
 }""" .
+
+med:ElementPresentation sh:sparql med:BusinessRule_5, med:BusinessRule_6, med:BusinessRule_7,
+    med:BusinessRule_8 .
 
 med:BusinessRule_6 a sh:SPARQLConstraint;
   dct:description "Tous les éléments présentation de Spécialités virtualisables devraient être classées dans un PhPID4"@fr;
@@ -2843,6 +2864,10 @@ WHERE {
  FILTER NOT EXISTS { $this med:quantiteSubstanceSup ?qttSup . }
 }""" .
 
+med:DosagePresentation sh:sparql med:BusinessRule_9 .
+
+med:DosageConcentration sh:sparql med:BusinessRule_9 .
+
 med:BusinessRule_10 a sh:SPARQLConstraint;
   dct:description "Le CIS d'une Présentation doit être le même que le CIS de l'UCD de cette Présentation"@fr;
   sh:message "La spécialité d'une Présentation ne se retrouve pas comme spécialité de l'UCD de cette Présentation";
@@ -2873,6 +2898,8 @@ WHERE {
  ?autreSub rdfs:label|skos:altLabel ?unNom .
  BIND(?unNom AS ?value)
 }""" .
+
+med:Substance sh:sparql med:BusinessRule_11, med:BusinessRule_12, med:BusinessRule_13 .
 
 med:BusinessRule_12 a sh:SPARQLConstraint;
   dct:description "Un synonyme de substance ne peut pas être en prefLabel"@fr;
@@ -2910,11 +2937,13 @@ PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 SELECT $this ?value
 WHERE {
  $this med:prescriptibiliteEnDC ?value .
- FILTER(?value NOT IN (med:NiveauPrescriptibilite_315 med:NiveauPrescriptibilite_316))
+ FILTER(?value NOT IN (med:NiveauPrescriptibilite_315, med:NiveauPrescriptibilite_316))
  FILTER NOT EXISTS {
  $this med:justificationPrescriptibiliteEnDC ?justification .
  }
 }""" .
+
+med:SpecialitePharmaceutique sh:sparql med:BusinessRule_14, med:BusinessRule_15 .
 
 med:BusinessRule_15 a sh:SPARQLConstraint;
   dct:description "Une justification doit être indiquée si le niveau de virtualisation n'est pas \"virtualisable\""@fr;
@@ -2980,12 +3009,12 @@ CONSTRUCT {
 }""" .
 
 med:Component_sousClasseDe a sh:ConstraintComponent;
-  sh:parameter _:d85f7e570c704b5b9b53672428339dae826;
+  sh:parameter _:91358f30d9824e0aa6957b2381cfbb4c1009;
   sh:labelTemplate "The value must be a subClassOf {$sousClasseDe}";
   sh:nodeValidator med:Component_sousClasseDe-nodeValidator;
   sh:propertyValidator med:Component_sousClasseDe-propertyValidator .
 
-_:d85f7e570c704b5b9b53672428339dae826 sh:path med:sousClasseDe;
+_:91358f30d9824e0aa6957b2381cfbb4c1009 sh:path med:sousClasseDe;
   sh:name "sous-classe de"@fr, "subClass of"@en;
   sh:description "The class of which the value is expected to be a subClassOf"@en .
 
@@ -3009,11 +3038,11 @@ SELECT ?this ?value WHERE {
 }""" .
 
 med:Component_closedBySuperClasses a sh:ConstraintComponent;
-  sh:parameter _:d85f7e570c704b5b9b53672428339dae827;
+  sh:parameter _:91358f30d9824e0aa6957b2381cfbb4c1010;
   sh:labelTemplate "The property does not belong to a superclass";
   sh:nodeValidator med:Component_closedBySuperClasses-nodeValidator .
 
-_:d85f7e570c704b5b9b53672428339dae827 sh:path med:closedBySuperClasses;
+_:91358f30d9824e0aa6957b2381cfbb4c1010 sh:path med:closedBySuperClasses;
   sh:name "fermé par les super classes"@fr, "closed by super classes"@en .
 
 med:Component_closedBySuperClasses-nodeValidator a sh:SPARQLSelectValidator;
