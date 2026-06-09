@@ -37,7 +37,10 @@ export interface ProjectConfig {
  */
 export interface ProjectConfigAdapter {
   getProjectConfig(projectId: string): Promise<ProjectConfig>;
-  executeSparql(projectId: string, query: string): Promise<unknown>;
+  executeSparql(
+    projectId: string,
+    query: string,
+  ): Promise<Record<string, unknown>>;
   getShaclNodeShapes(
     projectId: string,
     lang?: string,
@@ -106,7 +109,10 @@ export class ConfigBackedProjectConfigAdapter implements ProjectConfigAdapter {
 
   // For simplicity, this method directly executes the SPARQL query against the endpoint.
   // in review "usr sparql route or not with creating a sheard service"
-  async executeSparql(projectId: string, query: string): Promise<unknown> {
+  async executeSparql(
+    projectId: string,
+    query: string,
+  ): Promise<Record<string, unknown>> {
     const config = await this.getProjectConfig(projectId);
 
     const response = await axios({

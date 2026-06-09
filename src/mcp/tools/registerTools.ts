@@ -112,54 +112,9 @@ export async function registerTools(
             text: JSON.stringify(payload, null, 2),
           },
         ],
-        structuredContent: payload,
       };
     },
   );
-  /*
-  server.registerTool(
-    "inspect_schema_shacl",
-    {
-      title: "Inspect Schema SHACL",
-      description: `Step 1 of the query workflow for project '${projectId}'. Returns the full raw SHACL document and must be used first to inspect the complete schema structure, understand how shapes and properties are connected, and identify valid graph paths before any query construction.`,
-      inputSchema: {},
-    },
-    async () => {
-      try {
-        const shacl = await projectConfigAdapter.readShacl(projectId);
-
-        return {
-          content: [
-            {
-              type: "text",
-              text: shacl,
-            },
-          ],
-          structuredContent: {
-            projectId,
-            shacl,
-          },
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-
-        return {
-          isError: true,
-          content: [
-            {
-              type: "text",
-              text: `inspect_schema_shacl failed: ${message}`,
-            },
-          ],
-          structuredContent: {
-            projectId,
-            error: message,
-          },
-        };
-      }
-    },
-  );
-  */
 
   server.registerTool(
     `${projectId}_schema_overview`,
@@ -267,19 +222,14 @@ export async function registerTools(
           (await projectConfigAdapter.getFewShots(projectId)) ?? [];
         const payload = { projectId, fewShots };
         return {
-          content: [
-            { type: "text", text: JSON.stringify(payload, null, 2) },
-          ],
           structuredContent: payload,
+          content: [],
         };
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
         return {
           isError: true,
-          content: [
-            { type: "text", text: `get_few_shots failed: ${message}` },
-          ],
-          structuredContent: { projectId, error: message },
+          content: [{ type: "text", text: `get_few_shots failed: ${message}` }],
         };
       }
     },
@@ -426,21 +376,12 @@ export async function registerTools(
         );
 
         return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify(
-                { prefixes: prefixesRecord, shapes },
-                null,
-                2,
-              ),
-            },
-          ],
           structuredContent: {
             projectId,
             prefixes: prefixesRecord,
             nodeshapes: shapes,
           },
+          content: [],
         };
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
@@ -496,6 +437,46 @@ export async function registerTools(
         idempotentHint: false,
         openWorldHint: true,
       },
+      outputSchema: z
+        .object({})
+        .catchall(
+          z.object({
+            result: z
+              .array(
+                z.object({
+                  id: z
+                    .string()
+                    .describe(
+                      "Candidate entity IRI. This is the value to inject directly into the SPARQL query once selected.",
+                    ),
+                  name: z
+                    .string()
+                    .describe("Human-readable label of the candidate entity."),
+                  type: z
+                    .union([
+                      z.array(z.string()),
+                      z.array(z.object({ id: z.string(), name: z.string() })),
+                    ])
+                    .optional()
+                    .describe(
+                      "Class IRIs of the candidate, or {id, name} pairs when type expansion is enabled.",
+                    ),
+                  score: z
+                    .number()
+                    .describe("Match confidence score; higher is better."),
+                  match: z
+                    .boolean()
+                    .describe(
+                      "True when this candidate is a confident/exact match. If every candidate has match: false, present the list and let the user choose.",
+                    ),
+                }),
+              )
+              .describe("Ranked candidate list for this reconciliation key."),
+          }),
+        )
+        .describe(
+          "One entry per reconciliation key (same keys as the `queries` input), each holding its ranked candidate list.",
+        ),
     },
     async ({ queries }) => {
       try {
@@ -505,16 +486,8 @@ export async function registerTools(
         );
 
         return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify(result, null, 2),
-            },
-          ],
-          structuredContent: {
-            projectId,
-            result,
-          },
+          structuredContent: result,
+          content: [],
         };
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
@@ -527,10 +500,6 @@ export async function registerTools(
               text: `sparnatural_reconcile_entities failed: ${message}`,
             },
           ],
-          structuredContent: {
-            projectId,
-            error: message,
-          },
         };
       }
     },
@@ -565,17 +534,8 @@ export async function registerTools(
         );
 
         return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify(result, null, 2),
-            },
-          ],
-          structuredContent: {
-            projectId,
-            executedQuery: query,
-            result,
-          },
+          structuredContent: result,
+          content: [],
         };
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
@@ -588,10 +548,6 @@ export async function registerTools(
               text: `execute_final_sparql failed: ${message}`,
             },
           ],
-          structuredContent: {
-            projectId,
-            error: message,
-          },
         };
       }
     },
