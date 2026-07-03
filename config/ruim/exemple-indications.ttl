@@ -29,6 +29,10 @@ mesh:Q000188 a skos:Concept ;
 	skos:prefLabel "Traitement médicamenteux"@fr, "Drug therapy"@en ;
 .
 
+mesh:Q000175 a skos:Concept ;
+	skos:prefLabel "Diagnostic"@fr, "Diagnosis"@en ;
+.
+
 ## Action pharmacologique : modèle métier cible
 # TAVNEOS
 <http://data.esante.gouv.fr/ansm/medicament/SpecialitePharmaceutique_69292539> 
