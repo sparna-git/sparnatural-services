@@ -1,0 +1,117 @@
+@prefix iso-idmp: <https://spec.pistoiaalliance.org/idmp/ontology/ISO/ISO11615-MedicinalProducts/> .
+@prefix hetopvoc: <https://hetop.eu/data/vocabulaire#> .
+@prefix hetop-indication: <https://hetop.eu/data/indication/> .
+@prefix hetop-action-pharmaco: <https://hetop.eu/data/action-pharmacologique/> .
+@prefix mesh-vocab: <http://id.nlm.nih.gov/mesh/vocab#> .
+@prefix mesh: <http://id.nlm.nih.gov/mesh/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix med: <http://data.esante.gouv.fr/ansm/medicament/> .
+@prefix shacl-play: <https://shacl-play.sparna.fr/ontology#> .
+
+
+med:SpecialitePharmaceutique a sh:NodeShape, rdfs:Class ;
+	sh:property [
+		sh:name "a pour indication"@fr ;
+		skos:altLabel "est indiqué pour"@fr ;
+		sh:description "lien entre une spécialité et une de ses indications."@fr ;
+		sh:path iso-idmp:hasTherapeuticIndication ;
+		sh:class iso-idmp:TherapeuticIndication ;
+		shacl-play:background-color  "red" ;
+	] ;
+	sh:property [
+		sh:name "a pour action pharmacologique"@fr ;
+		sh:description "lien entre une spécialité et une action pharmacologique."@fr ;
+		sh:path hetopvoc:actionPharmacologique ;
+		sh:class hetopvoc:ActionPharmacologique ;
+		shacl-play:background-color  "red" ;
+	] ;
+.
+
+
+iso-idmp:TherapeuticIndication a sh:NodeShape, rdfs:Class ;
+	rdfs:label "Indication Thérapeutique"@fr ;
+	sh:nodeKind sh:IRI ;
+	sh:pattern "^https://hetop.eu/data/indication/.*$";
+	sh:property [
+		sh:path iso-idmp:hasIndicationAsDiseaseSymptomProcedure ;
+		sh:name "code de l'indication"@fr ;
+		sh:description "Référence à un code MeSH (en général) donnant l'indication du médicament (typiquement une pathologie) (par exemple \"obésité\")"@fr;
+		sh:minCount 1 ;
+		sh:maxCount 1 ;
+		sh:nodeKind sh:IRI ;
+		sh:class skos:Concept ;
+	] ;
+	sh:property [
+		sh:path iso-idmp:hasIntendedEffect ;
+		sh:name "qualificatif (\"effet attendu\")"@fr;
+		sh:description "Usage de l'indication, typiquement pour indiquer si l'indication est utilisée pour le traitement d'une pathologie ou son diagnostic."@fr ;
+		sh:agentInstruction "Utilise mesh:Q000188 pour 'traitement médicamenteux' et mesh:Q000175 pour 'diagnostic'"@fr;
+		# pas de sh:minCount car on n'est pas sûr que le qualificatif soit toujours là
+		# pas de sh:maxCount car on peut supposer qu'une même indication soit utilisée en même temps pour "Diagnostic" et "Traitement"
+		sh:nodeKind sh:IRI ;
+		sh:class mesh-vocab:Qualifier ;
+		# Potentiellement on peut lister tous les qualificatifs possibles avec les enfants
+		# Diagnostic, Diagnostic par imagerie, Traitement médicamenteux, Prévention et contrôle
+		#
+		sh:in (
+			# Traitement médic.
+			mesh:Q000188
+			# Diagnostic par imagerie
+			mesh:Q000000981
+			# Prévention et Contrôle
+			mesh:Q000517
+			# Diagnostic. cf. https://meshb.nlm.nih.gov/record/ui?ui=Q000175
+			mesh:Q000175
+		)
+	] ;
+.
+
+
+hetopvoc:ActionPharmacologique a sh:NodeShape, rdfs:Class ;
+	rdfs:label "Action Pharmacologique"@fr ;
+	sh:nodeKind sh:IRI ;
+	sh:pattern "^https://hetop.eu/data/action-pharmacologique/.*$";
+	sh:property [
+		sh:path hetopvoc:cible ;
+		sh:name "cible de l'action pharmacologique"@fr ;
+		sh:description "Un récepteur, un organe, un effet (\"anti-inflammatoire\") etc. considéré comme la cible de l'action pharmacologique"@fr;
+		sh:minCount 1 ;
+		sh:nodeKind sh:IRI ;
+		sh:class skos:Concept ;
+	] ;
+	sh:property [
+		sh:path hetopvoc:effet ;
+		sh:name "effet"@fr;
+		sh:description "Effet optionnel sur la cible, comme \"inhibiteur\", etc."@fr ;
+		sh:minCount 0 ;
+		sh:maxCount 1 ;
+		sh:nodeKind sh:IRI ;
+		sh:class mesh-vocab:Qualifier ;
+	] ;
+.
+
+
+skos:Concept a sh:NodeShape, rdfs:Class ;
+	rdfs:label "Concept"@fr ;
+	sh:property [
+		sh:path skos:prefLabel ;
+		sh:minCount 1 ;
+		sh:nodeKind sh:Literal ;
+		sh:datatype rdf:langString ;
+		sh:uniqueLang true ;
+	] ;
+.
+
+mesh-vocab:Qualifier a sh:NodeShape, rdfs:Class ;
+	rdfs:label "Qualifier MeSH"@fr ;
+	sh:property [
+		sh:path skos:prefLabel ;
+		sh:minCount 1 ;
+		sh:nodeKind sh:Literal ;
+		sh:datatype rdf:langString ;
+		sh:uniqueLang true ;
+	] ;
+.

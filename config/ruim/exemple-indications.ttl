@@ -1,0 +1,64 @@
+
+
+# Cible de la structure à générer
+
+## Indication
+@prefix iso-idmp: <https://spec.pistoiaalliance.org/idmp/ontology/ISO/ISO11615-MedicinalProducts/> .
+@prefix hetopvoc: <https://hetop.eu/data/vocabulaire#> .
+@prefix hetop-indication: <https://hetop.eu/data/indication/> .
+@prefix hetop-action-pharmaco: <https://hetop.eu/data/action-pharmacologique/> .
+@prefix mesh: <http://id.nlm.nih.gov/mesh/> .
+
+
+# SYMBICORT TURBUHALER 200/6 microgrammes par dose, poudre pour inhalation
+<http://data.esante.gouv.fr/ansm/medicament/SpecialitePharmaceutique_61237448> iso-idmp:hasTherapeuticIndication hetop-indication:msh_D_001249-msh_Q_000188 .
+
+# Type de l'entité
+hetop-indication:msh_D_001249-msh_Q_000188 rdf:type iso-idmp:TherapeuticIndication ;
+  # Asthme - voir https://meshb.nlm.nih.gov/record/ui?ui=D001249
+  iso-idmp:hasIndicationAsDiseaseSymptomProcedure mesh:D001249 ;
+  # Traitement médicamenteux - voir https://meshb.nlm.nih.gov/record/ui?ui=Q000188
+  iso-idmp:hasIntendedEffect mesh:Q000188 ;
+.
+
+mesh:D001249 a skos:Concept ;
+	skos:prefLabel "Asthme"@fr, "Asthma"@en ;
+.
+
+mesh:Q000188 a skos:Concept ;
+	skos:prefLabel "Traitement médicamenteux"@fr, "Drug therapy"@en ;
+.
+
+## Action pharmacologique : modèle métier cible
+# TAVNEOS
+<http://data.esante.gouv.fr/ansm/medicament/SpecialitePharmaceutique_69292539> 
+	hetopvoc:actionPharmacologique hetop-action-pharmaco:mesh_D_044087-msh_Q_000037 ;
+.
+
+hetop-action-pharmaco:mesh_D_044087-msh_Q_000037 a hetopvoc:ActionPharmacologique ;
+	# récepteur XYZ
+	hetopvoc:cible mesh:D044087 ;
+	# antagoniste et inhibiteur
+	hetopvoc:effet mesh:Q000037 ;
+.
+
+mesh:D044087 a skos:Concept ;
+	skos:prefLabel "Récepteur anaphylatoxine C5a"@fr, "Receptor, Anaphylatoxin C5a"@en ;
+.
+
+mesh:Q000037 a skos:Concept ;
+	skos:prefLabel "antagonistes et inhibiteurs"@fr, "antagonists & inhibitors"@en ;
+.
+
+## Action pharmacologique : graphe d'Hetop
+# <http://data.esante.gouv.fr/ansm/medicament/SpecialitePharmaceutique_69292539>
+# 	hetop:T_REL_PHA_PS_HAS_PHARM_ACTION [
+# 		# récepteur XYZ
+# 		rdf:value mesh:D044087 ;
+# 		# antagoniste et inhibiteur
+# 		hetop:qualificatif mesh:Q000037 ;
+# 	] ;
+# .
+
+
+
