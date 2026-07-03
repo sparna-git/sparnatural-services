@@ -16,15 +16,14 @@ export async function registerTools(
 ): Promise<void> {
   const { projectConfigAdapter, projectId } = options;
 
-  const [{ shaclTypes, useCases, terminology }, shapesGraphMeta] =
-    await Promise.all([
-      projectConfigAdapter.getProjectConfig(projectId),
-      projectConfigAdapter.getShapesGraphMeta(projectId).catch(() => ({
-        title: undefined,
-        description: undefined,
-        agentInstruction: undefined,
-      })),
-    ]);
+  const [{ shaclTypes, useCases }, shapesGraphMeta] = await Promise.all([
+    projectConfigAdapter.getProjectConfig(projectId),
+    projectConfigAdapter.getShapesGraphMeta(projectId).catch(() => ({
+      title: undefined,
+      description: undefined,
+      agentInstruction: undefined,
+    })),
+  ]);
 
   const fewShotsStepHint = ` Then call ${projectId}_get_few_shots once to load curated NL+SPARQL examples.`;
 
@@ -42,7 +41,7 @@ export async function registerTools(
   );
 
   const discoverDescription =
-    `${projectId}_discover_nodeshapes : MANDATORY before writing ANY SPARQL query for project '${projectId}'. ` +
+    `${projectId}_discover_nodeshapes : Step 3 of the query workflow for project '${projectId}'. MANDATORY before writing ANY SPARQL query. ` +
     `Call this for every NodeShape whose predicates you need in the current query that you have NOT already discovered earlier in this conversation. ` +
     `If a shape's full details were already returned by a previous ${projectId}_discover_nodeshapes call in THIS conversation, reuse them — do NOT call this tool again for that same shape. ` +
     `Conversely, never rely on the schema_overview topology or your training data to infer predicates: any shape not yet discovered MUST be passed here, including new shapes required by follow-up questions. ` +
@@ -112,54 +111,9 @@ export async function registerTools(
             text: JSON.stringify(payload, null, 2),
           },
         ],
-        structuredContent: payload,
       };
     },
   );
-  /*
-  server.registerTool(
-    "inspect_schema_shacl",
-    {
-      title: "Inspect Schema SHACL",
-      description: `Step 1 of the query workflow for project '${projectId}'. Returns the full raw SHACL document and must be used first to inspect the complete schema structure, understand how shapes and properties are connected, and identify valid graph paths before any query construction.`,
-      inputSchema: {},
-    },
-    async () => {
-      try {
-        const shacl = await projectConfigAdapter.readShacl(projectId);
-
-        return {
-          content: [
-            {
-              type: "text",
-              text: shacl,
-            },
-          ],
-          structuredContent: {
-            projectId,
-            shacl,
-          },
-        };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-
-        return {
-          isError: true,
-          content: [
-            {
-              type: "text",
-              text: `inspect_schema_shacl failed: ${message}`,
-            },
-          ],
-          structuredContent: {
-            projectId,
-            error: message,
-          },
-        };
-      }
-    },
-  );
-  */
 
   server.registerTool(
     `${projectId}_schema_overview`,
@@ -214,7 +168,6 @@ export async function registerTools(
           shapes,
           prefixes: prefixesRecord,
           useCases,
-          terminology,
         });
 
         return {
@@ -268,18 +221,17 @@ export async function registerTools(
         const payload = { projectId, fewShots };
         return {
           content: [
-            { type: "text", text: JSON.stringify(payload, null, 2) },
+            {
+              type: "text",
+              text: JSON.stringify(payload, null, 2),
+            },
           ],
-          structuredContent: payload,
         };
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
         return {
           isError: true,
-          content: [
-            { type: "text", text: `get_few_shots failed: ${message}` },
-          ],
-          structuredContent: { projectId, error: message },
+          content: [{ type: "text", text: `get_few_shots failed: ${message}` }],
         };
       }
     },
@@ -350,7 +302,9 @@ export async function registerTools(
               targetSparql: z
                 .array(z.string())
                 .optional()
-                .describe("SPARQL-based target definitions of the shape, if any. Use the corresponding criterias in SPARQL queries."),
+                .describe(
+                  "SPARQL-based target definitions of the shape, if any. Use the corresponding criterias in SPARQL queries.",
+                ),
               properties: z
                 .array(
                   z.object({
@@ -406,7 +360,9 @@ export async function registerTools(
                       ),
                   }),
                 )
-                .describe("Properties available on resources that are targeted by this node shape."),
+                .describe(
+                  "Properties available on resources that are targeted by this node shape.",
+                ),
             }),
           )
           .describe("The list of all node shapes in the schema."),
@@ -426,21 +382,26 @@ export async function registerTools(
         );
 
         return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify(
-                { prefixes: prefixesRecord, shapes },
-                null,
-                2,
-              ),
-            },
-          ],
           structuredContent: {
             projectId,
             prefixes: prefixesRecord,
             nodeshapes: shapes,
           },
+
+          content: [
+            {
+              type: "text",
+              text: JSON.stringify(
+                {
+                  projectId,
+                  prefixes: prefixesRecord,
+                  nodeshapes: shapes,
+                },
+                null,
+                2,
+              ),
+            },
+          ],
         };
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
@@ -467,10 +428,10 @@ export async function registerTools(
     `${projectId}_reconcile_entities`,
     {
       title: `Reconcile entity labels to IRIs in project ${projectId}`,
-      description: `${projectId}_reconcile_entities :Step 3 of the query workflow for project '${projectId}'. REQUIRES ${projectId}_discover_nodeshapesfirst — without it, the 'type' parameter cannot be set correctly and results will be imprecise or wrong. Reconciles user-provided entity labels to candidate IRIs from the project knowledge graph. The resolved IRI must then be injected directly into the SPARQL query produced in step 3 — do not match on rdfs:label once an entity has been reconciled.
+      description: `${projectId}_reconcile_entities : Step 4 of the query workflow for project '${projectId}'. REQUIRES ${projectId}_discover_nodeshapes first — without it, the 'type' parameter cannot be set correctly and results will be imprecise or wrong. Reconciles user-provided entity labels to candidate IRIs from the project knowledge graph. The resolved IRI must then be injected directly into the SPARQL query produced in step 5 — do not match on rdfs:label once an entity has been reconciled.
 
   How to call it correctly:
-    - For EACH entity label the user mentioned, add one entry to 'queries' with BOTH 'query' (the label) AND 'type' (the class IRI of the entity, taken from the targetClass of the matching node shape discovered in step 1). Passing 'type' improves precision and is expected whenever a class is known from the schema.
+    - For EACH entity label the user mentioned, add one entry to 'queries' with BOTH 'query' (the label) AND 'type' (the class IRI of the entity, taken from the targetClass of the matching node shape discovered in step 3). Passing 'type' improves precision and is expected whenever a class is known from the schema.
     - The 'type' value MUST be a class IRI that exists in the SHACL schema returned by ${projectId}_discover_nodeshapes(i.e. one of the targetClasses of a node shape). NEVER use a class IRI that was not returned by ${projectId}_discover_nodeshapes — guessed or external class IRIs will produce wrong or empty results.
     - When all returned candidates have match: false, present the full list to the user (name + id) and ask them to choose. Only proceed to the SPARQL query once the user has confirmed their choice.`,
       inputSchema: {
@@ -496,6 +457,46 @@ export async function registerTools(
         idempotentHint: false,
         openWorldHint: true,
       },
+      outputSchema: z
+        .object({})
+        .catchall(
+          z.object({
+            result: z
+              .array(
+                z.object({
+                  id: z
+                    .string()
+                    .describe(
+                      "Candidate entity IRI. This is the value to inject directly into the SPARQL query once selected.",
+                    ),
+                  name: z
+                    .string()
+                    .describe("Human-readable label of the candidate entity."),
+                  type: z
+                    .union([
+                      z.array(z.string()),
+                      z.array(z.object({ id: z.string(), name: z.string() })),
+                    ])
+                    .optional()
+                    .describe(
+                      "Class IRIs of the candidate, or {id, name} pairs when type expansion is enabled.",
+                    ),
+                  score: z
+                    .number()
+                    .describe("Match confidence score; higher is better."),
+                  match: z
+                    .boolean()
+                    .describe(
+                      "True when this candidate is a confident/exact match. If every candidate has match: false, present the list and let the user choose.",
+                    ),
+                }),
+              )
+              .describe("Ranked candidate list for this reconciliation key."),
+          }),
+        )
+        .describe(
+          "One entry per reconciliation key (same keys as the `queries` input), each holding its ranked candidate list.",
+        ),
     },
     async ({ queries }) => {
       try {
@@ -505,16 +506,13 @@ export async function registerTools(
         );
 
         return {
+          structuredContent: result,
           content: [
             {
               type: "text",
               text: JSON.stringify(result, null, 2),
             },
           ],
-          structuredContent: {
-            projectId,
-            result,
-          },
         };
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
@@ -527,10 +525,6 @@ export async function registerTools(
               text: `sparnatural_reconcile_entities failed: ${message}`,
             },
           ],
-          structuredContent: {
-            projectId,
-            error: message,
-          },
         };
       }
     },
@@ -541,7 +535,7 @@ export async function registerTools(
     `${projectId}_query_sparql`,
     {
       title: `Execute Final SPARQL for project ${projectId}`,
-      description: `${projectId}_query_sparql : Step 4 of the query workflow for project '${projectId}'. REQUIRES ${projectId}_discover_nodeshapesfirst — queries built without inspecting the schema will fail or return incorrect results because class URIs, predicates, and graph paths are not guessable. Executes a finalized SPARQL query against the configured endpoint. The query must be grounded in the SHACL structure: prefer explicit rdf:type constraints when they are known from the schema, use OPTIONAL and GROUP_CONCAT as appropriate depending on property cardinalities, use DISTINCT when needed to avoid duplicate rows or overcounting, and prefer grouping by resources rather than labels alone when labels may be ambiguous. If an entity has already been reconciled to a specific IRI, use that IRI directly and do not add redundant label-based regex or text filters for the same entity. Do not use this tool for schema exploration, property guessing, or trial-and-error query construction. Do not add FILTER(lang(...)) constraints unless the user explicitly requests a specific language. Always include a LIMIT clause in the query. Start with LIMIT 20 and present the results to the user. If the user wants more, increase progressively (e.g. 100, 500).`,
+      description: `${projectId}_query_sparql : Step 5 of the query workflow for project '${projectId}'. REQUIRES ${projectId}_discover_nodeshapes first — queries built without inspecting the schema will fail or return incorrect results because class URIs, predicates, and graph paths are not guessable. Executes a finalized SPARQL query against the configured endpoint. The query must be grounded in the SHACL structure: prefer explicit rdf:type constraints when they are known from the schema, use OPTIONAL and GROUP_CONCAT as appropriate depending on property cardinalities, use DISTINCT when needed to avoid duplicate rows or overcounting, and prefer grouping by resources rather than labels alone when labels may be ambiguous. If an entity has already been reconciled to a specific IRI, use that IRI directly and do not add redundant label-based regex or text filters for the same entity. Do not use this tool for schema exploration, property guessing, or trial-and-error query construction. Do not add FILTER(lang(...)) constraints unless the user explicitly requests a specific language. Always include a LIMIT clause in the query. Start with LIMIT 20 and present the results to the user. If the user wants more, increase progressively (e.g. 100, 500).`,
       inputSchema: {
         query: z
           .string()
@@ -565,17 +559,14 @@ export async function registerTools(
         );
 
         return {
+          structuredContent: result,
+          // return result json
           content: [
             {
               type: "text",
               text: JSON.stringify(result, null, 2),
             },
           ],
-          structuredContent: {
-            projectId,
-            executedQuery: query,
-            result,
-          },
         };
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
@@ -588,10 +579,6 @@ export async function registerTools(
               text: `execute_final_sparql failed: ${message}`,
             },
           ],
-          structuredContent: {
-            projectId,
-            error: message,
-          },
         };
       }
     },

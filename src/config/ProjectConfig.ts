@@ -31,24 +31,12 @@ export interface UseCase {
   joins?: string;
 }
 
-export interface TerminologyMapping {
-  /** How the end user names the concept (CIS, princeps, laboratoire…). */
-  user: string;
-  /** How the domain model / RUIM names the same concept. */
-  domain?: string;
-  /** Property or path in the RDF graph. Markdown allowed (backticks). */
-  sparql?: string;
-}
-
 export interface FewShot {
   /** Natural-language question, in the project's primary language. */
   question: string;
   /** Curated SPARQL that correctly answers the question. Used by the
    *  agent as a template — predicates and filters may need adapting. */
   sparql: string;
-  /** Compacted NodeShape IRIs referenced by this query. Tells the agent
-   *  which shapes to pass to discover_nodeshapes before adapting. */
-  shapes: string[];
 }
 
 export interface ProjectConfig {
@@ -58,10 +46,6 @@ export interface ProjectConfig {
    *  the LLM where to enter the graph and which joins to follow for a recurring
    *  question pattern. NOT few-shots — no SPARQL, no literal example values. */
   useCases?: UseCase[];
-  /** User-vocabulary ↔ domain-vocabulary ↔ SPARQL-predicate mapping, rendered
-   *  as a glossary table in the MCP schema_overview. Helps the LLM translate
-   *  end-user wording into the right path in the model. */
-  terminology?: TerminologyMapping[];
   /** Path to a JSON file containing curated NL question + SPARQL pairs.
    *  When set, exposed via the MCP `${projectId}_get_few_shots` tool so the
    *  agent can consult realistic examples before writing SPARQL.

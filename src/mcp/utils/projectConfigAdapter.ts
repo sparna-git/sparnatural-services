@@ -15,11 +15,7 @@ import type {
   ReconcileInput,
   ReconcileOutput,
 } from "../../services/reconciliation/interfaces/ReconcileServiceIfc";
-import type {
-  UseCase,
-  TerminologyMapping,
-  FewShot,
-} from "../../config/ProjectConfig";
+import type { UseCase, FewShot } from "../../config/ProjectConfig";
 import { loadFewShots } from "../../config/FewShots";
 
 export interface ProjectConfig {
@@ -28,7 +24,6 @@ export interface ProjectConfig {
   shaclPath?: string;
   shaclTypes?: string[];
   useCases?: UseCase[];
-  terminology?: TerminologyMapping[];
   fewShotsFile?: string;
 }
 
@@ -37,7 +32,10 @@ export interface ProjectConfig {
  */
 export interface ProjectConfigAdapter {
   getProjectConfig(projectId: string): Promise<ProjectConfig>;
-  executeSparql(projectId: string, query: string): Promise<unknown>;
+  executeSparql(
+    projectId: string,
+    query: string,
+  ): Promise<Record<string, unknown>>;
   getShaclNodeShapes(
     projectId: string,
     lang?: string,
@@ -94,7 +92,6 @@ export class ConfigBackedProjectConfigAdapter implements ProjectConfigAdapter {
       shaclPath: projectConfig.shacl,
       shaclTypes: projectConfig.shaclTypes,
       useCases: projectConfig.useCases,
-      terminology: projectConfig.terminology,
       fewShotsFile: projectConfig.fewShotsFile,
     };
   }
@@ -106,7 +103,10 @@ export class ConfigBackedProjectConfigAdapter implements ProjectConfigAdapter {
 
   // For simplicity, this method directly executes the SPARQL query against the endpoint.
   // in review "usr sparql route or not with creating a sheard service"
-  async executeSparql(projectId: string, query: string): Promise<unknown> {
+  async executeSparql(
+    projectId: string,
+    query: string,
+  ): Promise<Record<string, unknown>> {
     const config = await this.getProjectConfig(projectId);
 
     const response = await axios({

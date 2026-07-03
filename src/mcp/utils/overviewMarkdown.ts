@@ -1,5 +1,5 @@
 import type { NodeShapeOverviewInfo } from "./shaclParser";
-import type { UseCase, TerminologyMapping } from "../../config/ProjectConfig";
+import type { UseCase } from "../../config/ProjectConfig";
 
 export interface OverviewMeta {
   title?: string;
@@ -14,7 +14,6 @@ export interface OverviewBuildInput {
   shapes: NodeShapeOverviewInfo[];
   prefixes: Record<string, string>;
   useCases?: UseCase[];
-  terminology?: TerminologyMapping[];
 }
 
 /**
@@ -30,7 +29,6 @@ export type SectionBuilder = (input: OverviewBuildInput) => string | undefined;
 const DEFAULT_SECTIONS: SectionBuilder[] = [
   headerSection,
   nodeShapesSection,
-  terminologySection,
   useCasesSection,
 ];
 
@@ -80,25 +78,6 @@ function isEmptyShape(s: NodeShapeOverviewInfo): boolean {
     !s.labelPath &&
     s.externalMatchPaths.length === 0
   );
-}
-
-function terminologySection(input: OverviewBuildInput): string | undefined {
-  const rows = input.terminology ?? [];
-  if (rows.length === 0) return undefined;
-
-  const tableRows = rows
-    .map(
-      (t) =>
-        `| ${escapeCell(t.user)} | ${escapeCell(t.domain ?? "—")} | ${escapeCell(t.sparql ?? "—")} |`,
-    )
-    .join("\n");
-
-  return [
-    "## Correspondances terminologiques",
-    "Traduction du vocabulaire utilisateur vers le modèle RUIM. À consulter dès qu'une question utilise un terme métier (CIS, princeps, laboratoire…) avant de chercher la propriété correspondante via `discover_nodeshapes`.",
-    "| Terme utilisateur | Terme du modèle | Propriété |\n|---|---|---|",
-    tableRows,
-  ].join("\n\n");
 }
 
 function useCasesSection(input: OverviewBuildInput): string | undefined {
