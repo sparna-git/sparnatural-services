@@ -115,7 +115,7 @@ projects:
         cacheSize: 500
         maxResults: 4
   ruim-mcp:
-    shacl: ./config/ruim/RUIM-SHACL-instances.ttl
+    shacl: ./config/ruim/RUIM-SHACL-instances.ttl ./config/ruim/indications-shacl.ttl
     sparqlEndpoint: https://data.sparna.fr/graphdb/repositories/RUIM
     fewShotsFile: ./config/ruim/few-shots.json
     useCases:
@@ -134,6 +134,12 @@ projects:
       - title: "Toutes les spécialités d'une forme"
         entryPoint: "`Forme` filtrée sur libellé -> `med:formeManufacturee`"
         joins: "<- `SpecialitePharmaceutique`"
+      - title: "Toutes les spécialités en fonction de leurs indications"
+        entryPoint: "`TherapeuticIndication` avec `Concept` réconcilié de l'indication + `Concept` réconcilié de l'effet -> `iso-idmp:hasTherapeuticIndication`"
+        join: "<- `SpecialitePharmaceutique`"
+      - title: "Toutes les Spécialités ayant une certaine action"
+        entryPoint: "`ActionPharmacologique` avec `Concept` réconcilié de la cible + `Concept` réconcilié de l'effet -> `hetopvoc:actionPharmacologique`"
+        join: "<- `SpecialitePharmaceutique`"
       - title: "Composition d'une spécialité"
         entryPoint: "`SpecialitePharmaceutique` filtrée sur libellé -> `med:seComposeDe`"
         joins: "<- `Element` -> `med:substanceActive`|`med:fractionTherapeutique` (composition formelle) + <- `Element` -> `med:expressionDeDosage` (composition textuelle)"
@@ -172,6 +178,9 @@ projects:
       - http://data.esante.gouv.fr/ansm/medicament/StatutSpecialite
       - http://data.esante.gouv.fr/ansm/medicament/TypeEvenement
       - http://data.esante.gouv.fr/ema/sms
+      - https://spec.pistoiaalliance.org/idmp/ontology/ISO/ISO11615-MedicinalProducts/TherapeuticIndication
+      - https://hetop.eu/data/vocabulaire#ActionPharmacologique
+      - http://www.w3.org/2004/02/skos/core#Concept
     domains:
       - sparna-git.github.io
     cache:
@@ -190,6 +199,9 @@ projects:
         - field: altLabel
           boost: 5
           queryFile: ./config/ruim/sparqlqueriesindex/altlabel_skos.rq
+        - field: skosPrefLabel
+          boost: 10
+          queryFile: ./config/ruim/sparqlqueriesindex/skos_preflabel.rq
     t2qPromptGenerator:
       implementation: T2QPromptGenerator
       additionalInstructions: ./config/ruim/additionalInstructions.txt
