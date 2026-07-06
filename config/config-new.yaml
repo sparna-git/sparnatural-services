@@ -180,6 +180,7 @@ projects:
       - http://data.esante.gouv.fr/ema/sms
       - https://spec.pistoiaalliance.org/idmp/ontology/ISO/ISO11615-MedicinalProducts/TherapeuticIndication
       - https://hetop.eu/data/vocabulaire#ActionPharmacologique
+      - http://www.w3.org/2004/02/skos/core#Concept
     domains:
       - sparna-git.github.io
     cache:
