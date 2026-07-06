@@ -140,6 +140,9 @@ projects:
       - title: "Toutes les Spécialités ayant une certaine action"
         entryPoint: "`ActionPharmacologique` avec `Concept` réconcilié de la cible + `Concept` réconcilié de l'effet -> `hetopvoc:actionPharmacologique`"
         join: "<- `SpecialitePharmaceutique`"
+      - title: "Composition d'une spécialité"
+        entryPoint: "`SpecialitePharmaceutique` filtrée sur libellé -> `med:seComposeDe`"
+        joins: "<- `Element` -> `med:substanceActive`|`med:fractionTherapeutique` (composition formelle) + <- `Element` -> `med:expressionDeDosage` (composition textuelle)"
     shaclTypes:
       - http://data.esante.gouv.fr/ansm/medicament/SpecialitePharmaceutique
       - http://data.esante.gouv.fr/ansm/medicament/Presentation
