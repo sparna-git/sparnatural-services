@@ -115,7 +115,7 @@ projects:
         cacheSize: 500
         maxResults: 4
   ruim-mcp:
-    shacl: ./config/ruim/RUIM-SHACL-instances.ttl
+    shacl: ./config/ruim/RUIM-SHACL-instances.ttl ./config/ruim/indications-shacl.ttl
     sparqlEndpoint: https://data.sparna.fr/graphdb/repositories/RUIM
     fewShotsFile: ./config/ruim/few-shots.json
     useCases:
@@ -134,6 +134,12 @@ projects:
       - title: "Toutes les spécialités d'une forme"
         entryPoint: "`Forme` filtrée sur libellé -> `med:formeManufacturee`"
         joins: "<- `SpecialitePharmaceutique`"
+      - title: "Toutes les spécialités en fonction de leurs indications"
+        entryPoint: "`TherapeuticIndication` avec `Concept` réconcilié de l'indication + `Concept` réconcilié de l'effet -> `iso-idmp:hasTherapeuticIndication`"
+        join: "<- `SpecialitePharmaceutique`"
+      - title: "Toutes les Spécialités ayant une certaine action"
+        entryPoint: "`ActionPharmacologique` avec `Concept` réconcilié de la cible + `Concept` réconcilié de l'effet -> `hetopvoc:actionPharmacologique`"
+        join: "<- `SpecialitePharmaceutique`"
     shaclTypes:
       - http://data.esante.gouv.fr/ansm/medicament/SpecialitePharmaceutique
       - http://data.esante.gouv.fr/ansm/medicament/Presentation
@@ -169,6 +175,8 @@ projects:
       - http://data.esante.gouv.fr/ansm/medicament/StatutSpecialite
       - http://data.esante.gouv.fr/ansm/medicament/TypeEvenement
       - http://data.esante.gouv.fr/ema/sms
+      - https://spec.pistoiaalliance.org/idmp/ontology/ISO/ISO11615-MedicinalProducts/TherapeuticIndication
+      - https://hetop.eu/data/vocabulaire#ActionPharmacologique
     domains:
       - sparna-git.github.io
     cache:
