@@ -81,19 +81,8 @@ projects:
       implementation: Q2TPromptGenerator
     reconciliation:
       - implementation: LuceneGraphDBReconcileService
-      - implementation: LunrReconcileService
         cacheSize: 1000
         maxResults: 10
-        indexCachePath: ./cache/ruim/lunr-index-ruim.json
-        sparqlQueries:
-          - field: label
-            boost: 10
-            queryFiles:
-              - ./config/ruim/sparqlqueriesindex/label_rdfs.rq
-              - ./config/ruim/sparqlqueriesindex/label_atc.rq
-          - field: altLabel
-            boost: 5
-            queryFile: ./config/ruim/sparqlqueriesindex/altlabel_skos.rq
   isidore:
     shacl: ./config/isidore/isidore-shapes.ttl
     sparqlEndpoint: https://isidore-ref.huma-num.fr/sparql
