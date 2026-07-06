@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "src/index.ts",
   "scripts": {
-    "start": "ts-node src/index.ts --config=config/config-new.yaml",
+    "start": "ts-node src/index.ts --max-old-space-size=8192 --config=config/config-new.yaml",
     "clean": "rm -rf dist",
     "build:lib": "tsc",
     "build": "npm run clean && npm run build:lib",
