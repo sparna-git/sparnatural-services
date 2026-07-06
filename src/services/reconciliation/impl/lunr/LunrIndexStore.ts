@@ -76,14 +76,33 @@ export class LunrIndexStore {
   ): Promise<void> {
     try {
       await fs.promises.mkdir(path.dirname(this.filePath), { recursive: true });
-      await fs.promises.writeFile(
-        this.filePath,
-        JSON.stringify({
-          index: index.toJSON(),
-          uriToData: Object.fromEntries(uriToData),
-        }),
-        "utf-8",
-      );
+
+      // Stream the JSON to disk instead of building one giant string in memory.
+      // With ~167k entities, JSON.stringify of the whole {index, uriToData}
+      // object peaked past the heap limit and crashed the server at save time.
+      // Here uriToData is serialized entity by entity, so the full JSON string
+      // never exists in RAM at once. The on-disk format is unchanged.
+      const stream = fs.createWriteStream(this.filePath, { encoding: "utf-8" });
+      const write = (chunk: string): Promise<void> =>
+        new Promise((resolve, reject) => {
+          stream.write(chunk, (err) =>
+            err ? reject(err) : resolve(),
+          );
+        });
+
+      await write(`{"index":${JSON.stringify(index.toJSON())},"uriToData":{`);
+      let first = true;
+      for (const [uri, data] of uriToData) {
+        await write(
+          `${first ? "" : ","}${JSON.stringify(uri)}:${JSON.stringify(data)}`,
+        );
+        first = false;
+      }
+      await write("}}");
+
+      await new Promise<void>((resolve, reject) => {
+        stream.end((err?: Error | null) => (err ? reject(err) : resolve()));
+      });
       logger.info({}, `[lunr-recon] Index saved → "${this.filePath}"`);
     } catch {
       logger.warn({}, "[lunr-recon] Failed to save index.");
