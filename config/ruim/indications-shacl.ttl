@@ -43,6 +43,7 @@ iso-idmp:TherapeuticIndication a sh:NodeShape, rdfs:Class ;
 		sh:maxCount 1 ;
 		sh:nodeKind sh:IRI ;
 		sh:class skos:Concept ;
+		shacl-play:background-color  "red" ;
 	] ;
 	sh:property [
 		sh:path iso-idmp:hasIntendedEffect ;
@@ -65,7 +66,8 @@ iso-idmp:TherapeuticIndication a sh:NodeShape, rdfs:Class ;
 			mesh:Q000517
 			# Diagnostic. cf. https://meshb.nlm.nih.gov/record/ui?ui=Q000175
 			mesh:Q000175
-		)
+		);
+		shacl-play:background-color  "red" ;
 	] ;
 .
 
@@ -81,6 +83,7 @@ hetopvoc:ActionPharmacologique a sh:NodeShape, rdfs:Class ;
 		sh:minCount 1 ;
 		sh:nodeKind sh:IRI ;
 		sh:class skos:Concept ;
+		shacl-play:background-color  "red" ;
 	] ;
 	sh:property [
 		sh:path hetopvoc:effet ;
@@ -90,6 +93,7 @@ hetopvoc:ActionPharmacologique a sh:NodeShape, rdfs:Class ;
 		sh:maxCount 1 ;
 		sh:nodeKind sh:IRI ;
 		sh:class mesh-vocab:Qualifier ;
+		shacl-play:background-color  "red" ;
 	] ;
 .
 
