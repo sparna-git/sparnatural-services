@@ -104,7 +104,7 @@ projects:
         cacheSize: 500
         maxResults: 4
   ruim-mcp:
-    shacl: ./config/ruim/RUIM-SHACL-instances.ttl ./config/ruim/indications-shacl.ttl
+    shacl: ./config/ruim/RUIM-SHACL-instances-cleaned.ttl ./config/ruim/indications-shacl.ttl
     sparqlEndpoint: https://data.sparna.fr/graphdb/repositories/RUIM
     fewShotsFile: ./config/ruim/few-shots.json
     useCases:
@@ -139,8 +139,6 @@ projects:
       - http://data.esante.gouv.fr/ansm/medicament/GroupeGenerique
       - http://data.esante.gouv.fr/ansm/medicament/Element
       - http://data.esante.gouv.fr/ansm/medicament/ElementPresentation
-      - http://data.esante.gouv.fr/ansm/medicament/DosageConcentration
-      - http://data.esante.gouv.fr/ansm/medicament/DosagePresentation
       - http://data.esante.gouv.fr/ansm/medicament/Unite
       - http://data.esante.gouv.fr/ansm/medicament/ExpressionDeDosage
       - http://data.esante.gouv.fr/ansm/medicament/Organisation
@@ -148,18 +146,9 @@ projects:
       - http://data.esante.gouv.fr/ansm/medicament/Voie
       - http://data.esante.gouv.fr/ansm/medicament/Forme
       - http://data.esante.gouv.fr/ansm/medicament/UniteDePresentation
-      - http://data.esante.gouv.fr/ansm/medicament/TypeContenant
-      - http://data.esante.gouv.fr/ansm/medicament/JustificationNiveauVirtualisation
       - http://data.esante.gouv.fr/ansm/medicament/JustificationNiveauPrescriptibilite
-      - http://data.esante.gouv.fr/ansm/medicament/NiveauVirtualisation
       - http://data.esante.gouv.fr/ansm/medicament/NiveauPrescriptibilite
-      - http://data.esante.gouv.fr/ansm/medicament/TypeDose
       - http://data.esante.gouv.fr/ansm/medicament/Gamme
-      - http://data.esante.gouv.fr/ansm/medicament/PrescriptionEnDC
-      - http://data.esante.gouv.fr/ansm/medicament/PPhParSubstance
-      - http://data.esante.gouv.fr/ansm/medicament/PPhParSubstanceDosage
-      - http://data.esante.gouv.fr/ansm/medicament/PPhParSubstanceForme
-      - http://data.esante.gouv.fr/ansm/medicament/PPhParSubstanceDosageForme
       - http://data.esante.gouv.fr/ansm/medicament/Evenement
       - http://data.esante.gouv.fr/ansm/medicament/Autorisation
       - http://data.esante.gouv.fr/ansm/medicament/ChangementDeStatut
