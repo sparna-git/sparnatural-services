@@ -185,3 +185,22 @@ projects:
       additionalInstructions: ./config/ruim/additionalInstructions.txt
     q2tPromptGenerator:
       implementation: Q2TPromptGenerator
+  ep:
+    shacl: ./config/ep/eli-ep_meetings.shacl.ttl ./config/ep/eli-ep_parliamentary-questions.shacl.ttl ./config/org-ep_meps.shacl.ttl
+    sparqlEndpoint: https://data.sparna.fr/graphdb/repositories/EP
+    cache:
+      urilookup: ./cache/ep/urilookup_cache.json
+    reconciliation:
+      implementation: LunrReconcileService
+      cacheSize: 1000
+      maxResults: 6
+      indexCachePath: ./cache/ep/lunr-index.json
+      sparqlQueries:
+        - field: label
+          boost: 10
+          queryFiles:
+            - ./config/ep/sparqlqueriesindex/rdfs_label.rq
+            - ./config/ep/sparqlqueriesindex/skos_prefLabel.rq
+        - field: altLabel
+          boost: 5
+          queryFile: ./config/ep/sparqlqueriesindex/skos_altLabel.rq

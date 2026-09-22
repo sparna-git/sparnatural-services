@@ -1,0 +1,735 @@
+@prefix schema: <http://schema.org/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix skosthes: <http://purl.org/iso25964/skos-thes#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix qb: <http://purl.org/linked-data/cube#> .
+@prefix doap: <http://usefulinc.com/ns/doap#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix euvoc: <http://publications.europa.eu/ontology/euvoc#> .
+@prefix vann: <http://purl.org/vocab/vann/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix adms: <http://www.w3.org/ns/adms#> .
+@prefix org: <http://www.w3.org/ns/org#> .
+@prefix xls2rdf: <https://xls2rdf.sparna.fr/vocabulary#> .
+@prefix eli-dl: <http://data.europa.eu/eli/eli-draft-legislation-ontology#> .
+@prefix meps: <https://data.europarl.europa.eu/def/meps#> .
+@prefix ept: <https://data.europarl.europa.eu/def/> .
+@prefix org-ep: <https://data.europarl.europa.eu/def/org-ep#> .
+@prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
+@prefix shacl-play: <https://shacl-play.sparna.fr/ontology#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix person: <http://www.w3.org/ns/person#> .
+@prefix epvoc: <https://data.europarl.europa.eu/def/epvoc#> .
+@prefix op-aut: <http://publications.europa.eu/resource/authority/> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix skosxl: <http://www.w3.org/2008/05/skos-xl#> .
+
+<https://data.europarl.europa.eu/def/meps#> a owl:Ontology, adms:Asset;
+  dcterms:type <https://publications.europa.eu/resource/authority/dataset-type/APROF>;
+  rdfs:label "Meps dataset description"@en;
+  dcterms:title "Meps dataset description"@en;
+  dcterms:description "This Dataset Description is a subset of the general ORG-EP application profile and it includes classes and properties used in Meps datasets. Descriptions of classes and properties can be found in ORG-EP application profile."@en;
+  owl:versionInfo "2.1.0";
+  adms:versionNotes """2.1.0 - 2024-03-21
+- (rfc) change epvoc:membershipClassification from EU AT op-aut:corporate-body-classification to EPT ept:ep-entitites
+- (rfc) change range from xsd:dateTime to xsd:date for vcard:bday, epvoc:deathDate, dcat:startDate, dcat:endDate
+- (rfc) org:role[org:Role] values based on EP taxonomy ep-roles and not EU AT (op-aut:role)
+
+1.2 - 2023-09-26
+- (new) add epvoc:sortLabel
+
+1.1 - 2023-04-13
+- remove external shapes (incl. controlled vocabularies data) in datasets.
+
+1.0 - 2022-11-18
+- creation"""@en;
+  adms:status <https://publications.europa.eu/resource/authority/dataset-status/COMPLETED>;
+  owl:versionIRI <https://data.europarl.europa.eu/def/meps#>;
+  dcterms:conformsTo <https://www.w3.org/TR/shacl>;
+  dcterms:created "2021-11-18"^^xsd:date;
+  dcterms:modified "2024-03-21T00:00:00.000Z"^^xsd:dateTime;
+  dcterms:dateCopyrighted "2022"^^xsd:gYear;
+  dcterms:license <https://www.europarl.europa.eu/legal-notice/en/>;
+  dcterms:creator <https://publications.europa.eu/resource/authority/corporate-body/EP>;
+  dcterms:publisher <https://publications.europa.eu/resource/authority/corporate-body/EP>;
+  dcterms:rigthsHolder <https://publications.europa.eu/resource/authority/corporate-body/EURUN>;
+  dcat:distribution _:a4aeb3f30c2042e3b539bc99a24f35721876 .
+
+_:a4aeb3f30c2042e3b539bc99a24f35721876 dcterms:format <https://www.iana.org/assignments/media-types/text/turtle>;
+  dcat:downloadURL <https://europarl.github.io/org-ep/dsd/meps/org-ep_meps.shacl.ttl> .
+
+meps:Person a sh:NodeShape;
+  rdfs:comment "This node shape represents a subset of foaf:Person"@en;
+  sh:target meps:Person-target;
+  skos:example "https://data.europarl.europa.eu/person/124936";
+  sh:nodeKind sh:IRI;
+  sh:pattern "^https://data.europarl.europa.eu/person/[0-9]*?$";
+  sh:closed "true"^^xsd:boolean;
+  rdfs:label "Person"@en;
+  sh:order "1"^^xsd:integer;
+  owl:versionInfo "1.0";
+  sh:property meps:P9, meps:P10, meps:P11, meps:P12, meps:P13, meps:P14, meps:P15, meps:P16,
+    meps:P17, meps:P18, meps:P19, meps:P20, meps:P21, meps:P22, meps:P23, meps:P24, meps:P25,
+    meps:P26, meps:P27, meps:P28, meps:P29, meps:P30, meps:P31, meps:P32 .
+
+meps:Person-target sh:select """PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX org: <http://www.w3.org/ns/org#> 
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+SELECT ?this
+WHERE {
+ ?this rdf:type foaf:Person .
+}""" .
+
+meps:Membership a sh:NodeShape;
+  sh:targetClass org:Membership;
+  skos:example "https://data.europarl.europa.eu/membership/12345-m-999900001 , https://data.europarl.europa.eu/membership/12345-f-999900001";
+  sh:nodeKind sh:IRI;
+  sh:closed "true"^^xsd:boolean;
+  rdfs:label "Membership"@en;
+  sh:order "2"^^xsd:integer;
+  owl:versionInfo "1.0";
+  sh:property meps:P35, meps:P36, meps:P37, meps:P38, meps:P39, meps:P40, meps:P41,
+    meps:P42, meps:P43 .
+
+meps:ContactPoint a sh:NodeShape;
+  sh:targetClass epvoc:ContactPoint;
+  skos:example "https://data.europarl.europa.eu/contact-point/58766-m-16341-M05047";
+  sh:nodeKind sh:IRI;
+  sh:pattern "^https://data.europarl.europa.eu/contact-point/.*$";
+  sh:closed "true"^^xsd:boolean;
+  rdfs:label "Contact Point"@en;
+  sh:order "3"^^xsd:integer;
+  owl:versionInfo "1.0";
+  sh:property meps:P46, meps:P47, meps:P48, meps:P49 .
+
+meps:OnlineAccount a sh:NodeShape;
+  sh:targetClass foaf:OnlineAccount;
+  skos:example "https://twitter.com/mariearenaps";
+  sh:nodeKind sh:IRI;
+  sh:closed "true"^^xsd:boolean;
+  rdfs:label "Online Account"@en;
+  sh:order "4"^^xsd:integer;
+  owl:versionInfo "1.0";
+  sh:property meps:P52, meps:P53 .
+
+meps:Voice a sh:NodeShape;
+  sh:targetClass vcard:Voice;
+  skos:example "https://data.europarl.europa.eu/tel/33388175139";
+  sh:nodeKind sh:IRI;
+  sh:pattern "^https://data.europarl.europa.eu/tel/[0-9]*$";
+  sh:closed "true"^^xsd:boolean;
+  rdfs:label "Voice"@en;
+  sh:order "5"^^xsd:integer;
+  owl:versionInfo "1.0";
+  sh:property meps:P56, meps:P57 .
+
+meps:Fax a sh:NodeShape;
+  sh:targetClass vcard:Fax;
+  skos:example "https://data.europarl.europa.eu/tel/33388175139";
+  sh:nodeKind sh:IRI;
+  sh:pattern "^https://data.europarl.europa.eu/tel/[0-9]*$";
+  sh:closed "true"^^xsd:boolean;
+  rdfs:label "Fax"@en;
+  sh:order "6"^^xsd:integer;
+  owl:versionInfo "1.0";
+  sh:property meps:P60, meps:P61 .
+
+meps:PeriodOfTime a sh:NodeShape;
+  sh:targetClass dcterms:PeriodOfTime;
+  skos:example "https://data.europarl.europa.eu/time-period/pt_9";
+  sh:nodeKind sh:IRI;
+  sh:pattern "^https://data.europarl.europa.eu/time-period/.*$";
+  sh:closed "true"^^xsd:boolean;
+  rdfs:label "Period Of Time"@en;
+  sh:order "7"^^xsd:integer;
+  owl:versionInfo "1.0";
+  sh:property meps:P64, meps:P65, meps:P66 .
+
+meps:OrganizationReference a sh:NodeShape;
+  skos:example "https://data.europarl.europa.eu/org/1234";
+  sh:nodeKind sh:IRI;
+  sh:pattern "^https://data.europarl.europa.eu/org/.*$";
+  sh:closed "true"^^xsd:boolean;
+  rdfs:label "Reference to an Organization"@en;
+  sh:order "8"^^xsd:integer;
+  owl:versionInfo "1.1";
+  sh:property meps:P97 .
+
+meps:ImageReference a sh:NodeShape;
+  skos:example "https://www.europarl.europa.eu/mepphoto/124936.jpg";
+  sh:nodeKind sh:IRI;
+  sh:closed "true"^^xsd:boolean;
+  rdfs:label "Reference to a Image"@en;
+  sh:order "9"^^xsd:integer;
+  owl:versionInfo "1.1";
+  sh:property meps:P69 .
+
+meps:ResourceReference a sh:NodeShape;
+  sh:nodeKind sh:IRI;
+  sh:closed "true"^^xsd:boolean;
+  rdfs:label "Reference to a Resource"@en;
+  sh:order "10"^^xsd:integer;
+  owl:versionInfo "1.1";
+  sh:property meps:P71 .
+
+meps:DocumentReference a sh:NodeShape;
+  sh:nodeKind sh:IRI;
+  sh:closed "true"^^xsd:boolean;
+  rdfs:label "Reference to a Document"@en;
+  sh:order "11"^^xsd:integer;
+  owl:versionInfo "1.1";
+  sh:property meps:P73 .
+
+meps:GenderReference a sh:NodeShape;
+  skos:example "http://publications.europa.eu/resource/authority/human-sex/FEMALE";
+  sh:nodeKind sh:IRI;
+  sh:pattern "http://publications.europa.eu/resource/authority/human-sex/.*$";
+  sh:closed "true"^^xsd:boolean;
+  rdfs:label "Reference to a Gender"@en;
+  sh:order "12"^^xsd:integer;
+  owl:versionInfo "1.1";
+  sh:property meps:P75, meps:P76 .
+
+meps:HonorificTitleReference a sh:NodeShape;
+  skos:example "http://publications.europa.eu/resource/authority/honorific/MR";
+  sh:nodeKind sh:IRI;
+  sh:pattern "http://publications.europa.eu/resource/authority/honorific/.*$";
+  sh:closed "true"^^xsd:boolean;
+  rdfs:label "Reference to a Honorific Title"@en;
+  sh:order "13"^^xsd:integer;
+  owl:versionInfo "1.1";
+  sh:property meps:P78, meps:P79 .
+
+meps:CountryReference a sh:NodeShape;
+  skos:example "http://publications.europa.eu/resource/authority/country/BEL";
+  sh:nodeKind sh:IRI;
+  sh:pattern "http://publications.europa.eu/resource/authority/country/.*$";
+  sh:closed "true"^^xsd:boolean;
+  rdfs:label "Reference to a Country"@en;
+  sh:order "14"^^xsd:integer;
+  owl:versionInfo "1.1";
+  sh:property meps:P81, meps:P82 .
+
+meps:AddressTypeReference a sh:NodeShape;
+  skos:example "http://publications.europa.eu/resource/authority/address-type/TWT";
+  sh:nodeKind sh:IRI;
+  sh:pattern "http://publications.europa.eu/resource/authority/address-type/.*$";
+  sh:closed "true"^^xsd:boolean;
+  rdfs:label "Reference to a Address Type"@en;
+  sh:order "15"^^xsd:integer;
+  owl:versionInfo "1.1";
+  sh:property meps:P84, meps:P85 .
+
+meps:RoleReference a sh:NodeShape;
+  skos:example "https://data.europarl.europa.eu/def/ep-roles/MEMBER_PARLIAMENT";
+  sh:nodeKind sh:IRI;
+  sh:pattern "^https://data.europarl.europa.eu/def/ep-roles.*$";
+  sh:closed "true"^^xsd:boolean;
+  rdfs:label "Reference to a Role"@en;
+  sh:order "16"^^xsd:integer;
+  owl:versionInfo "2.1.0";
+  sh:property meps:P90, meps:P91 .
+
+meps:CorporateBodyClassificationReference a sh:NodeShape;
+  skos:example "https://data.europarl.europa.eu/def/ep-entities/EU_POLITICAL_GROUP";
+  sh:nodeKind sh:IRI;
+  sh:pattern "^https://data.europarl.europa.eu/def/ep-entities.*$";
+  sh:closed "true"^^xsd:boolean;
+  rdfs:label "Reference to a Membership Classification"@en;
+  sh:order "17"^^xsd:integer;
+  owl:versionInfo "2.1.0";
+  sh:property meps:P87, meps:P88 .
+
+meps:SiteReference a sh:NodeShape;
+  skos:example "http://publications.europa.eu/resource/authority/site/ASP";
+  sh:nodeKind sh:IRI;
+  sh:pattern "http://publications.europa.eu/resource/authority/site/.*$";
+  sh:closed "true"^^xsd:boolean;
+  rdfs:label "Reference to a Site"@en;
+  sh:order "18"^^xsd:integer;
+  owl:versionInfo "1.1";
+  sh:property meps:P93, meps:P94 .
+
+meps:P9 owl:versionInfo "1.0";
+  sh:path rdf:type;
+  sh:name "type"@en;
+  sh:minCount "1"^^xsd:integer;
+  sh:maxCount "1"^^xsd:integer;
+  sh:nodeKind sh:IRI;
+  sh:hasValue foaf:Person .
+
+meps:P10 owl:versionInfo "1.0";
+  sh:path dcterms:identifier;
+  sh:name "Identifier"@en;
+  sh:minCount "1"^^xsd:integer;
+  sh:maxCount "1"^^xsd:integer;
+  sh:nodeKind sh:Literal;
+  sh:datatype xsd:string .
+
+meps:P11 owl:versionInfo "1.0";
+  sh:path skos:notation;
+  sh:name "Notation"@en;
+  sh:minCount "1"^^xsd:integer;
+  sh:nodeKind sh:Literal;
+  sh:datatype epvoc:codictPersonId .
+
+meps:P12 owl:versionInfo "1.0";
+  sh:path rdfs:label;
+  sh:name "Label"@en;
+  sh:minCount "1"^^xsd:integer;
+  sh:nodeKind sh:Literal;
+  sh:datatype xsd:string .
+
+meps:P13 owl:versionInfo "1.0";
+  sh:path foaf:givenName;
+  sh:name "Given name"@en;
+  sh:minCount "1"^^xsd:integer;
+  sh:maxCount "1"^^xsd:integer;
+  sh:nodeKind sh:Literal;
+  sh:datatype xsd:string .
+
+meps:P14 owl:versionInfo "1.0";
+  sh:path foaf:familyName;
+  sh:name "Family name"@en;
+  sh:minCount "1"^^xsd:integer;
+  sh:maxCount "1"^^xsd:integer;
+  sh:nodeKind sh:Literal;
+  sh:datatype xsd:string .
+
+meps:P15 owl:versionInfo "1.0";
+  sh:path epvoc:upperGivenName;
+  sh:name "Upper given name"@en;
+  sh:maxCount "1"^^xsd:integer;
+  sh:nodeKind sh:Literal;
+  sh:datatype xsd:string .
+
+meps:P16 owl:versionInfo "1.0";
+  sh:path epvoc:upperFamilyName;
+  sh:name "Upper family name"@en;
+  sh:maxCount "1"^^xsd:integer;
+  sh:nodeKind sh:Literal;
+  sh:datatype xsd:string .
+
+meps:P17 owl:versionInfo "1.0";
+  sh:path euvoc:officialGivenName;
+  sh:name "Official given name"@en;
+  sh:maxCount "1"^^xsd:integer;
+  sh:nodeKind sh:Literal;
+  sh:datatype xsd:string .
+
+meps:P18 owl:versionInfo "1.0";
+  sh:path euvoc:officialFamilyName;
+  sh:name "Official family name"@en;
+  sh:maxCount "1"^^xsd:integer;
+  sh:nodeKind sh:Literal;
+  sh:datatype xsd:string .
+
+meps:P19 owl:versionInfo "1.0";
+  sh:path epvoc:upperOfficialGivenName;
+  sh:name "Uppercase official given name"@en;
+  sh:maxCount "1"^^xsd:integer;
+  sh:nodeKind sh:Literal;
+  sh:datatype xsd:string .
+
+meps:P20 owl:versionInfo "1.0";
+  sh:path epvoc:upperOfficialFamilyName;
+  sh:name "Uppercase official family name"@en;
+  sh:maxCount "1"^^xsd:integer;
+  sh:nodeKind sh:Literal;
+  sh:datatype xsd:string .
+
+meps:P21 owl:versionInfo "2.1.0";
+  sh:path vcard:bday;
+  sh:name "Birthday"@en;
+  sh:maxCount "1"^^xsd:integer;
+  sh:nodeKind sh:Literal;
+  sh:datatype xsd:date .
+
+meps:P22 owl:versionInfo "2.1.0";
+  sh:path epvoc:deathDate;
+  sh:name "Death date"@en;
+  sh:maxCount "1"^^xsd:integer;
+  sh:nodeKind sh:Literal;
+  sh:datatype xsd:date .
+
+meps:P23 owl:versionInfo "1.1";
+  sh:path vcard:hasGender;
+  sh:name "Has gender"@en;
+  sh:maxCount "1"^^xsd:integer;
+  sh:nodeKind sh:IRI;
+  sh:node meps:GenderReference .
+
+meps:P24 owl:versionInfo "1.1";
+  sh:path foaf:img;
+  sh:name "Image"@en;
+  sh:maxCount "1"^^xsd:integer;
+  sh:nodeKind sh:IRI;
+  sh:node meps:ImageReference .
+
+meps:P25 owl:versionInfo "1.1";
+  sh:path vcard:hasHonorificPrefix;
+  sh:name "Has honorific prefix"@en;
+  sh:nodeKind sh:IRI;
+  sh:node meps:HonorificTitleReference .
+
+meps:P26 owl:versionInfo "1.1";
+  sh:path person:citizenship;
+  sh:name "Citizenship"@en;
+  sh:nodeKind sh:IRI;
+  sh:node meps:CountryReference .
+
+meps:P27 owl:versionInfo "1.0";
+  sh:path person:placeOfBirth;
+  sh:name "Place of birth"@en;
+  sh:maxCount "1"^^xsd:integer;
+  sh:nodeKind sh:Literal;
+  sh:datatype xsd:string .
+
+meps:P28 owl:versionInfo "1.1";
+  sh:path vcard:hasEmail;
+  sh:name "Has email"@en;
+  sh:nodeKind sh:IRI;
+  sh:node meps:ResourceReference .
+
+meps:P29 owl:versionInfo "1.1";
+  sh:path foaf:homepage;
+  sh:name "Homepage"@en;
+  sh:nodeKind sh:IRI;
+  sh:node meps:DocumentReference .
+
+meps:P30 owl:versionInfo "1.0";
+  sh:path foaf:account;
+  sh:name "Account"@en;
+  sh:nodeKind sh:IRI;
+  sh:node meps:OnlineAccount .
+
+meps:P31 owl:versionInfo "1.0";
+  sh:path org:hasMembership;
+  sh:name "Has membership"@en;
+  sh:nodeKind sh:IRI;
+  sh:node meps:Membership .
+
+meps:P32 owl:versionInfo "1.2";
+  sh:path epvoc:sortLabel;
+  sh:name "Sort Label"@en;
+  sh:maxCount "1"^^xsd:integer;
+  sh:nodeKind sh:Literal;
+  sh:datatype xsd:string .
+
+meps:P35 owl:versionInfo "1.0";
+  sh:path rdf:type;
+  sh:name "type"@en;
+  sh:minCount "1"^^xsd:integer;
+  sh:maxCount "1"^^xsd:integer;
+  sh:nodeKind sh:IRI;
+  sh:hasValue org:Membership .
+
+meps:P36 owl:versionInfo "1.0";
+  sh:path dcterms:identifier;
+  sh:name "Membership id"@en;
+  sh:minCount "1"^^xsd:integer;
+  sh:maxCount "1"^^xsd:integer;
+  sh:nodeKind sh:Literal;
+  sh:datatype xsd:string .
+
+meps:P37 owl:versionInfo "1.0";
+  sh:path skos:notation;
+  sh:name "Notation"@en;
+  sh:minCount "1"^^xsd:integer;
+  sh:nodeKind sh:Literal;
+  sh:or _:a4aeb3f30c2042e3b539bc99a24f35721877 .
+
+_:a4aeb3f30c2042e3b539bc99a24f35721877 rdf:first _:a4aeb3f30c2042e3b539bc99a24f35721878;
+  rdf:rest _:a4aeb3f30c2042e3b539bc99a24f35721879 .
+
+_:a4aeb3f30c2042e3b539bc99a24f35721878 sh:datatype epvoc:codictFunctionId .
+
+_:a4aeb3f30c2042e3b539bc99a24f35721879 rdf:first _:a4aeb3f30c2042e3b539bc99a24f35721880;
+  rdf:rest rdf:nil .
+
+_:a4aeb3f30c2042e3b539bc99a24f35721880 sh:datatype epvoc:codictMandateId .
+
+meps:P38 owl:versionInfo "1.0";
+  sh:path org:memberDuring;
+  sh:name "Member during"@en;
+  sh:minCount "1"^^xsd:integer;
+  sh:maxCount "1"^^xsd:integer;
+  sh:nodeKind sh:IRI;
+  sh:node meps:PeriodOfTime .
+
+meps:P39 owl:versionInfo "2.1.0";
+  sh:path org:role;
+  sh:name "Role"@en;
+  sh:minCount "1"^^xsd:integer;
+  sh:maxCount "1"^^xsd:integer;
+  sh:nodeKind sh:IRI;
+  sh:node meps:RoleReference;
+  sh:pattern "^https://data.europarl.europa.eu/def/ep-roles.*$" .
+
+meps:P40 owl:versionInfo "1.1";
+  sh:path org:organization;
+  sh:name "Organization"@en;
+  sh:minCount "1"^^xsd:integer;
+  sh:maxCount "1"^^xsd:integer;
+  sh:nodeKind sh:IRI;
+  sh:node meps:OrganizationReference .
+
+meps:P41 owl:versionInfo "1.1";
+  sh:path euvoc:represents;
+  sh:name "Represents"@en;
+  sh:maxCount "1"^^xsd:integer;
+  sh:nodeKind sh:IRI;
+  sh:node meps:CountryReference .
+
+meps:P42 owl:versionInfo "1.0";
+  sh:path dcat:contactPoint;
+  sh:name "Contact point"@en;
+  sh:description "Remark: only for current mandate memberships (without endDate)"@en;
+  sh:nodeKind sh:IRI;
+  sh:node meps:ContactPoint .
+
+meps:P43 owl:versionInfo "1.1";
+  sh:path epvoc:membershipClassification;
+  sh:name "Membership Classification"@en;
+  sh:maxCount "1"^^xsd:integer;
+  sh:nodeKind sh:IRI;
+  sh:node meps:CorporateBodyClassificationReference .
+
+meps:P46 owl:versionInfo "1.0";
+  sh:path rdf:type;
+  sh:name "type"@en;
+  sh:minCount "1"^^xsd:integer;
+  sh:maxCount "1"^^xsd:integer;
+  sh:nodeKind sh:IRI;
+  sh:hasValue epvoc:ContactPoint .
+
+meps:P47 owl:versionInfo "1.0";
+  sh:path euvoc:officeAddress;
+  sh:name "Office address"@en;
+  sh:maxCount "1"^^xsd:integer;
+  sh:nodeKind sh:Literal;
+  sh:datatype xsd:string .
+
+meps:P48 owl:versionInfo "1.1";
+  sh:path epvoc:hasSite;
+  sh:name "Has site"@en;
+  sh:maxCount "1"^^xsd:integer;
+  sh:nodeKind sh:IRI;
+  sh:node meps:SiteReference .
+
+meps:P49 owl:versionInfo "1.0";
+  sh:path vcard:hasTelephone;
+  sh:name "Has telephone"@en;
+  sh:nodeKind sh:IRI;
+  sh:or _:a4aeb3f30c2042e3b539bc99a24f35721881 .
+
+_:a4aeb3f30c2042e3b539bc99a24f35721881 rdf:first _:a4aeb3f30c2042e3b539bc99a24f35721882;
+  rdf:rest _:a4aeb3f30c2042e3b539bc99a24f35721883 .
+
+_:a4aeb3f30c2042e3b539bc99a24f35721882 sh:node meps:Voice .
+
+_:a4aeb3f30c2042e3b539bc99a24f35721883 rdf:first _:a4aeb3f30c2042e3b539bc99a24f35721884;
+  rdf:rest rdf:nil .
+
+_:a4aeb3f30c2042e3b539bc99a24f35721884 sh:node meps:Fax .
+
+meps:P52 owl:versionInfo "1.0";
+  sh:path rdf:type;
+  sh:name "type"@en;
+  sh:minCount "1"^^xsd:integer;
+  sh:maxCount "1"^^xsd:integer;
+  sh:nodeKind sh:IRI;
+  sh:hasValue foaf:OnlineAccount .
+
+meps:P53 owl:versionInfo "1.1";
+  sh:path dcterms:type;
+  sh:name "Type"@en;
+  sh:maxCount "1"^^xsd:integer;
+  sh:nodeKind sh:IRI;
+  sh:node meps:AddressTypeReference .
+
+meps:P56 owl:versionInfo "1.0";
+  sh:path rdf:type;
+  sh:name "type"@en;
+  sh:minCount "1"^^xsd:integer;
+  sh:maxCount "1"^^xsd:integer;
+  sh:nodeKind sh:IRI;
+  sh:hasValue vcard:Voice .
+
+meps:P57 owl:versionInfo "1.1";
+  sh:path vcard:hasValue;
+  sh:name "Has value"@en;
+  sh:minCount "1"^^xsd:integer;
+  sh:maxCount "1"^^xsd:integer;
+  sh:nodeKind sh:IRI;
+  sh:node meps:ResourceReference .
+
+meps:P60 owl:versionInfo "1.0";
+  sh:path rdf:type;
+  sh:name "type"@en;
+  sh:minCount "1"^^xsd:integer;
+  sh:maxCount "1"^^xsd:integer;
+  sh:nodeKind sh:IRI;
+  sh:hasValue vcard:Fax .
+
+meps:P61 owl:versionInfo "1.1";
+  sh:path vcard:hasValue;
+  sh:name "Has value"@en;
+  sh:minCount "1"^^xsd:integer;
+  sh:maxCount "1"^^xsd:integer;
+  sh:nodeKind sh:IRI;
+  sh:node meps:ResourceReference .
+
+meps:P64 owl:versionInfo "1.0";
+  sh:path rdf:type;
+  sh:name "type"@en;
+  sh:minCount "1"^^xsd:integer;
+  sh:nodeKind sh:IRI;
+  sh:hasValue dcterms:PeriodOfTime .
+
+meps:P65 owl:versionInfo "2.1.0";
+  sh:path dcat:startDate;
+  sh:name "Start date"@en;
+  sh:minCount "1"^^xsd:integer;
+  sh:maxCount "1"^^xsd:integer;
+  sh:nodeKind sh:Literal;
+  sh:datatype xsd:date .
+
+meps:P66 owl:versionInfo "2.1.0";
+  sh:path dcat:endDate;
+  sh:name "End date"@en;
+  sh:maxCount "1"^^xsd:integer;
+  sh:nodeKind sh:Literal;
+  sh:datatype xsd:date .
+
+meps:P69 owl:versionInfo "1.1";
+  sh:path rdf:type;
+  sh:name "type"@en;
+  sh:nodeKind sh:IRI;
+  sh:hasValue foaf:Image;
+  sh:deactivated "true"^^xsd:boolean .
+
+meps:P71 owl:versionInfo "1.1";
+  sh:path rdf:type;
+  sh:name "type"@en;
+  sh:nodeKind sh:IRI;
+  sh:hasValue rdfs:Resource;
+  sh:deactivated "true"^^xsd:boolean .
+
+meps:P73 owl:versionInfo "1.1";
+  sh:path rdf:type;
+  sh:name "type"@en;
+  sh:nodeKind sh:IRI;
+  sh:hasValue foaf:Document;
+  sh:deactivated "true"^^xsd:boolean .
+
+meps:P75 owl:versionInfo "1.1";
+  sh:path rdf:type;
+  sh:name "type"@en;
+  sh:nodeKind sh:IRI;
+  sh:hasValue vcard:Gender;
+  sh:deactivated "true"^^xsd:boolean .
+
+meps:P76 owl:versionInfo "1.1";
+  sh:path skos:inScheme;
+  sh:name "Is in scheme"@en;
+  sh:nodeKind sh:IRI;
+  sh:hasValue op-aut:human-sex;
+  sh:deactivated "true"^^xsd:boolean .
+
+meps:P78 owl:versionInfo "1.1";
+  sh:path rdf:type;
+  sh:name "type"@en;
+  sh:nodeKind sh:IRI;
+  sh:hasValue euvoc:HonorificTitle;
+  sh:deactivated "true"^^xsd:boolean .
+
+meps:P79 owl:versionInfo "1.1";
+  sh:path skos:inScheme;
+  sh:name "Is in scheme"@en;
+  sh:nodeKind sh:IRI;
+  sh:hasValue op-aut:honorific;
+  sh:deactivated "true"^^xsd:boolean .
+
+meps:P81 owl:versionInfo "1.1";
+  sh:path rdf:type;
+  sh:name "type"@en;
+  sh:nodeKind sh:IRI;
+  sh:hasValue euvoc:Country;
+  sh:deactivated "true"^^xsd:boolean .
+
+meps:P82 owl:versionInfo "1.1";
+  sh:path skos:inScheme;
+  sh:name "Is in scheme"@en;
+  sh:nodeKind sh:IRI;
+  sh:hasValue op-aut:country;
+  sh:deactivated "true"^^xsd:boolean .
+
+meps:P84 owl:versionInfo "1.1";
+  sh:path rdf:type;
+  sh:name "type"@en;
+  sh:nodeKind sh:IRI;
+  sh:hasValue euvoc:AddressType;
+  sh:deactivated "true"^^xsd:boolean .
+
+meps:P85 owl:versionInfo "1.1";
+  sh:path skos:inScheme;
+  sh:name "Is in scheme"@en;
+  sh:nodeKind sh:IRI;
+  sh:hasValue op-aut:address-type;
+  sh:deactivated "true"^^xsd:boolean .
+
+meps:P87 owl:versionInfo "1.1";
+  sh:path rdf:type;
+  sh:name "type"@en;
+  sh:nodeKind sh:IRI;
+  sh:hasValue euvoc:CorporateBodyClassification;
+  sh:deactivated "true"^^xsd:boolean .
+
+meps:P88 owl:versionInfo "2.1.0";
+  sh:path skos:inScheme;
+  sh:name "Is in scheme"@en;
+  sh:nodeKind sh:IRI;
+  sh:hasValue ept:ep-entities;
+  sh:deactivated "true"^^xsd:boolean .
+
+meps:P90 owl:versionInfo "1.1";
+  sh:path rdf:type;
+  sh:name "type"@en;
+  sh:nodeKind sh:IRI;
+  sh:hasValue org:Role;
+  sh:deactivated "true"^^xsd:boolean .
+
+meps:P91 owl:versionInfo "2.1.0";
+  sh:path skos:inScheme;
+  sh:name "Is in scheme"@en;
+  sh:nodeKind sh:IRI;
+  sh:hasValue ept:ep-roles;
+  sh:deactivated "true"^^xsd:boolean .
+
+meps:P93 owl:versionInfo "1.1";
+  sh:path rdf:type;
+  sh:name "type"@en;
+  sh:nodeKind sh:IRI;
+  sh:hasValue org:Site;
+  sh:deactivated "true"^^xsd:boolean .
+
+meps:P94 owl:versionInfo "1.1";
+  sh:path skos:inScheme;
+  sh:name "Is in scheme"@en;
+  sh:nodeKind sh:IRI;
+  sh:hasValue op-aut:site;
+  sh:deactivated "true"^^xsd:boolean .
+
+meps:P97 owl:versionInfo "2.1.0";
+  sh:path rdf:type;
+  sh:name "type"@en;
+  sh:minCount "1"^^xsd:integer;
+  sh:nodeKind sh:IRI;
+  sh:hasValue org:Organization;
+  sh:deactivated "true"^^xsd:boolean .
