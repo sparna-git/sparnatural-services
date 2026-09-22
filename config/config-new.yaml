@@ -190,6 +190,11 @@ projects:
     sparqlEndpoint: https://data.sparna.fr/graphdb/repositories/EP
     cache:
       urilookup: ./cache/ep/urilookup_cache.json
+    useCases:
+      - title: "Meetings attended by an MEP"
+        entryPoint: "`Person` linked to `Activity Plenary Sitting` by `eli-dl:has_participant_person`"
+      - title: "Authors of ^parliamentary question"
+        entryPoint: "`eli:Work` epvoc:workHadParticipation eli-dl:Participation with an eli-dl:has_participant_role of 'author', then eli-dl:has_participant_person to the Person"
     shaclTypes:
       - https://data.europarl.europa.eu/def/meps#Person
     reconciliation:
