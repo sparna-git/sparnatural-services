@@ -186,7 +186,7 @@ projects:
     q2tPromptGenerator:
       implementation: Q2TPromptGenerator
   ep:
-    shacl: ./config/ep/eli-ep_meetings.shacl.ttl ./config/ep/eli-ep_parliamentary-questions.shacl.ttl ./config/org-ep_meps.shacl.ttl
+    shacl: ./config/ep/eli-ep_meetings.shacl.ttl ./config/ep/eli-ep_parliamentary-questions.shacl.ttl ./config/ep/org-ep_meps.shacl.ttl
     sparqlEndpoint: https://data.sparna.fr/graphdb/repositories/EP
     cache:
       urilookup: ./cache/ep/urilookup_cache.json
