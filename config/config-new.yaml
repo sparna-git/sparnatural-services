@@ -190,6 +190,8 @@ projects:
     sparqlEndpoint: https://data.sparna.fr/graphdb/repositories/EP
     cache:
       urilookup: ./cache/ep/urilookup_cache.json
+    shaclTypes:
+      - https://data.europarl.europa.eu/def/meps#Person
     reconciliation:
       implementation: LunrReconcileService
       cacheSize: 1000
