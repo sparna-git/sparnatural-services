@@ -186,7 +186,7 @@ projects:
     q2tPromptGenerator:
       implementation: Q2TPromptGenerator
   ep:
-    shacl: ./config/ep/eli-ep_meetings.shacl.ttl ./config/ep/eli-ep_parliamentary-questions.shacl.ttl ./config/ep/org-ep_meps.shacl.ttl
+    shacl: ./config/ep/eli-ep_meetings.shacl.ttl ./config/ep/eli-ep_parliamentary-questions.shacl.ttl ./config/ep/org-ep_meps.shacl.ttl ./config/ep/extra-definitions.ttl
     sparqlEndpoint: https://data.sparna.fr/graphdb/repositories/EP
     cache:
       urilookup: ./cache/ep/urilookup_cache.json
@@ -197,6 +197,7 @@ projects:
         entryPoint: "`eli:Work` epvoc:workHadParticipation eli-dl:Participation with an eli-dl:has_participant_role of 'author', then eli-dl:has_participant_person to the Person"
     shaclTypes:
       - https://data.europarl.europa.eu/def/meps#Person
+      - https://data.europarl.europa.eu/def/meetings_api#Activity-MTG-PL
     reconciliation:
       implementation: LunrReconcileService
       cacheSize: 1000
@@ -208,6 +209,7 @@ projects:
           queryFiles:
             - ./config/ep/sparqlqueriesindex/rdfs_label.rq
             - ./config/ep/sparqlqueriesindex/skos_prefLabel.rq
+            #- ./config/ep/sparqlqueriesindex/activity_label.rq
         - field: altLabel
           boost: 5
           queryFile: ./config/ep/sparqlqueriesindex/skos_altLabel.rq

@@ -2,7 +2,11 @@ import axios from "axios";
 import { ConfigProvider } from "../../config/ConfigProvider";
 import { AppConfig } from "../../config/AppConfig";
 
-import { getSHACLConfig, loadShaclTtl } from "../../config/SCHACL";
+import {
+  getSHACLConfig,
+  listNodeShapeIris,
+  loadShaclTtl,
+} from "../../config/SCHACL";
 import { ShapesGraph } from "rdf-shacl-commons";
 import {
   extractNodeShapes,
@@ -90,10 +94,28 @@ export class ConfigBackedProjectConfigAdapter implements ProjectConfigAdapter {
       projectId,
       sparqlEndpoint: projectConfig.sparqlEndpoint,
       shaclPath: projectConfig.shacl,
-      shaclTypes: projectConfig.shaclTypes,
+      shaclTypes:
+        projectConfig.shaclTypes ??
+        (await this.resolveShaclTypesFromModel(projectId)),
       useCases: projectConfig.useCases,
       fewShotsFile: projectConfig.fewShotsFile,
     };
+  }
+
+  /**
+   * Values the `type` parameter accepts when the YAML lists none: the
+   * NodeShape IRIs, the vocabulary every reconciliation service expects.
+   */
+  private async resolveShaclTypesFromModel(
+    projectId: string,
+  ): Promise<string[] | undefined> {
+    try {
+      const { model } = await getSHACLConfig(projectId);
+      const shapes = listNodeShapeIris(model);
+      return shapes.length > 0 ? shapes : undefined;
+    } catch {
+      return undefined;
+    }
   }
 
   async getFewShots(projectId: string): Promise<FewShot[] | undefined> {

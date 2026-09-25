@@ -28,6 +28,7 @@ export type SectionBuilder = (input: OverviewBuildInput) => string | undefined;
 
 const DEFAULT_SECTIONS: SectionBuilder[] = [
   headerSection,
+  prefixesSection,
   nodeShapesSection,
   useCasesSection,
 ];
@@ -56,6 +57,26 @@ function headerSection({ projectId, meta }: OverviewBuildInput): string {
   return lines.join("\n\n");
 }
 
+/**
+ * The prefixes the shape IRIs below are compacted with. Without them an agent
+ * expands `questions:QuestionOralWork` by guessing, and calls
+ * `discover_nodeshapes` with an IRI that matches nothing.
+ *
+ * Rendered as PREFIX declarations, so they can be pasted into a query.
+ */
+function prefixesSection({ prefixes }: OverviewBuildInput): string | undefined {
+  const declarations = Object.entries(prefixes)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([prefix, uri]) => `PREFIX ${prefix}: <${uri}>`);
+  if (declarations.length === 0) return undefined;
+
+  return [
+    "## Préfixes",
+    "Les IRI de ce document sont abrégées avec ces préfixes. Passez-les tels quels aux autres outils, et n'inventez jamais une IRI complète à partir d'un préfixe.",
+    "```sparql\n" + declarations.join("\n") + "\n```",
+  ].join("\n\n");
+}
+
 function nodeShapesSection(input: OverviewBuildInput): string | undefined {
   const shapes = [...input.shapes]
     .filter((s) => !isEmptyShape(s))
@@ -65,7 +86,7 @@ function nodeShapesSection(input: OverviewBuildInput): string | undefined {
   const blocks = shapes.map((s) => renderShapeBlock(s));
   return [
     "## NodeShapes",
-    "Toutes les NodeShapes du modèle avec leur description et la liste des shapes liées. Pour chaque shape impliquée dans une requête SPARQL, appelez `discover_nodeshapes` afin d'obtenir les paths concrets, cardinalités, datatypes, valeurs autorisées et agent instructions — **sauf si cette shape a déjà été découverte plus tôt dans la conversation**. Inutile de re-découvrir une shape déjà obtenue.",
+    "Toutes les NodeShapes du modèle avec leur description et la liste des shapes liées. Quand aucune classe n'identifie une shape, une ligne **Ciblée par** donne le motif SPARQL qui sélectionne ses instances. Pour chaque shape impliquée dans une requête SPARQL, appelez `discover_nodeshapes` afin d'obtenir les paths concrets, cardinalités, datatypes, valeurs autorisées et agent instructions — **sauf si cette shape a déjà été découverte plus tôt dans la conversation**. Inutile de re-découvrir une shape déjà obtenue.",
     blocks.join("\n\n"),
   ].join("\n\n");
 }
@@ -76,7 +97,8 @@ function isEmptyShape(s: NodeShapeOverviewInfo): boolean {
     s.keyRelations.length === 0 &&
     s.identifierPaths.length === 0 &&
     !s.labelPath &&
-    s.externalMatchPaths.length === 0
+    s.externalMatchPaths.length === 0 &&
+    !s.targetSelect
   );
 }
 
@@ -122,6 +144,11 @@ function renderShapeBlock(s: NodeShapeOverviewInfo): string {
     );
   }
 
+  // No class identifies the shape: show the criterion that does.
+  if (s.targetClasses.length === 0 && s.targetSelect) {
+    lines.push(`**Ciblée par** : \`${targetPattern(s.targetSelect)}\``);
+  }
+
   if (s.description) lines.push(s.description.trim());
 
   if (s.keyRelations.length > 0) {
@@ -130,6 +157,19 @@ function renderShapeBlock(s: NodeShapeOverviewInfo): string {
   }
 
   return lines.join("\n\n");
+}
+
+/**
+ * The graph pattern of a target query, on one line: what is between the
+ * outermost braces, whitespace collapsed. The full query, prefixes included,
+ * stays available through `discover_nodeshapes`.
+ */
+function targetPattern(select: string): string {
+  const open = select.indexOf("{");
+  const close = select.lastIndexOf("}");
+  const body =
+    open !== -1 && close > open ? select.slice(open + 1, close) : select;
+  return body.replace(/\s+/g, " ").trim();
 }
 
 function dedupeRelationTargets(

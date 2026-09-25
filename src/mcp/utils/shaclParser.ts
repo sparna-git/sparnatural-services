@@ -1,4 +1,5 @@
-import type { ShaclModel } from "rdf-shacl-commons";
+import { RDFS, SH } from "rdf-shacl-commons";
+import type { NodeShape, Resource, ShaclModel } from "rdf-shacl-commons";
 import { DataFactory } from "rdf-data-factory";
 
 const _rdfFactory = new DataFactory();
@@ -26,6 +27,8 @@ export interface NodeShapeOverviewInfo {
   label?: string;
   description?: string;
   targetClasses: string[];
+  /** `sh:select` of the shape's SPARQL target, when it has no target class. */
+  targetSelect?: string;
   order?: number;
   keyShape?: boolean;
   // Key-property heuristic results (see extractNodeShapesOverview)
@@ -59,6 +62,8 @@ export interface PropertyShapeInfo {
   minCount?: number;
   maxCount?: number;
   classes?: string[];
+  /** `sh:node`: the shape the values conform to. A shape IRI, not a class. */
+  targetShape?: string[];
   datatypes?: string[];
   values?: string[];
 }
@@ -97,19 +102,33 @@ function getAgentInstructionWithFallback(
   return undefined;
 }
 
+/**
+ * Label in the preferred language, or in any other language of the model.
+ *
+ * The property is read directly because `getLabel()` never returns undefined:
+ * it falls back to the local name of the IRI, which would hide a label written
+ * in another language. The EP shapes, for instance, are labelled in English
+ * only, and the default language is French.
+ */
 function getLabelWithFallback(
-  shape: { getLabel: (lang: string) => string | undefined },
+  shape: {
+    getLabel: (lang: string) => string | undefined;
+    getResource: () => Resource;
+  },
   preferredLang: string,
   allLangs: string[],
+  model: ShaclModel,
+  labelProperty: Resource,
 ): string | undefined {
-  const preferred = shape.getLabel(preferredLang);
-  if (preferred) return preferred;
-  for (const lang of allLangs) {
-    if (lang === preferredLang) continue;
-    const value = shape.getLabel(lang);
+  for (const lang of [preferredLang, ...allLangs]) {
+    const value = model.readSinglePropertyInLang(
+      shape.getResource(),
+      labelProperty,
+      lang,
+    )?.value;
     if (value) return value;
   }
-  return undefined;
+  return shape.getLabel(preferredLang);
 }
 
 /**
@@ -138,12 +157,38 @@ function compact(
   return iri;
 }
 
+/** The `sh:select` of a shape's SPARQL target, if it has one. */
+function readTargetSelect(
+  nodeShape: NodeShape,
+  model: ShaclModel,
+): string | undefined {
+  for (const target of nodeShape.getShTarget()) {
+    const select = model.readSinglePropertyAsString(target, SH.SELECT)?.trim();
+    if (select) return select;
+  }
+  return undefined;
+}
+
+/**
+ * Where an object property points: `sh:class` names the target class,
+ * `sh:node` the target shape. Overview only — a `sh:node` is a shape name,
+ * not an `rdf:type`.
+ */
+function rangeOf(ps: {
+  getShClass: () => Resource[];
+  getShNode: () => Resource[];
+}): Resource[] {
+  const classes = ps.getShClass();
+  return classes.length > 0 ? classes : ps.getShNode();
+}
+
 // True if this property shape carries an "identifier" semantics under our
 // heuristic. Purely semantic — cardinality is irrelevant (CIP7 is optional
 // but still an identifier).
 //   1. Canonical: sh:path = skos:notation or dct:identifier.
-//   2. Datatype property (sh:datatype set, no sh:class) whose sh:name matches
-//      the identifier name regex (identif | code | CIS | CIP | UCD).
+//   2. Datatype property (sh:datatype set, and neither sh:class nor sh:node)
+//      whose sh:name matches the identifier name regex
+//      (identif | code | CIS | CIP | UCD).
 function isIdentifierProperty(
   ps: any,
   pathRaw: string | undefined,
@@ -152,7 +197,7 @@ function isIdentifierProperty(
 ): boolean {
   if (pathRaw === SKOS_NOTATION || pathRaw === DCT_IDENTIFIER) return true;
 
-  // Object properties (sh:class set) are relations, not identifiers.
+  // Object properties (sh:class or sh:node set) are relations, not identifiers.
   if (hasClass) return false;
 
   const datatypes = ps.getShDatatype?.() ?? [];
@@ -209,7 +254,7 @@ export function extractNodeShapesOverview(
     if (keyVals.some((t) => t.value === "true")) {
       keyShapeRawIris.add(rawIri);
     }
-    const lbl = getLabelWithFallback(ns, lang, allLangs);
+    const lbl = getLabelWithFallback(ns, lang, allLangs, model, RDFS.LABEL);
     if (lbl) labelByRawIri.set(rawIri, lbl);
   }
 
@@ -237,8 +282,8 @@ export function extractNodeShapesOverview(
       const path = c(pathRaw);
       if (!path) continue;
 
-      const psName = getLabelWithFallback(ps, lang, allLangs);
-      const classResources = ps.getShClass();
+      const psName = getLabelWithFallback(ps, lang, allLangs, model, SH.NAME);
+      const classResources = rangeOf(ps);
       const classesRaw = classResources.map((r) => r.value);
       const classesCompact = classesRaw.map((v) => c(v)!);
       const hasClass = classesCompact.length > 0;
@@ -246,8 +291,9 @@ export function extractNodeShapesOverview(
       if (hasClass) {
         objectProperties.push({ path, targetClasses: classesCompact });
 
-        // Structural relation if any target class is itself a NodeShape
-        // declared in the model (covers Forme, Voie, Dosage*, etc.).
+        // Structural relation if any target is itself a NodeShape declared in
+        // the model: a sh:class named after its shape (Forme, Voie, Dosage*…)
+        // or a sh:node, which always points at a shape.
         for (let i = 0; i < classesRaw.length; i++) {
           const targetRaw = classesRaw[i];
           if (!allShapeRawIris.has(targetRaw)) continue;
@@ -277,11 +323,15 @@ export function extractNodeShapesOverview(
       ? c(defaultLabelProp.getShPath?.()?.value)
       : undefined;
 
+    const targetSelect =
+      targetClasses.length === 0 ? readTargetSelect(ns, model) : undefined;
+
     const shape: NodeShapeOverviewInfo = {
       shapeIri,
       label: labelByRawIri.get(rawIri),
       description: getTooltipWithFallback(ns, lang, allLangs),
       targetClasses,
+      targetSelect,
       objectProperties,
       dataProperties,
       labelPath,
@@ -317,7 +367,8 @@ export function extractNodeShapes(
     const shapeIri = c(ns.getResource().value)!;
 
     const targetClasses = ns.getTargetClasses().map((r) => c(r.value)!);
-    const targetSparql = ns.getShTarget().map((r) => c(r.value)!);
+    // The query itself, not the IRI of the sh:target node, which says nothing.
+    const targetSelect = readTargetSelect(ns, model);
 
     const nsDescription = getTooltipWithFallback(ns, lang, allLangs);
     const nsAgentInstr = getAgentInstructionWithFallback(ns, lang, allLangs);
@@ -325,7 +376,11 @@ export function extractNodeShapes(
     const properties: PropertyShapeInfo[] = ns.getProperties().map((ps) => {
       const path = ps.getShPath();
 
+      // sh:class uniquement : le champ "classes" est annoncé à l'agent comme
+      // des IRI de rdf:type à mettre dans ses requêtes. Une cible sh:node est
+      // un nom de shape, pas un type, et produirait une requête sans résultat.
       const classes = ps.getShClass().map((r) => c(r.value)!);
+      const targetShapes = ps.getShNode().map((r) => c(r.value)!);
       const datatypes = ps.getShDatatype().map((d) => c(d.getUri().value)!);
 
       const shIn = ps.getShIn();
@@ -336,7 +391,7 @@ export function extractNodeShapes(
 
       const prop: PropertyShapeInfo = {
         path: c(path?.value),
-        name: getLabelWithFallback(ps, lang, allLangs),
+        name: getLabelWithFallback(ps, lang, allLangs, model, SH.NAME),
       };
 
       if (psDescription) prop.description = psDescription;
@@ -344,6 +399,7 @@ export function extractNodeShapes(
       if (ps.getShMinCount() != null) prop.minCount = ps.getShMinCount();
       if (ps.getShMaxCount() != null) prop.maxCount = ps.getShMaxCount();
       if (classes.length) prop.classes = classes;
+      if (targetShapes.length) prop.targetShape = targetShapes;
       if (datatypes.length) prop.datatypes = datatypes;
       if (values?.length) prop.values = values;
 
@@ -352,14 +408,14 @@ export function extractNodeShapes(
 
     const shape: NodeShapeInfo = {
       shapeIri,
-      label: getLabelWithFallback(ns, lang, allLangs),
+      label: getLabelWithFallback(ns, lang, allLangs, model, RDFS.LABEL),
       targetClasses,
       properties,
     };
 
     if (nsDescription) shape.description = nsDescription;
     if (nsAgentInstr?.length) shape.agentInstruction = nsAgentInstr.join(" ");
-    if (targetSparql.length) shape.targetSparql = targetSparql;
+    if (targetSelect) shape.targetSparql = [targetSelect];
 
     return shape;
   });

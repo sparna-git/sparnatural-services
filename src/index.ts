@@ -134,6 +134,8 @@ app.listen(PORT, () => {
   console.log(`✅ Sparnatural service API listening on port ${PORT}`);
 
   // Pre-warm Lunr indexes for all projects that use LunrReconcileService (direct or chained)
+  const warmUps: Promise<void>[] = [];
+
   for (const projectKey of AppConfig.getInstance().listProjects()) {
     const project = AppConfig.getInstance().getProject(projectKey);
     const service = project.reconcileService;
@@ -149,12 +151,21 @@ app.listen(PORT, () => {
 
     for (const lunr of lunrServices) {
       console.log(`[lunr] Warming up index for project "${projectKey}"…`);
-      lunr.warmUp().catch((err) => {
-        console.error(
-          `[lunr] Index warm-up failed for project "${projectKey}":`,
-          err,
-        );
-      });
+      warmUps.push(
+        lunr.warmUp().catch((err) => {
+          console.error(
+            `[lunr] Index warm-up FAILED for project "${projectKey}":`,
+            err,
+          );
+        }),
+      );
     }
+  }
+
+  // Until this line shows up, a reconciliation call waits for its index.
+  if (warmUps.length > 0) {
+    Promise.all(warmUps).then(() => {
+      console.log("✅ Lunr indexes ready — reconciliation is operational");
+    });
   }
 });

@@ -3,7 +3,7 @@ import https from "https";
 import fs from "fs";
 import lunr from "lunr";
 import { FieldQueryConfig } from "../../../../config/ProjectConfig";
-import { getSHACLConfig } from "../../../../config/SCHACL";
+import { getSHACLConfig, listNodeShapeIris } from "../../../../config/SCHACL";
 import { SparqlBinding, FieldBinding, LegacyBinding, UriData } from "./types";
 import { normalizeAccents } from "./lunrPipeline";
 import logger from "../../../../utils/logger";
@@ -17,6 +17,10 @@ export class LunrIndexBuilder {
     private readonly fieldBoosts: Map<string, number>,
   ) {}
 
+  /**
+   * The types reconciliation can filter on: the project `shaclTypes` when the
+   * YAML lists them, every NodeShape IRI otherwise.
+   */
   async resolveShaclTypes(initialTypes: string[]): Promise<string[]> {
     if (initialTypes.length > 0) {
       logger.info(
@@ -27,22 +31,12 @@ export class LunrIndexBuilder {
     }
     try {
       const { model } = await getSHACLConfig(this.projectId);
-      const types: string[] = [];
-      for (const nodeShape of model.readAllNodeShapes()) {
-        const targetClasses = nodeShape.getTargetClasses();
-        if (targetClasses.length > 0) {
-          for (const tc of targetClasses)
-            if (tc.termType === "NamedNode") types.push(tc.value);
-        } else if (nodeShape.resource.termType === "NamedNode") {
-          types.push(nodeShape.resource.value);
-        }
-      }
-      const resolved = [...new Set(types)];
+      const shapes = listNodeShapeIris(model);
       logger.info(
         {},
-        `[lunr-recon] ${resolved.length} SHACL type(s) resolved from NodeShapes.`,
+        `[lunr-recon] ${shapes.length} NodeShape(s) resolved from the SHACL model.`,
       );
-      return resolved;
+      return shapes;
     } catch {
       logger.info(
         {},
@@ -151,18 +145,58 @@ export class LunrIndexBuilder {
     return { index, uriToData };
   }
 
+  /**
+   * Tags each indexed entity with the types it belongs to, which is what
+   * `LunrSearchEngine` filters on when a `type` is passed.
+   *
+   * One `?entity a <type>` branch per type, then `expandSparql` rewrites them
+   * against the data: a `sh:targetClass` becomes its class, a `sh:select`
+   * becomes its own pattern. Same translation as the SPARQL and Lucene
+   * services. The substitution also hits the `BIND`, so a class shape tags
+   * with its class and a `sh:select` shape with the shape IRI.
+   */
   async loadTypesFromSparql(
     uriToData: Map<string, UriData>,
     shaclTypes: string[],
   ): Promise<void> {
-    const inClause = shaclTypes.map((t) => `<${t}>`).join(", ");
-    const query = `
-      PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-      SELECT ?entity ?value WHERE {
-        ?entity rdf:type ?value .
-        FILTER(?value IN (${inClause}))
-      }
-    `;
+    if (shaclTypes.length === 0) return;
+
+    const branches = shaclTypes
+      .map((t) => `  { ?entity a <${t}> . BIND(<${t}> AS ?value) }`)
+      .join("\n  UNION\n");
+    let query = `SELECT ?entity ?value WHERE {\n${branches}\n}`;
+
+    try {
+      const { postProcessor } = await getSHACLConfig(this.projectId);
+      query = postProcessor.expandSparql(query, {});
+    } catch {
+      logger.info(
+        {},
+        `[lunr-recon] No SHACL config — types queried without expansion.`,
+      );
+    }
+
+    const bindings = await this.fetchTargetBindings(query);
+
+    let tagged = 0;
+    for (const b of bindings) {
+      if (!b.entity || !b.value) continue;
+      const data = uriToData.get(b.entity.value);
+      if (!data) continue; // no label, so not in the index
+      if (!data.types) data.types = [];
+      if (data.types.includes(b.value.value)) continue;
+      data.types.push(b.value.value);
+      tagged++;
+    }
+
+    logger.info(
+      {},
+      `[lunr-recon] Types loaded: ${bindings.length} row(s) for ${shaclTypes.length} type(s), ${tagged} tagged.`,
+    );
+  }
+
+  /** POST for the type query: no keep-alive and IPv4, as the large RUIM one needs. */
+  private async fetchTargetBindings(query: string): Promise<SparqlBinding[]> {
     const response = await axios.post<{
       results: { bindings: SparqlBinding[] };
     }>(
@@ -178,15 +212,7 @@ export class LunrIndexBuilder {
         family: 4,
       },
     );
-    const bindings = response.data.results.bindings;
-    for (const b of bindings) {
-      if (!b.entity || !b.value) continue;
-      const data = uriToData.get(b.entity.value);
-      if (!data) continue;
-      if (!data.types) data.types = [];
-      data.types.push(b.value.value);
-    }
-    logger.info({}, `[lunr-recon] Types loaded: ${bindings.length} triple(s).`);
+    return response.data.results.bindings;
   }
 
   async fetchSparqlBindings(query: string): Promise<SparqlBinding[]> {

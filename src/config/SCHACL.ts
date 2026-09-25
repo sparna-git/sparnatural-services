@@ -56,6 +56,19 @@ export function loadShaclTtl(projectKey: string): { ttl: string; firstPath: stri
   return entry;
 }
 
+/**
+ * IRIs of every NodeShape of a model: the values the reconciliation `type`
+ * accepts, which `expandSparql` translates into the data at query time.
+ */
+export function listNodeShapeIris(model: ShaclModel): string[] {
+  const iris = model
+    .readAllNodeShapes()
+    .map((nodeShape) => nodeShape.getResource())
+    .filter((resource) => resource.termType === "NamedNode")
+    .map((resource) => resource.value);
+  return [...new Set(iris)];
+}
+
 export async function getSHACLConfig(projectKey: string) {
   if (SHACL_CACHE[projectKey]) {
     return SHACL_CACHE[projectKey];

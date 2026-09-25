@@ -1,0 +1,7 @@
+PREFIX eli-dl: <http://data.europa.eu/eli/eli-draft-legislation-ontology#>
+SELECT ?entity ?value WHERE {
+  ?entity a eli-dl:Activity ;
+    eli-dl:had_activity_type <https://data.europarl.europa.eu/def/ep-activities/PLENARY_SITTING> ;
+    eli-dl:activity_label ?value .
+  FILTER(LANG(?value) = "fr" || LANG(?value) = "en" || LANG(?value) = "")
+}

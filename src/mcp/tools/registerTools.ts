@@ -346,6 +346,12 @@ export async function registerTools(
                       .describe(
                         "When present, indicates that the predicate points to instances of these classes. Follow the link to the corresponding Node Shape to discover further predicates.",
                       ),
+                    targetShape: z
+                      .array(z.string())
+                      .optional()
+                      .describe(
+                        "When present, indicates the node shapes the values of this predicate conform to. These are shape IRIs, not classes: call discover_nodeshapes on them to get their predicates, do NOT use them as rdf:type constraints.",
+                      ),
                     datatypes: z
                       .array(z.string())
                       .optional()
