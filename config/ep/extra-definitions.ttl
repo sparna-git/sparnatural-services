@@ -38,6 +38,7 @@
 
 questions:QuestionOralWork 
   sh:description "Parliamentary questions for oral answer dealt with during plenary sittings, and included in the day's debates. They may be followed by a resolution (Rule 142). Also includes Questions for Question Time asked during the period set aside for questions during plenary sittings (Rule 143)."@en ;
+  as:agentInstruction "An MEP may ask multiple questions during a sitting"@en ;
 .
 
 questions:P43 sh:path epvoc:workHadParticipation;
@@ -50,6 +51,7 @@ questions:P33 sh:path dcterms:title ;
 
 questions:QuestionWrittenWork
   sh:description "Written parliamentary questions with a request for a written answer (Rule 144)"@en ;
+  as:agentInstruction "An MEP may ask multiple questions during a sitting"@en ;
 .
 
 questions:P24 sh:path epvoc:workHadParticipation;
@@ -62,6 +64,7 @@ questions:P14 sh:path dcterms:title ;
 
 questions:InterpellationMajorWork
   sh:description "Major interpellations may be tabled by a political group to the Council, the Commission or the Vice-President of the Commission/High-Representative of the Union for Foreign Affairs and Security Policy."@en ;
+  as:agentInstruction "An MEP may issue multiple interpellation on the same day"@en ;
 .
 
 questions:P61 sh:path epvoc:workHadParticipation;
