@@ -1,0 +1,83 @@
+@prefix schema: <http://schema.org/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix skosthes: <http://purl.org/iso25964/skos-thes#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix qb: <http://purl.org/linked-data/cube#> .
+@prefix doap: <http://usefulinc.com/ns/doap#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix euvoc: <http://publications.europa.eu/ontology/euvoc#> .
+@prefix locn: <http://www.w3.org/ns/locn#> .
+@prefix vann: <http://purl.org/vocab/vann/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix mtg: <https://data.europarl.europa.eu/def/meetings_api#> .
+@prefix eli: <http://data.europa.eu/eli/ontology#> .
+@prefix adms: <http://www.w3.org/ns/adms#> .
+@prefix org: <http://www.w3.org/ns/org#> .
+@prefix xls2rdf: <https://xls2rdf.sparna.fr/vocabulary#> .
+@prefix event-type: <http://publications.europa.eu/resource/authority/event/> .
+@prefix eli-dl: <http://data.europa.eu/eli/eli-draft-legislation-ontology#> .
+@prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
+@prefix geosparql: <http://www.opengis.net/ont/geosparql#> .
+@prefix shacl-play: <https://shacl-play.sparna.fr/ontology#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix ep-activities: <https://data.europarl.europa.eu/def/ep-activities/> .
+@prefix ep-document-types: <https://data.europarl.europa.eu/def/ep-document-types/> .
+@prefix epvoc: <https://data.europarl.europa.eu/def/epvoc#> .
+@prefix op-aut: <http://publications.europa.eu/resource/authority/> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix skosxl: <http://www.w3.org/2008/05/skos-xl#> .
+@prefix questions: <https://data.europarl.europa.eu/def/parliamentary-questions#> .
+
+
+### Parliamentary questions
+
+questions:QuestionOralWork 
+  rdfs:comment "Parliamentary questions for oral answer dealt with during plenary sittings, and included in the day's debates. They may be followed by a resolution (Rule 142). Also includes Questions for Question Time asked during the period set aside for questions during plenary sittings (Rule 143)."@en ;
+.
+
+questions:P43 sh:path epvoc:workHadParticipation;
+  sh:description "Links an oral question to the participation entry that describes the stakeholders of this question (in particular its author)"@en;
+.
+
+questions:QuestionWrittenWork
+  rdfs:comment "Written parliamentary questions with a request for a written answer (Rule 144)"@en ;
+.
+
+questions:P24 sh:path epvoc:workHadParticipation;
+  sh:description "Links a written question to the participation entry that describes the stakeholders of this question (in particular its author)"@en;
+.
+
+questions:InterpellationMajorWork
+  rdfs:comment "Major interpellations may be tabled by a political group to the Council, the Commission or the Vice-President of the Commission/High-Representative of the Union for Foreign Affairs and Security Policy."@en ;
+.
+
+questions:P61 sh:path epvoc:workHadParticipation;
+  sh:description "Links a major interpellation to the participation entry that describes the stakeholders of this question (in particular its author)"@en;
+.
+
+questions:Participation 
+  rdfs:comment "Describes the participation of stakeholders (participants) with respect to a document. Particpants may be persons or organizations. Participants plays a role (in particular, the role of authors of documents). Persons can participate in the name of an organization."@en ;
+.
+
+questions:P133 sh:path eli-dl:participation_role;
+  sh:agentInstruction "Use <https://data.europarl.europa.eu/def/ep-roles/AUTHOR> for authors and <https://data.europarl.europa.eu/def/ep-roles/ADDRESSEE> for addressees of questions."
+.
+
+### Meetings
+
+mtg:Activity-GMTG-PL
+  rdfs:comment "The European Parliament plenary part-session shall be the meeting of the Europeal Parliament convened as a rule each month and subdivided into daily sittings."@en
+.
+
+mtg:Activity-MTG-PL 
+  rdfs:comment "The European Parliament plenary sitting is a subdivision of a plenary part-session. Sittings of the Parliament held on the same day shall be deemed to be a single sitting."@en ;
+.
+
+mtg:P34 sh:path eli-dl:had_participant_person;
+    sh:description "Relates a sitting to an MEP that participated in this sitting."@en;
+.
