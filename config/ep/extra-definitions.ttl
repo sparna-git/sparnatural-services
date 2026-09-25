@@ -44,6 +44,10 @@ questions:P43 sh:path epvoc:workHadParticipation;
   sh:description "Links an oral question to the participation entry that describes the stakeholders of this question (in particular its author)"@en;
 .
 
+questions:P33 sh:path dcterms:title ;
+  sh:agentInstruction "Titles are multilingual in every EU official language. If you need a title, filter them in a single language depending on user preference."@en ;
+.
+
 questions:QuestionWrittenWork
   sh:description "Written parliamentary questions with a request for a written answer (Rule 144)"@en ;
 .
@@ -52,12 +56,20 @@ questions:P24 sh:path epvoc:workHadParticipation;
   sh:description "Links a written question to the participation entry that describes the stakeholders of this question (in particular its author)"@en;
 .
 
+questions:P14 sh:path dcterms:title ;
+  sh:agentInstruction "Titles are multilingual in every EU official language. If you need a title, filter them in a single language depending on user preference."@en ;
+.
+
 questions:InterpellationMajorWork
   sh:description "Major interpellations may be tabled by a political group to the Council, the Commission or the Vice-President of the Commission/High-Representative of the Union for Foreign Affairs and Security Policy."@en ;
 .
 
 questions:P61 sh:path epvoc:workHadParticipation;
   sh:description "Links a major interpellation to the participation entry that describes the stakeholders of this question (in particular its author)"@en;
+.
+
+questions:P51 sh:path dcterms:title ;
+  sh:agentInstruction "Titles are multilingual in every EU official language. If you need a title, filter them in a single language depending on user preference."@en ;
 .
 
 questions:Participation 
