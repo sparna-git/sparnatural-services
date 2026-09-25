@@ -68,6 +68,10 @@ questions:P133 sh:path eli-dl:participation_role;
   sh:agentInstruction "Use <https://data.europarl.europa.eu/def/ep-roles/AUTHOR> for authors and <https://data.europarl.europa.eu/def/ep-roles/ADDRESSEE> for addressees of questions."
 .
 
+questions:WorkTypeReference
+  sh:agentInstruction "This is a SKOS concept with a skos:prefLabel"@en ;
+.
+
 ### Meetings
 
 mtg:Activity-GMTG-PL
@@ -80,4 +84,8 @@ mtg:Activity-MTG-PL
 
 mtg:P34 sh:path eli-dl:had_participant_person;
     sh:description "Relates a sitting to an MEP that participated in this sitting."@en;
+.
+
+mtg:ActivityType-Node
+  sh:agentInstruction "This is a SKOS concept with a skos:prefLabel"@en ;
 .
