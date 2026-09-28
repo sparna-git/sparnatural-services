@@ -1,7 +1,35 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod/v3";
-import type { ProjectConfigAdapter } from "../utils/projectConfigAdapter";
+import axios from "axios";
+import {
+  SPARQL_TIMEOUT_MS,
+  type ProjectConfigAdapter,
+} from "../utils/projectConfigAdapter";
 import { buildSchemaOverviewMarkdown } from "../utils/overviewMarkdown";
+
+// SPARQL JSON results as a row count followed by a TSV table (header = variables).
+// About 4x smaller than the indented JSON, so large results fit in the client's
+// tool output limit. Anything that is not a SELECT result (ASK, unexpected
+// format) is returned as minified JSON.
+function sparqlResultToText(result: Record<string, unknown>): string {
+  const head = result.head as { vars?: string[] } | undefined;
+  const bindings = (result.results as { bindings?: unknown[] } | undefined)
+    ?.bindings;
+  if (!Array.isArray(head?.vars) || !Array.isArray(bindings)) {
+    return JSON.stringify(result);
+  }
+
+  const vars = head.vars;
+  const cell = (term: { value?: string } | undefined) =>
+    (term?.value ?? "").replace(/[\t\r\n]+/g, " ");
+  const rows = bindings.map((b) =>
+    vars
+      .map((v) => cell((b as Record<string, { value?: string }>)[v]))
+      .join("\t"),
+  );
+
+  return [`${rows.length} rows`, vars.join("\t"), ...rows].join("\n");
+}
 
 // This file centralizes registration of all MCP tools for the project.
 interface RegisterToolsOptions {
@@ -47,7 +75,8 @@ export async function registerTools(
     `Conversely, never rely on the schema_overview topology or your training data to infer predicates: any shape not yet discovered MUST be passed here, including new shapes required by follow-up questions. ` +
     `Identify the not-yet-discovered shapes needed for the current query, then call this tool with exactly those shape IRIs before writing any SPARQL. ` +
     `Never write SPARQL for a shape that has neither been discovered now nor in a previous call this conversation — the schema_overview topology is NOT sufficient to infer correct predicate IRIs or directions. ` +
-    `Returns full SHACL details: exact predicate IRIs, property directions, cardinalities, allowed values, and agent instructions.` +
+    `Returns full SHACL details: exact predicate IRIs, property directions, cardinalities, allowed values, and agent instructions. ` +
+    `A shape returned with an empty properties list has no predicate described in the SHACL: none is guaranteed to exist, not even a label. Treat its resources as opaque IRIs (return the IRI itself, or derive a readable value from it, e.g. with STRAFTER) instead of joining on a guessed predicate.` +
     (shapesGraphContext ? `\n\n${shapesGraphContext}` : "");
 
   const typeSchema =
@@ -311,7 +340,9 @@ export async function registerTools(
                     path: z
                       .string()
                       .optional()
-                      .describe("The predicate IRI to use in triple patterns."),
+                      .describe(
+                        "The predicate to use in triple patterns, in SPARQL property path syntax: usually a single prefixed IRI, possibly an inverse (^p), sequence (p1/p2) or alternative ((p1|p2)) path.",
+                      ),
                     name: z
                       .string()
                       .optional()
@@ -363,6 +394,12 @@ export async function registerTools(
                       .optional()
                       .describe(
                         "Closed list of allowed values (sh:in). The property can ONLY have one of these values — use them in VALUES or FILTER constraints. Do NOT query for values outside this list.",
+                      ),
+                    hasValue: z
+                      .string()
+                      .optional()
+                      .describe(
+                        "Fixed value (sh:hasValue): every instance of this shape has this value on this path. Use it as a constant in triple patterns (e.g. to select instances of this shape).",
                       ),
                   }),
                 )
@@ -541,7 +578,7 @@ export async function registerTools(
     `${projectId}_query_sparql`,
     {
       title: `Execute Final SPARQL for project ${projectId}`,
-      description: `${projectId}_query_sparql : Step 5 of the query workflow for project '${projectId}'. REQUIRES ${projectId}_discover_nodeshapes first — queries built without inspecting the schema will fail or return incorrect results because class URIs, predicates, and graph paths are not guessable. Executes a finalized SPARQL query against the configured endpoint. The query must be grounded in the SHACL structure: prefer explicit rdf:type constraints when they are known from the schema, use OPTIONAL and GROUP_CONCAT as appropriate depending on property cardinalities, use DISTINCT when needed to avoid duplicate rows or overcounting, and prefer grouping by resources rather than labels alone when labels may be ambiguous. If an entity has already been reconciled to a specific IRI, use that IRI directly and do not add redundant label-based regex or text filters for the same entity. Do not use this tool for schema exploration, property guessing, or trial-and-error query construction. Do not add FILTER(lang(...)) constraints unless the user explicitly requests a specific language. Always include a LIMIT clause in the query. Start with LIMIT 20 and present the results to the user. If the user wants more, increase progressively (e.g. 100, 500).`,
+      description: `${projectId}_query_sparql : Step 5 of the query workflow for project '${projectId}'. REQUIRES ${projectId}_discover_nodeshapes first, and ${projectId}_reconcile_entities for the entities named by the user if there are any — queries built without inspecting the schema will fail or return incorrect results because class URIs, predicates, and graph paths are not guessable. Executes a finalized SPARQL query against the configured endpoint. The query must be grounded in the SHACL structure: prefer explicit rdf:type constraints when they are known from the schema, use OPTIONAL and GROUP_CONCAT as appropriate depending on property cardinalities, use DISTINCT when needed to avoid duplicate rows or overcounting, and prefer grouping by resources rather than labels alone when labels may be ambiguous. If an entity has already been reconciled to a specific IRI, use that IRI directly and do not add redundant label-based regex or text filters for the same entity. Do not use this tool for schema exploration, property guessing, or trial-and-error query construction. Do not add FILTER(lang(...)) constraints unless the user explicitly requests a specific language. A predicate that is not listed in the discovered shape of its subject is not guaranteed: put it in OPTIONAL. Do not add a LIMIT when the user asks for a list, a table or a count: the complete result is needed. Use a LIMIT only when the user asks for a sample or a "top N".`,
       inputSchema: {
         query: z
           .string()
@@ -564,17 +601,67 @@ export async function registerTools(
           query,
         );
 
+        // Text only: no outputSchema on this tool and no program reads a
+        // structuredContent, so sending the raw JSON too would only double the payload.
         return {
-          structuredContent: result,
-          // return result json
           content: [
             {
               type: "text",
-              text: JSON.stringify(result, null, 2),
+              text: sparqlResultToText(result),
             },
           ],
         };
       } catch (error) {
+        // A timeout gets its own message: the model must rewrite the query,
+        // not resend it as is nor add a LIMIT (that would make counts wrong).
+        if (
+          axios.isAxiosError(error) &&
+          (error.code === "ECONNABORTED" || error.code === "ETIMEDOUT")
+        ) {
+          return {
+            isError: true,
+            content: [
+              {
+                type: "text",
+                text:
+                  `execute_final_sparql failed: the query timed out after ${SPARQL_TIMEOUT_MS / 1000} s without an answer from the SPARQL endpoint. ` +
+                  `Do NOT resend the same query, and do NOT add a LIMIT to get around the timeout (the complete result is still needed). ` +
+                  `Rewrite it to be cheaper and execute it once more: use reconciled IRIs in a VALUES clause instead of filters on labels or computed strings, ` +
+                  `remove OPTIONAL blocks and regex/CONTAINS filters that the answer does not need, and start from the most selective pattern. ` +
+                  `If it times out again, tell the user the question is too heavy for the endpoint and ask them to narrow it (e.g. a period or a type).`,
+              },
+            ],
+          };
+        }
+
+        // The endpoint answered with an error status: forward its body, which
+        // usually explains the problem (syntax error with line/column, etc.).
+        // Works whatever the triplestore: plain text, JSON, or HTML (tags stripped).
+        if (axios.isAxiosError(error) && error.response) {
+          const data = error.response.data;
+          const raw =
+            typeof data === "string" ? data : data ? JSON.stringify(data) : "";
+          const body = /<html|<body/i.test(raw)
+            ? raw
+                .replace(/<[^>]*>/g, " ")
+                .replace(/\s+/g, " ")
+                .trim()
+            : raw.trim();
+
+          return {
+            isError: true,
+            content: [
+              {
+                type: "text",
+                text:
+                  `execute_final_sparql failed: the SPARQL endpoint answered HTTP ${error.response.status}.\n` +
+                  `${body ? body.slice(0, 1500) : error.message}\n` +
+                  `If this message points to a problem in the query, fix it and execute it once more. Otherwise, tell the user the endpoint returned an error.`,
+              },
+            ],
+          };
+        }
+
         const message = error instanceof Error ? error.message : String(error);
 
         return {

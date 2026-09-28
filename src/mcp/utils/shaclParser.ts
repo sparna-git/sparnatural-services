@@ -1,5 +1,6 @@
-import { RDFS, SH } from "rdf-shacl-commons";
+import { PropertyPath, RDFS, SH } from "rdf-shacl-commons";
 import type { NodeShape, Resource, ShaclModel } from "rdf-shacl-commons";
+import type { Term } from "@rdfjs/types";
 import { DataFactory } from "rdf-data-factory";
 
 const _rdfFactory = new DataFactory();
@@ -66,6 +67,8 @@ export interface PropertyShapeInfo {
   targetShape?: string[];
   datatypes?: string[];
   values?: string[];
+  /** `sh:hasValue`: a value every instance must have on this path. */
+  hasValue?: string;
 }
 
 /**
@@ -155,6 +158,43 @@ function compact(
     if (iri.startsWith(uri)) return prefix + iri.slice(uri.length);
   }
   return iri;
+}
+
+/**
+ * A `sh:path` in SPARQL property path syntax, IRIs compacted with the prefixes.
+ * A plain predicate stays a prefixed name; a blank-node path (sh:inversePath,
+ * sequence, sh:alternativePath…) becomes e.g. `^eli-dl:answers_to` instead of
+ * the blank node id, which the agent cannot use in a query.
+ */
+function renderPath(
+  path: Resource | undefined,
+  model: ShaclModel,
+  prefixes: [string, string][],
+): string | undefined {
+  if (!path) return undefined;
+  if (path.termType === "NamedNode") return compact(path.value, prefixes);
+  try {
+    return new PropertyPath(path, model)
+      .toSparql()
+      .replace(/<([^>]+)>/g, (full, iri: string) => {
+        const short = compact(iri, prefixes);
+        return short === iri ? full : short!;
+      });
+  } catch {
+    return path.value;
+  }
+}
+
+/** A `sh:hasValue` term: IRIs compacted, literals quoted as in SPARQL. */
+function renderValue(
+  term: Term,
+  prefixes: [string, string][],
+): string | undefined {
+  if (term.termType === "NamedNode") return compact(term.value, prefixes);
+  if (term.termType === "Literal") {
+    return JSON.stringify(term.value) + (term.language ? `@${term.language}` : "");
+  }
+  return term.value;
 }
 
 /** The `sh:select` of a shape's SPARQL target, if it has one. */
@@ -279,7 +319,7 @@ export function extractNodeShapesOverview(
 
     for (const ps of ns.getProperties()) {
       const pathRaw = ps.getShPath()?.value;
-      const path = c(pathRaw);
+      const path = renderPath(ps.getShPath(), model, prefixes);
       if (!path) continue;
 
       const psName = getLabelWithFallback(ps, lang, allLangs, model, SH.NAME);
@@ -385,12 +425,13 @@ export function extractNodeShapes(
 
       const shIn = ps.getShIn();
       const values = shIn?.map((t) => c(t.value)!);
+      const shHasValue = ps.getShHasValue();
 
       const psDescription = getTooltipWithFallback(ps, lang, allLangs);
       const psAgentInstr = getAgentInstructionWithFallback(ps, lang, allLangs);
 
       const prop: PropertyShapeInfo = {
-        path: c(path?.value),
+        path: renderPath(path, model, prefixes),
         name: getLabelWithFallback(ps, lang, allLangs, model, SH.NAME),
       };
 
@@ -402,6 +443,7 @@ export function extractNodeShapes(
       if (targetShapes.length) prop.targetShape = targetShapes;
       if (datatypes.length) prop.datatypes = datatypes;
       if (values?.length) prop.values = values;
+      if (shHasValue) prop.hasValue = renderValue(shHasValue, prefixes);
 
       return prop;
     });

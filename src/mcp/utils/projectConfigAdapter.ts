@@ -22,6 +22,9 @@ import type {
 import type { UseCase, FewShot } from "../../config/ProjectConfig";
 import { loadFewShots } from "../../config/FewShots";
 
+// Max time we wait for the SPARQL endpoint when executing a query from query_sparql.
+export const SPARQL_TIMEOUT_MS = 60_000;
+
 export interface ProjectConfig {
   projectId: string;
   sparqlEndpoint: string;
@@ -134,7 +137,7 @@ export class ConfigBackedProjectConfigAdapter implements ProjectConfigAdapter {
     const response = await axios({
       method: "POST",
       url: config.sparqlEndpoint,
-      timeout: 60_000, // 60 seconds timeout
+      timeout: SPARQL_TIMEOUT_MS,
       headers: {
         Accept: "application/sparql-results+json, application/json",
         "Content-Type": "application/x-www-form-urlencoded",
