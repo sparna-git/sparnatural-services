@@ -471,7 +471,7 @@ export async function registerTools(
     `${projectId}_reconcile_entities`,
     {
       title: `Reconcile entity labels to IRIs in project ${projectId}`,
-      description: `${projectId}_reconcile_entities : Step 4 of the query workflow for project '${projectId}'. REQUIRES ${projectId}_discover_nodeshapes first — without it, the 'type' parameter cannot be set correctly and results will be imprecise or wrong. Reconciles user-provided entity labels to candidate IRIs from the project knowledge graph. The resolved IRI must then be injected directly into the SPARQL query produced in step 5 — do not match on rdfs:label once an entity has been reconciled.
+      description: `${projectId}_reconcile_entities : Step 4 of the query workflow for project '${projectId}'. REQUIRES ${projectId}_discover_nodeshapes first — without it, the 'type' parameter cannot be set correctly and results will be imprecise or wrong. Reconciles user-provided entity labels to candidate IRIs from the project knowledge graph. The resolved IRI must then be injected directly into the SPARQL query produced in step 5 — do not match on rdfs:label once an entity has been reconciled. Always prefer this tool over a direct SPARQL lookup on labels.
 
   How to call it correctly:
     - For EACH entity label the user mentioned, add one entry to 'queries' with BOTH 'query' (the label) AND 'type' (the class IRI of the entity, taken from the targetClass of the matching node shape discovered in step 3). Passing 'type' improves precision and is expected whenever a class is known from the schema.
