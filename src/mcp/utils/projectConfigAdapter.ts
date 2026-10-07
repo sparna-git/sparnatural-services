@@ -60,6 +60,8 @@ export interface ProjectConfigAdapter {
     description?: string;
     agentInstruction?: string;
   }>;
+  // get prefixes on set variable for the project, to be used in reconciliation and discover nodeshapes
+  getShaclPrefixes(projectId: string): Promise<[string, string][]>;
 
   reconcileEntities(
     projectId: string,
@@ -218,6 +220,12 @@ export class ConfigBackedProjectConfigAdapter implements ProjectConfigAdapter {
     const prefixes = extractPrefixesFromTtl(ttl);
     const shapes = extractNodeShapesOverview(model, lang, prefixes);
     return { shapes, prefixes };
+  }
+
+  async getShaclPrefixes(projectId: string): Promise<[string, string][]> {
+    await this.getProjectConfig(projectId);
+    const { ttl } = loadShaclTtl(projectId);
+    return extractPrefixesFromTtl(ttl);
   }
 
   async getShapesGraphMeta(

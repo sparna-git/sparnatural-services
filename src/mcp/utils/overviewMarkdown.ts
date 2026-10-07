@@ -12,7 +12,6 @@ export interface OverviewBuildInput {
   lang: string;
   meta: OverviewMeta;
   shapes: NodeShapeOverviewInfo[];
-  prefixes: Record<string, string>;
   useCases?: UseCase[];
 }
 
@@ -28,7 +27,6 @@ export type SectionBuilder = (input: OverviewBuildInput) => string | undefined;
 
 const DEFAULT_SECTIONS: SectionBuilder[] = [
   headerSection,
-  prefixesSection,
   nodeShapesSection,
   useCasesSection,
 ];
@@ -55,26 +53,6 @@ function headerSection({ projectId, meta }: OverviewBuildInput): string {
     lines.push(`> **Agent instruction.** ${meta.agentInstruction}`);
   }
   return lines.join("\n\n");
-}
-
-/**
- * The prefixes the shape IRIs below are compacted with. Without them an agent
- * expands `questions:QuestionOralWork` by guessing, and calls
- * `discover_nodeshapes` with an IRI that matches nothing.
- *
- * Rendered as PREFIX declarations, so they can be pasted into a query.
- */
-function prefixesSection({ prefixes }: OverviewBuildInput): string | undefined {
-  const declarations = Object.entries(prefixes)
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([prefix, uri]) => `PREFIX ${prefix}: <${uri}>`);
-  if (declarations.length === 0) return undefined;
-
-  return [
-    "## Préfixes",
-    "Les IRI de ce document sont abrégées avec ces préfixes. Passez-les tels quels aux autres outils, et n'inventez jamais une IRI complète à partir d'un préfixe.",
-    "```sparql\n" + declarations.join("\n") + "\n```",
-  ].join("\n\n");
 }
 
 function nodeShapesSection(input: OverviewBuildInput): string | undefined {

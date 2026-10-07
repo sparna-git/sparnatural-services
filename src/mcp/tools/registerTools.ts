@@ -79,6 +79,13 @@ export async function registerTools(
     `A shape returned with an empty properties list has no predicate described in the SHACL: none is guaranteed to exist, not even a label. Treat its resources as opaque IRIs (return the IRI itself, or derive a readable value from it, e.g. with STRAFTER) instead of joining on a guessed predicate.` +
     (shapesGraphContext ? `\n\n${shapesGraphContext}` : "");
 
+  // Prefixes of all the SHACL files of the project, each declared once.
+  const shaclPrefixes = await projectConfigAdapter.getShaclPrefixes(projectId);
+  const prefixDeclarations = [
+    ...new Set(shaclPrefixes.map(([uri, p]) => `${p} <${uri}>`)),
+  ].join(", ");
+  const prefixNames = [...new Set(shaclPrefixes.map(([, p]) => p))];
+
   const typeSchema =
     shaclTypes && shaclTypes.length > 0
       ? z
@@ -176,7 +183,7 @@ export async function registerTools(
     async ({ lang }) => {
       try {
         const effectiveLang = lang ?? "fr";
-        const [{ shapes, prefixes }, meta] = await Promise.all([
+        const [{ shapes }, meta] = await Promise.all([
           projectConfigAdapter.getShaclNodeShapesOverview(
             projectId,
             effectiveLang,
@@ -186,16 +193,11 @@ export async function registerTools(
             .catch(() => ({})),
         ]);
 
-        const prefixesRecord = Object.fromEntries(
-          prefixes.map(([uri, p]) => [p.slice(0, -1), uri]),
-        );
-
         const markdown = buildSchemaOverviewMarkdown({
           projectId,
           lang: effectiveLang,
           meta,
           shapes,
-          prefixes: prefixesRecord,
           useCases,
         });
 
@@ -287,8 +289,17 @@ export async function registerTools(
             "List of NodeShape IRIs (compacted, as returned by schema_overview) to load in full detail. " +
               "Pass every shape whose predicates you will use in the current query that you have NOT already discovered in this conversation — including lookup shapes (e.g. med:GroupeGenerique if you will query group membership). " +
               "You may omit shapes already discovered earlier in this conversation and reuse those results; but do NOT omit a shape just because you think you know its predicates from training data or from the overview topology — those are not reliable, so discover it. " +
-              "When omitted, all shapes are returned (use only if you genuinely need the full schema).",
+              "When omitted, all shapes are returned (use only if you genuinely need the full schema). " +
+              `Prefixes: ${prefixDeclarations}.`,
           ),
+        ...(prefixNames.length > 0 && {
+          prefixes: z
+            .array(z.enum(prefixNames as [string, ...string[]]))
+            .optional()
+            .describe(
+              `Prefixes used by the shape IRIs passed in 'shapes'. Only these prefixes exist in the SHACL: ${prefixDeclarations}.`,
+            ),
+        }),
       },
       annotations: {
         readOnlyHint: true,
