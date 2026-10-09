@@ -2,7 +2,7 @@ import axios from "axios";
 import { SparnaturalQuery } from "../../../zod/query";
 import { z } from "zod";
 import { EmptyRequestError } from "../../../errors/emptyRequestError";
-import { ReconcileServiceIfc } from "../../reconciliation/interfaces/ReconcileServiceIfc";
+import { ReconcileServiceIfc } from "kgcompass";
 import { Text2QueryServiceIfc } from "../interfaces/Text2QueryServiceIfc";
 import { inject, injectable } from "tsyringe";
 import { RestText2QueryServiceConfig } from "../../../config/ProjectConfig";

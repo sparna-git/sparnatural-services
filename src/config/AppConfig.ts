@@ -1,11 +1,8 @@
 import "reflect-metadata";
 import { container, DependencyContainer } from "tsyringe";
+import { getReconcileService } from "kgcompass";
 import { Project } from "./Project";
-import {
-  ProjectConfig,
-  ReconciliationServiceConfig,
-  SparqlReconcileServiceConfig,
-} from "./ProjectConfig";
+import { ProjectConfig } from "./ProjectConfig";
 import { ConfigProvider } from "./ConfigProvider";
 import { AppLogger } from "../utils/AppLogger";
 import { MistralText2QueryService } from "../services/text2query-query2text/impl/MistralText2QueryService";
@@ -14,24 +11,6 @@ import { RestText2QueryService } from "../services/text2query-query2text/impl/Re
 import { RestQuery2TextService } from "../services/text2query-query2text/impl/RestQuery2TextService";
 import { Q2TPromptGenerator } from "../services/prompts/impl/Q2TPromptGeneratorService";
 import { T2QPromptGenerator } from "../services/prompts/impl/T2QPromptGeneratorService";
-import { SparqlReconcileService } from "../services/reconciliation/impl/SparqlReconcileService";
-import { SparqlReconcileServiceV13 } from "../services/reconciliation/impl/SparqlReconcileServiceV13";
-import { LuceneGraphDBReconcileService } from "../services/reconciliation/impl/LuceneGraphDBReconcileService";
-import { LunrReconcileService } from "../services/reconciliation/impl/lunr/LunrReconcileService";
-import { IsidoreApiReconcileService } from "../services/reconciliation/impl/IsidoreApiReconcileService";
-import { ChainedReconcileService } from "../services/reconciliation/ChainedReconcileService";
-import { ReconcileServiceIfc } from "../services/reconciliation/interfaces/ReconcileServiceIfc";
-/*
-const DEFAULT_RECONCILIATION_CONFIG: SparqlReconcileServiceConfig = {
-  cacheSize: SparqlReconcileService.DEFAULT_CACHE_SIZE,
-  maxResults: SparqlReconcileService.DEFAULT_MAX_RESULTS,
-};
-*/
-
-const DEFAULT_RECONCILIATION_CONFIG: SparqlReconcileServiceConfig = {
-  cacheSize: 1000,
-  maxResults: 10,
-};
 
 export class AppConfig {
   private static instance: AppConfig;
@@ -94,51 +73,13 @@ export class AppConfig {
     projectContainer.register<string>("project.sparqlEndpoint", {
       useValue: projectConfig.sparqlEndpoint,
     });
-    // 3. Build and register the reconciliation service (single or chained)
-    const reconciliationRaw = projectConfig.reconciliation;
-    const reconciliationList: ReconciliationServiceConfig[] = !reconciliationRaw
-      ? []
-      : Array.isArray(reconciliationRaw)
-        ? reconciliationRaw
-        : [reconciliationRaw];
+    // 3. The reconciliation service (single or chained) is built by KGCompass,
+    // from the "reconciliation" section of the project in this same config file
+    projectContainer.register("reconciliation", {
+      useFactory: () => getReconcileService(projectKey),
+    });
 
-    if (reconciliationList.length === 0) {
-      projectContainer.register("reconciliation", {
-        useToken: "default:reconciliation",
-      });
-      projectContainer.register("reconciliation.config", {
-        useValue: DEFAULT_RECONCILIATION_CONFIG,
-      });
-    } else if (reconciliationList.length === 1) {
-      projectContainer.register("reconciliation", {
-        useToken: reconciliationList[0].implementation,
-      });
-      projectContainer.register("reconciliation.config", {
-        useValue: reconciliationList[0],
-      });
-    } else {
-      // Build each service in its own child container so each gets its own config,
-      // then wrap them all in a ChainedReconcileService.
-      projectContainer.register("reconciliation", {
-        useFactory: (c) => {
-          const services: ReconcileServiceIfc[] = reconciliationList.map(
-            (cfg) => {
-              const child = c.createChildContainer();
-              child.register("reconciliation.config", { useValue: cfg });
-              return child.resolve<ReconcileServiceIfc>(
-                cfg.implementation as any,
-              );
-            },
-          );
-          return new ChainedReconcileService(services);
-        },
-      });
-      projectContainer.register("reconciliation.config", {
-        useValue: reconciliationList[0],
-      });
-    }
-
-    // 5. Same thing to register text2query service
+    // 5. Register the text2query service by its token, with its config
     projectContainer.register("text2query", {
       useToken:
         projectConfig.text2query?.implementation ?? "default:text2query",
@@ -200,26 +141,6 @@ export class AppConfig {
     });
     container.register("T2QPromptGenerator", {
       useClass: T2QPromptGenerator,
-    });
-
-    container.register("SparqlReconcileService", {
-      useClass: SparqlReconcileService,
-    });
-
-    container.register("SparqlReconcileServiceV13", {
-      useClass: SparqlReconcileServiceV13,
-    });
-
-    container.register("LuceneGraphDBReconcileService", {
-      useClass: LuceneGraphDBReconcileService,
-    });
-
-    container.register("LunrReconcileService", {
-      useClass: LunrReconcileService,
-    });
-
-    container.register("IsidoreApiReconcileService", {
-      useClass: IsidoreApiReconcileService,
     });
 
     container.register<string>("log.directory", {

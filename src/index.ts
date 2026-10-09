@@ -1,5 +1,4 @@
 import "reflect-metadata";
-import { AppConfig } from "./config/AppConfig";
 
 import express from "express";
 import cors from "cors";
@@ -18,11 +17,8 @@ import promptT2QRoute from "./routes/t2qPrompt";
 import promptQ2TRoute from "./routes/q2tPrompt";
 
 import { checkDomainMiddleware } from "./middleware/checkDomainMiddleware";
-import { createMcpRouter } from "./mcp/server";
 
-import { ConfigProvider } from "./config/ConfigProvider";
-import { LunrReconcileService } from "./services/reconciliation/impl/lunr/LunrReconcileService";
-import { ChainedReconcileService } from "./services/reconciliation/ChainedReconcileService";
+import { warmUpLunrIndexes } from "kgcompass";
 
 dotenv.config();
 
@@ -94,24 +90,6 @@ app.use(
   promptQ2TRoute,
 );
 
-// mcp routes
-app.use(
-  "/mcp/:projectKey",
-  (req, res, next) => {
-    const projectKey = req.params.projectKey;
-    const project =
-      ConfigProvider.getInstance().getConfig().projects?.[projectKey];
-    if (!project)
-      return res.status(404).json({ error: `Unknown project: ${projectKey}` });
-    next();
-  },
-  createMcpRouter(),
-);
-// route exemple pour tester le serveur MCP
-console.log(
-  `✅ MCP server route example: http://localhost:${PORT}/mcp/isidore`,
-);
-
 // Swagger
 app.use("/api/v1", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 //app.use("/api/monitoring", monitoringStatsRoute);
@@ -133,39 +111,7 @@ if (!process.env.MISTRAL_API_KEY) {
 app.listen(PORT, () => {
   console.log(`✅ Sparnatural service API listening on port ${PORT}`);
 
-  // Pre-warm Lunr indexes for all projects that use LunrReconcileService (direct or chained)
-  const warmUps: Promise<void>[] = [];
-
-  for (const projectKey of AppConfig.getInstance().listProjects()) {
-    const project = AppConfig.getInstance().getProject(projectKey);
-    const service = project.reconcileService;
-
-    const lunrServices: LunrReconcileService[] = [];
-    if (service instanceof LunrReconcileService) {
-      lunrServices.push(service);
-    } else if (service instanceof ChainedReconcileService) {
-      for (const s of service.services) {
-        if (s instanceof LunrReconcileService) lunrServices.push(s);
-      }
-    }
-
-    for (const lunr of lunrServices) {
-      console.log(`[lunr] Warming up index for project "${projectKey}"…`);
-      warmUps.push(
-        lunr.warmUp().catch((err) => {
-          console.error(
-            `[lunr] Index warm-up FAILED for project "${projectKey}":`,
-            err,
-          );
-        }),
-      );
-    }
-  }
-
-  // Until this line shows up, a reconciliation call waits for its index.
-  if (warmUps.length > 0) {
-    Promise.all(warmUps).then(() => {
-      console.log("✅ Lunr indexes ready — reconciliation is operational");
-    });
-  }
+  // Pre-warm Lunr indexes for all projects that use LunrReconcileService (direct or chained).
+  // Until they are ready, a reconciliation call waits for its index.
+  warmUpLunrIndexes();
 });

@@ -1,7 +1,7 @@
 import express from "express";
 import logger from "../utils/logger";
 
-import { SparqlReconcileService } from "../services/reconciliation/impl/SparqlReconcileService";
+import { SparqlReconcileService } from "kgcompass";
 import { AppConfig } from "../config/AppConfig";
 
 const router = express.Router({ mergeParams: true });

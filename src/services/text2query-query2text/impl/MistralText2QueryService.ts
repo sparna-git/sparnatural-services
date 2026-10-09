@@ -1,5 +1,5 @@
 import { Text2QueryServiceIfc } from "../interfaces/Text2QueryServiceIfc";
-import { ReconcileServiceIfc } from "../../reconciliation/interfaces/ReconcileServiceIfc";
+import { ReconcileServiceIfc } from "kgcompass";
 import { Mistral } from "@mistralai/mistralai";
 
 import strictSchema from "../../../schemas/newSchema.strict.v2.schema.json";
