@@ -7,7 +7,7 @@ import {
   NoOpText2QueryService,
   Text2QueryServiceIfc,
 } from "../services/text2query-query2text/interfaces/Text2QueryServiceIfc";
-import { NoOpReconcileService, ReconcileServiceIfc } from "kgcompass";
+import { NoOpReconcileService, ReconcileServiceIfc } from "kgreconcile";
 
 import {
   Q2TPromptGeneratorIfc,

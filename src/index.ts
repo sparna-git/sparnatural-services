@@ -18,7 +18,8 @@ import promptQ2TRoute from "./routes/q2tPrompt";
 
 import { checkDomainMiddleware } from "./middleware/checkDomainMiddleware";
 
-import { warmUpLunrIndexes } from "kgcompass";
+import { warmUpLunrIndexes } from "kgreconcile";
+import { AppConfig } from "./config/AppConfig";
 
 dotenv.config();
 
@@ -113,5 +114,12 @@ app.listen(PORT, () => {
 
   // Pre-warm Lunr indexes for all projects that use LunrReconcileService (direct or chained).
   // Until they are ready, a reconciliation call waits for its index.
-  warmUpLunrIndexes();
+  const appConfig = AppConfig.getInstance();
+  warmUpLunrIndexes(
+    Object.fromEntries(
+      appConfig
+        .listProjects()
+        .map((key) => [key, appConfig.getReconcileService(key)]),
+    ),
+  );
 });

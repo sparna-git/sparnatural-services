@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import { container, DependencyContainer } from "tsyringe";
-import { getReconcileService } from "kgcompass";
+import { createReconcileService, ReconcileServiceIfc } from "kgreconcile";
 import { Project } from "./Project";
 import { ProjectConfig } from "./ProjectConfig";
 import { ConfigProvider } from "./ConfigProvider";
@@ -17,6 +17,7 @@ export class AppConfig {
 
   private config: any;
   private cache: Record<string, Project> = {};
+  private reconcileServices: Record<string, ReconcileServiceIfc> = {};
 
   private constructor() {
     this.config = ConfigProvider.getInstance().getConfig();
@@ -56,6 +57,23 @@ export class AppConfig {
     }
   }
 
+  /**
+   * The reconciliation service (single or chained) of a project, built once by
+   * kgreconcile from the "reconciliation" section of the project.
+   */
+  getReconcileService(projectKey: string): ReconcileServiceIfc {
+    if (!this.reconcileServices[projectKey]) {
+      if (!this.hasProject(projectKey)) {
+        throw new Error(`Unknown project: ${projectKey}`);
+      }
+      this.reconcileServices[projectKey] = createReconcileService(
+        projectKey,
+        this.config.projects[projectKey],
+      );
+    }
+    return this.reconcileServices[projectKey];
+  }
+
   getAppLogger() {
     return container.resolve<AppLogger>(AppLogger);
   }
@@ -73,10 +91,9 @@ export class AppConfig {
     projectContainer.register<string>("project.sparqlEndpoint", {
       useValue: projectConfig.sparqlEndpoint,
     });
-    // 3. The reconciliation service (single or chained) is built by KGCompass,
-    // from the "reconciliation" section of the project in this same config file
+    // 3. The reconciliation service, shared by the project and its text2query service
     projectContainer.register("reconciliation", {
-      useFactory: () => getReconcileService(projectKey),
+      useFactory: () => this.getReconcileService(projectKey),
     });
 
     // 5. Register the text2query service by its token, with its config

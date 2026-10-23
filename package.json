@@ -20,7 +20,7 @@
     "exceljs": "^4.4.0",
     "express": "^4.18.2",
     "js-yaml": "^4.1.0",
-    "kgcompass": "file:../kgcompass/kgcompass-0.1.0.tgz",
+    "kgreconcile": "file:../kgreconcile/kgreconcile-0.1.0.tgz",
     "n3": "^1.26.0",
     "ngrok": "^5.0.0-beta.2",
     "pino": "^9.9.0",

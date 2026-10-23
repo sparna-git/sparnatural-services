@@ -1,4 +1,4 @@
-import type { ReconciliationServiceConfig } from "kgcompass";
+import type { ReconciliationServiceConfig } from "kgreconcile";
 
 export interface AppConfig {
   log?: {
